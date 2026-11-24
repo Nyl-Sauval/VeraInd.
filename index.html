@@ -147,6 +147,10 @@
             <div class="text-[11px] text-slate-500">Coefficient Score :</div>
             <div class="font-black text-sm text-indigo-700" id="badge-mois-coef">Mois 1 : Coeff x1</div>
           </div>
+          <a href="#boussole-negociation" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold px-3 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition">
+            <i class="fa-solid fa-compass text-amber-600"></i>
+            <span>Boussole Prix Neutre</span>
+          </a>
           <button type="button" onclick="switchTab('recap')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition">
             <i class="fa-solid fa-table-list"></i>
             <span>Voir le Récap Global</span>
@@ -354,6 +358,165 @@
                 Total Bouchons Disponibles : <span id="out-total-dispo">12 200</span> lots
               </div>
             </div>
+          </div>
+
+          <!-- BOUSSOLE DE NÉGOCIATION : PRIX DE REVIENT & PRIX NEUTRE (SEUIL 0€) -->
+          <div id="boussole-negociation" class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 shadow-xl border border-indigo-500/40 space-y-4">
+            
+            <!-- EN-TÊTE DE LA BOUSSOLE -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+              <div class="flex items-center space-x-2.5">
+                <span class="bg-amber-400 text-slate-950 font-black px-2.5 py-1 rounded text-xs shadow flex items-center space-x-1">
+                  <i class="fa-solid fa-compass"></i>
+                  <span>BOUSSOLE NÉGOCIATION</span>
+                </span>
+                <div>
+                  <h3 class="text-base font-black text-white flex items-center space-x-2">
+                    <span>Prix de Revient d'un lot & Prix Neutre (Point Mort)</span>
+                  </h3>
+                  <p class="text-[11px] text-slate-300">À quel prix minimum vendre pour ne pas perdre d'argent selon votre prix d'achat du liège</p>
+                </div>
+              </div>
+              <div class="bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/15 text-xs text-right">
+                <div class="text-[10px] text-amber-300 font-bold uppercase">Seuil Neutre Actif (<span id="boussole-mois-lbl">Mois 1</span>)</div>
+                <div class="text-base font-black text-white" id="boussole-prix-neutre-actif">21,05 € / lot</div>
+              </div>
+            </div>
+
+            <!-- DÉCOMPOSITION TRANSPARENTE DU COÛT D'UN LOT DE BOUCHONS -->
+            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10 text-xs space-y-2">
+              <div class="font-bold text-slate-300 text-[11px] uppercase tracking-wider flex items-center justify-between">
+                <span>Décomposition du Prix de Revient Complet (Base <span id="boussole-base-volume-lbl">10 000</span> lots vendus)</span>
+                <span class="text-slate-400 text-[10px] lowercase font-normal">1 lot = 5 kg grains = 14,29 kg liège brut</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[11px]">
+                <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700">
+                  <div class="text-slate-400 text-[10px]">1. Matière + Usine (Direct)</div>
+                  <div class="font-black text-amber-300 text-sm mt-0.5" id="boussole-cout-direct-disp">9,49 €</div>
+                  <div class="text-[9px] text-slate-400">Liège + Broyage (0,29€) + Moulage (2,00€)</div>
+                </div>
+                <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700">
+                  <div class="text-slate-400 text-[10px]">2. Transport Moyen</div>
+                  <div class="font-black text-slate-200 text-sm mt-0.5">~0,95 €</div>
+                  <div class="text-[9px] text-slate-400">Camion 0,87€ • Train 1,05€ • Bateau 0,81€</div>
+                </div>
+                <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700">
+                  <div class="text-slate-400 text-[10px]">3. Frais Fixes / lot</div>
+                  <div class="font-black text-slate-200 text-sm mt-0.5" id="boussole-charges-fixes-disp">9,56 €</div>
+                  <div class="text-[9px] text-slate-400">(Salaires 60k + Fixes 35k) / 10k lots</div>
+                </div>
+                <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700">
+                  <div class="text-slate-400 text-[10px]">4. Marketing (5%)</div>
+                  <div class="font-black text-slate-200 text-sm mt-0.5" id="boussole-marketing-disp">~1,05 €</div>
+                  <div class="text-[9px] text-slate-400">5% du prix de vente à l'équilibre</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- GRILLE DE RÉFÉRENCE : PRIX D'ACHAT DU LIÈGE -> PRIX NEUTRE (SEUIL 0€) -->
+            <div class="space-y-1.5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <span class="font-bold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-table-cells text-emerald-400"></i>
+                  <span>Grille des Prix Neutres selon le Liège acheté & le Volume :</span>
+                </span>
+                <!-- Sélecteur de volume global pour voir l'effet de dilution des charges fixes -->
+                <div class="flex items-center space-x-1 text-[11px] bg-slate-800 p-1 rounded-lg border border-slate-700 self-start sm:self-auto">
+                  <span class="text-slate-400 px-1 font-semibold">Volume :</span>
+                  <button type="button" onclick="setBoussoleVolume(9000)" id="btn-vol-9k" class="boussole-vol-btn px-2 py-0.5 rounded text-[10px] font-bold text-slate-300 hover:bg-slate-700 transition">9 000</button>
+                  <button type="button" onclick="setBoussoleVolume(10000)" id="btn-vol-10k" class="boussole-vol-btn px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-600 text-white transition">10 000</button>
+                  <button type="button" onclick="setBoussoleVolume(11000)" id="btn-vol-11k" class="boussole-vol-btn px-2 py-0.5 rounded text-[10px] font-bold text-slate-300 hover:bg-slate-700 transition">11 000</button>
+                  <button type="button" onclick="setBoussoleVolume(12000)" id="btn-vol-12k" class="boussole-vol-btn px-2 py-0.5 rounded text-[10px] font-bold text-slate-300 hover:bg-slate-700 transition">12 000</button>
+                </div>
+              </div>
+
+              <!-- TABLEAU COMPARATIF HAUTE LISIBILITÉ -->
+              <div class="overflow-x-auto rounded-xl border border-white/10">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-800/90 text-slate-300 text-[10px] uppercase font-bold border-b border-white/10">
+                      <th class="p-2.5">Approvisionnement Liège</th>
+                      <th class="p-2.5 text-center">Coût Direct Lot</th>
+                      <th class="p-2.5 text-center bg-indigo-900/40 text-amber-300 font-black">Prix Neutre (Bénéfice = 0€)</th>
+                      <th class="p-2.5 text-center text-emerald-300 font-black">Prix Conseillé Vente</th>
+                      <th class="p-2.5">Consigne Stratégique Négociation</th>
+                    </tr>
+                  </thead>
+                  <tbody id="boussole-table-body" class="divide-y divide-white/5 text-[11px]">
+                    <!-- Rempli dynamiquement en JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TESTEUR FLASH D'OFFRE EN DIRECT DE NÉGOCIATION -->
+            <div class="bg-slate-800/90 border border-indigo-500/30 rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <div class="flex items-center space-x-2 font-bold text-white text-xs">
+                  <span class="bg-emerald-500 text-slate-950 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black">⚡</span>
+                  <span>Testeur d'Offre Flash : Que donne la proposition d'un distributeur ?</span>
+                </div>
+                <span class="text-[10px] text-slate-400">Simulez le bénéfice de n'importe quelle offre en direct</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Prix offert -->
+                <div>
+                  <label class="block text-[11px] text-slate-300 font-semibold mb-1">Prix offert par le distributeur :</label>
+                  <div class="relative">
+                    <input type="number" id="inp-testeur-prix" value="21.5" step="0.1" min="15" max="30" class="w-full bg-slate-900 border border-slate-600 rounded-lg pl-3 pr-10 py-1.5 text-white font-black text-sm" oninput="updateTesteurOffre()">
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">€ / lot</span>
+                  </div>
+                </div>
+
+                <!-- Quantité lots -->
+                <div>
+                  <label class="block text-[11px] text-slate-300 font-semibold mb-1">Quantité demandée :</label>
+                  <div class="relative">
+                    <input type="number" id="inp-testeur-volume" value="3000" step="100" min="500" max="15000" class="w-full bg-slate-900 border border-slate-600 rounded-lg pl-3 pr-10 py-1.5 text-white font-black text-sm" oninput="updateTesteurOffre()">
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">lots</span>
+                  </div>
+                </div>
+
+                <!-- Transport -->
+                <div>
+                  <label class="block text-[11px] text-slate-300 font-semibold mb-1">Mode de transport :</label>
+                  <select id="sel-testeur-transport" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1.5 text-white text-xs font-semibold" onchange="updateTesteurOffre()">
+                    <option value="camion" selected>🚚 Camion (0,87 €/lot)</option>
+                    <option value="train">🚆 Train (1,05 €/lot • RSE)</option>
+                    <option value="bateau">🚢 Bateau (0,81 €/lot)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- VERDICT DU TESTEUR -->
+              <div class="p-3 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-3 bg-emerald-950/40 border-emerald-500/40" id="box-testeur-verdict">
+                <div class="space-y-1">
+                  <div class="flex items-center space-x-2">
+                    <span id="badge-testeur-verdict" class="px-2.5 py-0.5 rounded-full font-black text-xs bg-emerald-500 text-slate-950">RENTABLE</span>
+                    <span class="text-xs font-bold text-white" id="txt-testeur-marge">+0,45 € de marge nette par lot</span>
+                  </div>
+                  <p class="text-[11px] text-slate-300" id="txt-testeur-conseil">Proposition favorable. Vous gagnez de l'argent sur ce contrat.</p>
+                </div>
+
+                <div class="text-right shrink-0">
+                  <div class="text-[10px] text-slate-400 font-semibold">Bénéfice Net dégagé sur ce deal :</div>
+                  <div class="text-xl font-black text-emerald-400" id="out-testeur-gain">+1 350 €</div>
+                  <div class="text-[10px] text-slate-400">CA : <span id="out-testeur-ca" class="text-slate-200 font-bold">64 500 €</span></div>
+                </div>
+              </div>
+
+              <!-- BOUTONS D'INJECTION RAPIDE DANS LES DISTRIBUTEURS -->
+              <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-white/10 text-xs">
+                <span class="text-slate-400 text-[11px] font-semibold"><i class="fa-solid fa-arrow-down mr-1"></i> Appliquer cette offre à :</span>
+                <button type="button" onclick="appliquerOffreAuDistributeur(1)" class="bg-blue-600/80 hover:bg-blue-500 text-white font-bold px-2.5 py-1 rounded-lg text-xs transition">Distributeur 1</button>
+                <button type="button" onclick="appliquerOffreAuDistributeur(2)" class="bg-blue-600/80 hover:bg-blue-500 text-white font-bold px-2.5 py-1 rounded-lg text-xs transition">Distributeur 2</button>
+                <button type="button" onclick="appliquerOffreAuDistributeur(3)" class="bg-blue-600/80 hover:bg-blue-500 text-white font-bold px-2.5 py-1 rounded-lg text-xs transition">Distributeur 3</button>
+                <button type="button" onclick="appliquerOffreAuDistributeur(4)" class="bg-blue-600/80 hover:bg-blue-500 text-white font-bold px-2.5 py-1 rounded-lg text-xs transition">Distributeur 4</button>
+              </div>
+
+            </div>
+
           </div>
 
           <!-- ÉTAPE 3 : VENTES AUX 4 DISTRIBUTEURS -->
@@ -1165,8 +1328,10 @@
       document.getElementById('top-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-score').innerText = all.totaux.scoreCumule + ' / 300 pts';
 
-      // MAJ Grand Récapitulatif
+      // MAJ Grand Récapitulatif & Boussole
       renderRecap(all);
+      renderBoussoleTable();
+      updateTesteurOffre();
     }
 
     function renderRecap(all) {
@@ -1318,6 +1483,187 @@
       document.getElementById('v-d4-prix').value = prix.toFixed(1);
       handleInputChange();
       showToast('⚡ Prix de ' + prix.toFixed(2) + ' € appliqué aux 4 distributeurs pour ce mois !');
+    }
+
+    // BOUSSOLE DE NÉGOCIATION & PRIX NEUTRE
+    let currentBoussoleVolume = 10000;
+
+    function setBoussoleVolume(vol) {
+      currentBoussoleVolume = vol;
+      document.querySelectorAll('.boussole-vol-btn').forEach(btn => {
+        btn.className = 'boussole-vol-btn px-2 py-0.5 rounded text-[10px] font-bold text-slate-300 hover:bg-slate-700 transition';
+      });
+      const activeBtn = document.getElementById('btn-vol-' + (vol / 1000) + 'k');
+      if (activeBtn) {
+        activeBtn.className = 'boussole-vol-btn px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-600 text-white transition';
+      }
+      const lblVol = document.getElementById('boussole-base-volume-lbl');
+      if (lblVol) lblVol.innerText = vol.toLocaleString('fr-FR');
+      renderBoussoleTable();
+      updateTesteurOffre();
+    }
+
+    function renderBoussoleTable() {
+      const tbody = document.getElementById('boussole-table-body');
+      if (!tbody) return;
+
+      const m = appState.moisActif || 1;
+      const res = calculateSimulation(appState);
+      const vol = currentBoussoleVolume;
+      const chargesFixesLot = (PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel + 80) / vol;
+
+      // Décomposition affichée en haut de carte
+      const coutDirectMois = res.cmpBouchonLot;
+      const prixNeutreMois = calcPrixNeutre(coutDirectMois, vol, 0.95);
+
+      const elMoisLbl = document.getElementById('boussole-mois-lbl');
+      if (elMoisLbl) elMoisLbl.innerText = 'Mois ' + m;
+      const elNeutreActif = document.getElementById('boussole-prix-neutre-actif');
+      if (elNeutreActif) elNeutreActif.innerText = prixNeutreMois.toFixed(2) + ' € / lot';
+      const elCoutDirectDisp = document.getElementById('boussole-cout-direct-disp');
+      if (elCoutDirectDisp) elCoutDirectDisp.innerText = coutDirectMois.toFixed(2) + ' €';
+      const elChargesFixesDisp = document.getElementById('boussole-charges-fixes-disp');
+      if (elChargesFixesDisp) elChargesFixesDisp.innerText = chargesFixesLot.toFixed(2) + ' €';
+      const elMarketingDisp = document.getElementById('boussole-marketing-disp');
+      if (elMarketingDisp) elMarketingDisp.innerText = '~' + (prixNeutreMois * 0.05).toFixed(2) + ' €';
+
+      const tiers = [
+        {
+          nom: 'Stock départ M1 (CMP)',
+          desc: '110k kg liège 0,50€ + 7,5k grains 0,56€ + 3k lots 12€',
+          coutDirect: 9.4918,
+          prixConseille: '21,50 € à 22,00 €',
+          consigne: '⚠️ Plancher absolu M1 ! Ne JAMAIS signer sous ce seuil.',
+          isM1: true
+        },
+        {
+          nom: 'Liège brut à 0,50 € / kg',
+          desc: 'Tarif standard sans remise (< 90 000 kg)',
+          coutDirect: calcDirectCost(0.50),
+          prixConseille: '21,50 €',
+          consigne: 'Tarif de base, pas d\'économie matière.',
+          isM1: false
+        },
+        {
+          nom: 'Liège brut à 0,47 € / kg',
+          desc: 'Palier commande 90 000 kg (-6% remise)',
+          coutDirect: calcDirectCost(0.47),
+          prixConseille: '21,20 €',
+          consigne: 'Marge accrue de +0,43 €/lot.',
+          isM1: false
+        },
+        {
+          nom: 'Liège brut à 0,46 € / kg',
+          desc: 'Palier commande 110 000 kg (-8% remise)',
+          coutDirect: calcDirectCost(0.46),
+          prixConseille: '21,00 €',
+          consigne: 'Gain matière intéressant, négociez à 21,00€.',
+          isM1: false
+        },
+        {
+          nom: 'Liège brut à 0,44 € / kg',
+          desc: 'Palier commande 130 000 kg (-12% remise)',
+          coutDirect: calcDirectCost(0.44),
+          prixConseille: '20,80 €',
+          consigne: 'Très bonne marge, rentable dès 20,20€.',
+          isM1: false
+        },
+        {
+          nom: 'Liège brut à 0,43 € / kg',
+          desc: '★ Palier 150 000 kg (-14% - Recommandé SuberTech)',
+          coutDirect: calcDirectCost(0.43),
+          prixConseille: '20,50 € à 21,50 €',
+          consigne: '★ Force de frappe SuberTech : Rentable dès 20,00 € !',
+          isM2: true
+        }
+      ];
+
+      let html = '';
+      tiers.forEach((t) => {
+        const neutre = calcPrixNeutre(t.coutDirect, vol, 0.95);
+        let rowClass = 'hover:bg-white/5 transition';
+
+        if ((m === 1 && t.isM1) || (m > 1 && t.isM2)) {
+          rowClass = 'bg-indigo-600/30 border-l-4 border-amber-400 font-semibold';
+        }
+
+        html += `<tr class="${rowClass}">
+          <td class="p-2.5">
+            <div class="font-bold text-white flex items-center space-x-1.5">
+              ${(m === 1 && t.isM1) ? '<span class="text-amber-400 text-xs">👉 Actuel M1 :</span>' : ''}
+              ${(m > 1 && t.isM2) ? '<span class="text-emerald-400 text-xs">👉 Actuel M' + m + ' :</span>' : ''}
+              <span>${t.nom}</span>
+            </div>
+            <div class="text-[10px] text-slate-400">${t.desc}</div>
+          </td>
+          <td class="p-2.5 text-center font-bold text-slate-200">${t.coutDirect.toFixed(2)} €</td>
+          <td class="p-2.5 text-center bg-white/5 font-black text-amber-300 text-sm">${neutre.toFixed(2)} €</td>
+          <td class="p-2.5 text-center font-bold text-emerald-400">${t.prixConseille}</td>
+          <td class="p-2.5 text-slate-300 text-[10px]">${t.consigne}</td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function updateTesteurOffre() {
+      const elPrix = document.getElementById('inp-testeur-prix');
+      const elVol = document.getElementById('inp-testeur-volume');
+      const elTr = document.getElementById('sel-testeur-transport');
+      if (!elPrix || !elVol || !elTr) return;
+
+      const prix = Number(elPrix.value) || 21.5;
+      const vol = Number(elVol.value) || 3000;
+      const transport = elTr.value || 'camion';
+      const m = appState.moisActif || 1;
+
+      const ana = analyzeOffreDistributeur(prix, vol, m, currentBoussoleVolume, transport);
+
+      const elBadge = document.getElementById('badge-testeur-verdict');
+      const elMarge = document.getElementById('txt-testeur-marge');
+      const elConseil = document.getElementById('txt-testeur-conseil');
+      const elGain = document.getElementById('out-testeur-gain');
+      const elCa = document.getElementById('out-testeur-ca');
+      const elBox = document.getElementById('box-testeur-verdict');
+
+      if (!elBadge || !elMarge) return;
+
+      elBadge.innerText = ana.verdict;
+      if (ana.badgeColor === 'emerald') {
+        elBadge.className = 'px-2.5 py-0.5 rounded-full font-black text-xs bg-emerald-500 text-slate-950';
+        elBox.className = 'p-3 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-3 bg-emerald-950/40 border-emerald-500/40';
+        elGain.className = 'text-xl font-black text-emerald-400';
+      } else if (ana.badgeColor === 'amber') {
+        elBadge.className = 'px-2.5 py-0.5 rounded-full font-black text-xs bg-amber-400 text-slate-950';
+        elBox.className = 'p-3 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-3 bg-amber-950/40 border-amber-500/40';
+        elGain.className = 'text-xl font-black text-amber-400';
+      } else {
+        elBadge.className = 'px-2.5 py-0.5 rounded-full font-black text-xs bg-red-600 text-white animate-pulse';
+        elBox.className = 'p-3 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-3 bg-red-950/40 border-red-500/40';
+        elGain.className = 'text-xl font-black text-red-400';
+      }
+
+      elMarge.innerText = (ana.margeNetteLot >= 0 ? '+' : '') + ana.margeNetteLot.toFixed(2) + ' € de marge nette par lot';
+      elConseil.innerText = ana.conseil;
+      elGain.innerText = (ana.benefTotalDeal >= 0 ? '+' : '') + Math.round(ana.benefTotalDeal).toLocaleString('fr-FR') + ' €';
+      elCa.innerText = Math.round(ana.caDeal).toLocaleString('fr-FR') + ' €';
+    }
+
+    function appliquerOffreAuDistributeur(numDist) {
+      const prix = Number(document.getElementById('inp-testeur-prix').value) || 21.5;
+      const vol = Number(document.getElementById('inp-testeur-volume').value) || 3000;
+      const transport = document.getElementById('sel-testeur-transport').value || 'camion';
+
+      const inpLots = document.getElementById(`v-d${numDist}-lots`);
+      const inpPrix = document.getElementById(`v-d${numDist}-prix`);
+      const selTr = document.getElementById(`v-d${numDist}-transport`);
+
+      if (inpLots) inpLots.value = vol;
+      if (inpPrix) inpPrix.value = prix.toFixed(1);
+      if (selTr) selTr.value = transport;
+
+      handleInputChange();
+      showToast(`Offre appliquée au Distributeur ${numDist} (${vol} lots @ ${prix.toFixed(2)} €) !`);
     }
 
     function copierLienPartage() {

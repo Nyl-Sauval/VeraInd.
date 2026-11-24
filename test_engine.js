@@ -97,4 +97,33 @@ const testSlider21_5 = sim.calcProfitFromPrice(21.5, 10000, res.coutDirectLot);
 console.log("Slider M1 (21.50€, 10k lots) -> Résultat Net :", testSlider21_5.rn.toFixed(0), "€ | Point mort :", testSlider21_5.pointMortLots, "lots");
 assert(testSlider21_5.rn > 4000, "À 21.50€ pour 10k lots en M1, le RN doit dépasser +4 000€");
 
-console.log("\n Tous les tests du moteur mathématique sont passés avec succès !");
+// 7. Test Boussole de Négociation & Prix Neutres
+console.log("\n=== VALIDATION BOUSSOLE DE NÉGOCIATION & PRIX NEUTRES ===");
+const direct050 = sim.calcDirectCost(0.50);
+const direct046 = sim.calcDirectCost(0.46);
+const direct043 = sim.calcDirectCost(0.43);
+
+assert(Math.abs(direct050 - 9.4285) < 0.01, "Coût direct liège 0.50€ = 9.43€");
+assert(Math.abs(direct046 - 8.8571) < 0.01, "Coût direct liège 0.46€ = 8.86€");
+assert(Math.abs(direct043 - 8.4286) < 0.01, "Coût direct liège 0.43€ = 8.43€");
+
+const neutreM1 = sim.calcPrixNeutre(res.coutDirectLot, 10000, 0.95);
+const neutreM2 = sim.calcPrixNeutre(direct043, 10000, 0.95);
+
+console.log("Prix Neutre Mois 1 (Stock Départ 9.49€, 10k lots) :", neutreM1.toFixed(2), "€ / lot");
+console.log("Prix Neutre Mois 2 (Liège 0.43€, 10k lots) :", neutreM2.toFixed(2), "€ / lot");
+
+assert(Math.abs(neutreM1 - 21.05) < 0.02, "Prix neutre M1 doit être ~21.05€");
+assert(Math.abs(neutreM2 - 19.93) < 0.02, "Prix neutre M2 doit être ~19.93€");
+
+// Test analyseur d'offre
+const offreRentable = sim.analyzeOffreDistributeur(21.5, 3000, 1, 10000, 'camion');
+assert(offreRentable.verdict.includes('RENTABLE'), "21.50€ en M1 doit être rentable");
+assert(offreRentable.benefTotalDeal > 1000, "21.50€ sur 3000 lots doit dégager > 1000€ de bénéfice net");
+
+const offreDeficitaire = sim.analyzeOffreDistributeur(20.0, 3000, 1, 10000, 'camion');
+assert(offreDeficitaire.verdict.includes('DÉFICITAIRE'), "20.00€ en M1 doit être déficitaire");
+assert(offreDeficitaire.benefTotalDeal < 0, "20.00€ sur 3000 lots doit être négatif");
+
+console.log("\n Tous les tests du moteur mathématique et de négociation sont passés avec succès !");
+

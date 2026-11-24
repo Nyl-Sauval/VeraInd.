@@ -427,6 +427,86 @@ function calcProfitFromPrice(prix, volume = 10000, coutUnitaireLot = 9.4918) {
   };
 }
 
+// Calcul du coût direct de fabrication selon le prix d'achat du liège brut
+function calcDirectCost(prixLiegeKg) {
+  const kgLiegeParLot = 5 / PARAMS.rendementBroyage; // 14.2857 kg
+  const coutBroyageParLot = kgLiegeParLot * PARAMS.coutBroyageKg; // 0.2857 €
+  const coutMoulageParLot = 5 * PARAMS.coutMoulageKg; // 2.00 €
+  const coutMatiere = kgLiegeParLot * prixLiegeKg;
+  return coutMatiere + coutBroyageParLot + coutMoulageParLot;
+}
+
+// Calcul du Prix Neutre (Seuil de rentabilité 0 € de bénéfice)
+// P = (CoutDirect + CoutTransport + (ChargesFixes / Volume)) / (1 - 0.05)
+function calcPrixNeutre(coutDirectLot, volume = 10000, transportLot = 0.95) {
+  const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel + 80; // 95 580 €
+  const chargesFixesParLot = chargesFixes / volume;
+  return (coutDirectLot + transportLot + chargesFixesParLot) / (1 - PARAMS.tauxMarketing);
+}
+
+// Analyseur d'offre distributeur pour la négociation
+function analyzeOffreDistributeur(prixOffert, volume = 3000, mois = 1, volumeTotalMois = 10000, transportType = 'camion') {
+  // Coût direct selon le mois
+  const coutDirectLot = (mois === 1) ? 9.4918 : 8.4286;
+  
+  // Coût transport unitaire
+  let transportLot = 0.95;
+  if (transportType === 'camion') transportLot = 1721 / 1980; // ~0.869 €
+  else if (transportType === 'train') transportLot = 2768 / 2640; // ~1.048 €
+  else if (transportType === 'bateau') transportLot = 4668 / 5760; // ~0.810 €
+  else if (transportType === 'avion') transportLot = 79 / 60; // ~1.317 €
+
+  const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel + 80;
+  const chargesFixesLot = chargesFixes / volumeTotalMois;
+  const prixNeutre = (coutDirectLot + transportLot + chargesFixesLot) / (1 - PARAMS.tauxMarketing);
+
+  const caDeal = volume * prixOffert;
+  const marketingDeal = caDeal * PARAMS.tauxMarketing;
+  const coutDirectTotalDeal = volume * coutDirectLot;
+  const coutTransportDeal = volume * transportLot;
+  const partChargesFixesDeal = volume * chargesFixesLot;
+
+  const coutCompletTotal = coutDirectTotalDeal + coutTransportDeal + marketingDeal + partChargesFixesDeal;
+  const benefTotalDeal = caDeal - coutCompletTotal;
+  const coutRevientCompletLot = coutCompletTotal / volume;
+  const margeNetteLot = benefTotalDeal / volume;
+
+  let verdict = 'RENTABLE';
+  let badgeColor = 'emerald';
+  let conseil = 'Proposition favorable. Vous gagnez de l\'argent sur ce contrat.';
+
+  if (prixOffert < prixNeutre - 0.20) {
+    verdict = 'DÉFICITAIRE';
+    badgeColor = 'red';
+    conseil = `⚠️ REFUSEZ OU REHAUSSEZ ! Vous perdez ${Math.abs(margeNetteLot).toFixed(2)} € par lot. Prix plancher absolu : ${prixNeutre.toFixed(2)} €.`;
+  } else if (prixOffert < prixNeutre + 0.30) {
+    verdict = 'NEUTRE / MARGE MINIMALE';
+    badgeColor = 'amber';
+    conseil = `Limite point mort (+${margeNetteLot.toFixed(2)} €/lot). Tentez de gratter +0,50 €/lot ou négociez le paiement comptant.`;
+  } else if (prixOffert >= prixNeutre + 1.00) {
+    verdict = 'TRÈS RENTABLE (★)';
+    badgeColor = 'emerald';
+    conseil = `Excellente opportunité (+${margeNetteLot.toFixed(2)} €/lot). À signer rapidement !`;
+  }
+
+  return {
+    prixOffert,
+    volume,
+    mois,
+    coutDirectLot,
+    transportLot,
+    chargesFixesLot,
+    prixNeutre,
+    caDeal,
+    benefTotalDeal,
+    coutRevientCompletLot,
+    margeNetteLot,
+    verdict,
+    badgeColor,
+    conseil
+  };
+}
+
 // Export pour node si test
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -435,6 +515,9 @@ if (typeof module !== 'undefined' && module.exports) {
     getDefaultState,
     simulateAllMonths,
     calculateSimulation,
-    calcProfitFromPrice
+    calcProfitFromPrice,
+    calcDirectCost,
+    calcPrixNeutre,
+    analyzeOffreDistributeur
   };
 }
