@@ -299,7 +299,14 @@
                 </div>
                 <div class="flex justify-between border-t pt-1 font-semibold text-emerald-800">
                   <span id="lbl-impact-treso-cmd">Décaissement ce mois :</span>
-                  <span id="val-impact-treso-cmd">0 € (Payable à 30j de livraison)</span>
+                  <span id="val-impact-treso-cmd">-64 500 € (Payé comptant / instant)</span>
+                </div>
+                <div class="border-t pt-1.5 space-y-1">
+                  <label class="block text-[10px] text-slate-500 font-bold uppercase">Règlement commande fournisseur :</label>
+                  <select id="sel-reglement-fournisseur" class="w-full text-xs font-bold border rounded-lg px-2 py-1 bg-white text-slate-800" onchange="handleReglementFournisseurChange(this.value)">
+                    <option value="instant" selected>⚡ Comptant / Instant (décaissé le mois même)</option>
+                    <option value="30j">📅 30 jours après livraison (décaissé à M+2)</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -1214,8 +1221,16 @@
 
       const lblTresoCmd = document.getElementById('lbl-impact-treso-cmd');
       const valTresoCmd = document.getElementById('val-impact-treso-cmd');
-      lblTresoCmd.innerText = 'Décaissement ce mois :';
-      valTresoCmd.innerText = '0 € (Payable en M' + (m + 2) + ')';
+      const modeReg = appState.reglementFournisseur || 'instant';
+      if (modeReg === 'instant') {
+        lblTresoCmd.innerText = 'Décaissement ce mois :';
+        valTresoCmd.innerText = '-' + Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' € (Payé comptant / instant)';
+        valTresoCmd.className = 'font-bold text-red-600';
+      } else {
+        lblTresoCmd.innerText = 'Décaissement ce mois :';
+        valTresoCmd.innerText = '0 € (Payable en M' + (m + 2) + ')';
+        valTresoCmd.className = 'font-semibold text-emerald-700';
+      }
 
       // Badge et texte explicatif livraison M+1
       const badgeLivraison = document.getElementById('txt-livraison-delai-badge');
@@ -1453,8 +1468,9 @@
 
         { section: '💰 TRÉSORERIE & FINANCES' },
         { label: 'Trésorerie début de mois', u: '€', v1: r1.tresoDebut, v2: r2.tresoDebut, v3: r3.tresoDebut, v4: r4.tresoDebut, tot: 500000 },
-        { label: 'Total encaissements', u: '€', v1: r1.totalEncaissements, v2: r2.totalEncaissements, v3: r3.totalEncaissements, v4: r4.totalEncaissements, tot: r1.totalEncaissements + r2.totalEncaissements + r3.totalEncaissements + r4.totalEncaissements },
-        { label: 'Total décaissements', u: '€', v1: -r1.totalDecaissements, v2: -r2.totalDecaissements, v3: -r3.totalDecaissements, v4: -r4.totalDecaissements, tot: -(r1.totalDecaissements + r2.totalDecaissements + r3.totalDecaissements + r4.totalDecaissements) },
+        { label: '+ Encaissements ventes', u: '€', v1: r1.totalEncaissements, v2: r2.totalEncaissements, v3: r3.totalEncaissements, v4: r4.totalEncaissements, tot: r1.totalEncaissements + r2.totalEncaissements + r3.totalEncaissements + r4.totalEncaissements },
+        { label: '- Décaissement commande liège brut', u: '€', v1: -r1.decaissementFournisseur, v2: -r2.decaissementFournisseur, v3: -r3.decaissementFournisseur, v4: -r4.decaissementFournisseur, tot: -(r1.decaissementFournisseur + r2.decaissementFournisseur + r3.decaissementFournisseur + r4.decaissementFournisseur) },
+        { label: '- Autres décaissements (salaires, usine, machines, stocks)', u: '€', v1: -(r1.totalDecaissements - r1.decaissementFournisseur), v2: -(r2.totalDecaissements - r2.decaissementFournisseur), v3: -(r3.totalDecaissements - r3.decaissementFournisseur), v4: -(r4.totalDecaissements - r4.decaissementFournisseur), tot: -((r1.totalDecaissements - r1.decaissementFournisseur) + (r2.totalDecaissements - r2.decaissementFournisseur) + (r3.totalDecaissements - r3.decaissementFournisseur) + (r4.totalDecaissements - r4.decaissementFournisseur)) },
         { label: 'TRÉSORERIE FIN DE MOIS', u: '€', highlightBlue: true, v1: r1.tresorerieFinMois, v2: r2.tresorerieFinMois, v3: r3.tresorerieFinMois, v4: r4.tresorerieFinMois, tot: r4.tresorerieFinMois },
 
         { section: '🎯 SCORE & POINTS OFFICIELS' },
@@ -1778,10 +1794,20 @@
       reader.readAsText(file);
     }
 
+    function handleReglementFournisseurChange(val) {
+      appState.reglementFournisseur = val;
+      saveToLocalStorage();
+      runSimulation();
+      showToast(val === 'instant' ? '⚡ Paiement commande fournisseur comptant (instant) activé !' : '📅 Paiement commande fournisseur différé (30j après livraison) activé !');
+    }
+
     function loadStateIntoUI() {
       const m = appState.moisActif || 1;
       if (!appState.moisData) appState = getDefaultState();
       const curData = appState.moisData[m] || getDefaultMonthData(m);
+
+      const selReg = document.getElementById('sel-reglement-fournisseur');
+      if (selReg) selReg.value = appState.reglementFournisseur || 'instant';
 
       document.getElementById('inp-commande-liege').value = curData.commandeLiegeKg || 150000;
       document.getElementById('rng-broyage').value = curData.liegeABroyerKg || 110000;

@@ -75,6 +75,7 @@ function getDefaultMonthData(m) {
 function getDefaultState() {
   return {
     moisActif: 1,
+    reglementFournisseur: 'instant', // 'instant' (comptant/instantané) | 'livraison' (M+1) | '30j' (30j après livraison M+2)
     moisData: {
       1: getDefaultMonthData(1),
       2: getDefaultMonthData(2),
@@ -125,6 +126,7 @@ function migrateState(parsed) {
   if (parsed.moisData && parsed.moisData[1]) {
     appState = parsed;
     if (!appState.moisActif) appState.moisActif = 1;
+    if (!appState.reglementFournisseur) appState.reglementFournisseur = 'instant';
     // S'assurer que tous les mois existent
     for (let m = 1; m <= 4; m++) {
       if (!appState.moisData[m]) {
@@ -134,6 +136,7 @@ function migrateState(parsed) {
   } else if (parsed.ventes) {
     // Migration depuis ancien format mono-mois
     appState = getDefaultState();
+    appState.reglementFournisseur = parsed.reglementFournisseur || 'instant';
     appState.moisData[1] = {
       commandeLiegeKg: parsed.commandeLiegeKg || 150000,
       liegeABroyerKg: parsed.liegeABroyerKg || 110000,
@@ -276,12 +279,22 @@ function simulateAllMonths(state) {
     const decaissementFixe = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels; // 95 000 €
     const decaissementVariables = coutBroyage + coutMoulage + coutTransportTotal + fraisMarketing + fraisStockage;
     
-    // Décaissement commande producteur : payée 30 jours après livraison (M1 livrée M2 -> payée M3)
+    // Décaissement commande producteur :
+    // 'instant' : payé comptant le mois même de la commande (ex: M1 payé M1)
+    // 'livraison' : payé à la livraison (ex: M1 payé M2)
+    // '30j' : payé 30 jours après livraison (ex: M1 livré M2 et payé M3)
+    const modeReglement = state.reglementFournisseur || 'instant';
     let decaissementFournisseur = 0;
-    if (m === 3 && results[1]) {
-      decaissementFournisseur = results[1].montantCommandeLiege;
-    } else if (m === 4 && results[2]) {
-      decaissementFournisseur = results[2].montantCommandeLiege;
+    if (modeReglement === 'instant') {
+      decaissementFournisseur = montantCommandeLiege;
+    } else if (modeReglement === 'livraison') {
+      decaissementFournisseur = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
+    } else {
+      if (m === 3 && results[1]) {
+        decaissementFournisseur = results[1].montantCommandeLiege;
+      } else if (m === 4 && results[2]) {
+        decaissementFournisseur = results[2].montantCommandeLiege;
+      }
     }
 
     const totalDecaissements = detteStockInitDecaissee + machinesDecaissees + decaissementFixe + decaissementVariables + decaissementFournisseur;
