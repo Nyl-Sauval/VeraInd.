@@ -36,14 +36,14 @@ const PARAMS = {
   paliersLiege: [
     { seuil: 150000, prix: 0.43, remiseLabel: '-14% (0,43 €/kg)' },
     { seuil: 130000, prix: 0.44, remiseLabel: '-12% (0,44 €/kg)' },
-    { seuil: 110000, prix: 0.49, remiseLabel: '-2% (0,49 €/kg)' },
+    { seuil: 110000, prix: 0.46, remiseLabel: '-8% (0,46 €/kg)' },
     { seuil: 90000,  prix: 0.47, remiseLabel: '-6% (0,47 €/kg)' },
     { seuil: 35000,  prix: 0.50, remiseLabel: 'Tarif base (0,50 €/kg)' }
   ],
   getPrixLiege: function(kg) {
     if (kg >= 150000) return 0.43;
     if (kg >= 130000) return 0.44;
-    if (kg >= 110000) return 0.49;
+    if (kg >= 110000) return 0.46;
     if (kg >= 90000)  return 0.47;
     return 0.50;
   },
