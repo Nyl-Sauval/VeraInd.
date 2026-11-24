@@ -51,8 +51,8 @@ Bienvenue dans l'environnement décisionnel de **SuberTech Industries**, conçu 
 
 1. **Volume critique dès le Mois 1 (Viser 10 000 lots vendus) :**
    * Votre seuil de rentabilité est de **~9 474 lots** à 21 €/lot pour couvrir les 95 500 € de charges fixes.
-   * Vous disposez de **12 200 lots** mobilisables grâce à votre stock initial (3 000 bouchons finis + 7 500 kg de grains + 110 000 kg de liège à broyer).
-   * **Vendre 10 000 lots à 21-22 € vous assure un Résultat Net positif (+5 000 € à +15 000 €)** dès le premier mois, vous propulsant à la **1ère place du classement (20 pts RN + 10 pts CA = 30/30 pts)** !
+   * Vous disposez de **12 000 lots** mobilisables en M1 (3 000 bouchons de stock initial + 9 000 lots produits par les mouleuses, plafonnées à leur capacité max de 45 000 kg de grains, laissant 1 000 kg de grains en réserve pour M2).
+   * **Vendre 10 000 lots à 21-22 € vous assure un Résultat Net positif (+4 000 € à +15 000 €)** dès le premier mois, vous propulsant à la **1ère place du classement (20 pts RN + 10 pts CA = 30/30 pts)** !
 
 2. **Commande Fournisseur Espagnol : Activer la remise volume immédiatement :**
    * Commandez dès le Mois 1 **100 000 kg de liège brut à 0,47 €/kg** (au lieu de 0,50 €).

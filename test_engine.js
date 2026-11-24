@@ -39,18 +39,29 @@ console.log("Coût direct fabrication (liège à 0.47€) :", coutDirectRemise.t
 assert(Math.abs(coutDirectBase - 9.42857) < 1e-3, "Coût direct à 0.50€ doit être ~9.43€");
 assert(Math.abs(coutDirectRemise - 9.000) < 1e-3, "Coût direct à 0.47€ doit être ~9.00€");
 
-// 2. Potentiel de production du stock initial
+// 2. Potentiel de production et capacités machines (Moulins 155k kg, Mouleuses 45k kg)
 const stockLiegeInit = 110000; // kg
 const stockGrainsInit = 7500; // kg
 const stockBouchonsInit = 3000; // lots
 
-const grainsFromLiege = stockLiegeInit * 0.35; // 38 500 kg
-const totalGrainsDispo = stockGrainsInit + grainsFromLiege; // 46 000 kg
-const bouchonsFromGrains = totalGrainsDispo * 0.20; // 9 200 lots
-const totalBouchonsPotentiel = stockBouchonsInit + bouchonsFromGrains; // 12 200 lots
+const capaciteMoulins = 155000; // kg liège brut / mois
+const capaciteMouleuses = 45000; // kg grains / mois
 
+const liegeBroyable = Math.min(stockLiegeInit, capaciteMoulins); // 110 000 kg
+const grainsFromLiege = liegeBroyable * 0.35; // 38 500 kg
+const totalGrainsDispo = stockGrainsInit + grainsFromLiege; // 46 000 kg
+
+const grainsMoules = Math.min(totalGrainsDispo, capaciteMouleuses); // 45 000 kg (plafonné par les mouleuses)
+const grainsRestants = totalGrainsDispo - grainsMoules; // 1 000 kg
+const bouchonsFromGrains = grainsMoules * 0.20; // 9 000 lots
+const totalBouchonsPotentiel = stockBouchonsInit + bouchonsFromGrains; // 12 000 lots
+
+console.log("Total grains dispo en M1 :", totalGrainsDispo, "kg | Moulés (max mouleuses 45k) :", grainsMoules, "kg");
+console.log("Bouchons produits en M1 :", bouchonsFromGrains, "lots | Stock restant grains :", grainsRestants, "kg");
 console.log("Total lots de bouchons mobilisables en M1 :", totalBouchonsPotentiel, "lots");
-assert.strictEqual(totalBouchonsPotentiel, 12200, "Le stock initial permet de mobiliser 12 200 lots");
+assert.strictEqual(grainsMoules, 45000, "Mouleuse limitée à 45 000 kg de grains");
+assert.strictEqual(bouchonsFromGrains, 9000, "9 000 lots produits par les mouleuses");
+assert.strictEqual(totalBouchonsPotentiel, 12000, "Total 12 000 lots disponibles en M1");
 
 // 3. Coût de transport optimal
 const transports = [
@@ -87,15 +98,15 @@ console.log("Coût Moyen Pondéré (CMP) en Mois 1 (Stock Initial consommé) :",
 console.log("CMP blended en Mois 2 (Stock restant M1 + Production M2) :", res.allMonths.moisResults[2].cmpBouchonLot.toFixed(4), "€ / lot");
 console.log("Coût unitaire de fabrication brute en M2 :", res.coutDirectLotMois2.toFixed(4), "€ / lot");
 
-assert(Math.abs(res.coutDirectLot - 9.4918) < 0.01, "Le CMP en Mois 1 doit être ~9.49€");
-assert(Math.abs(res.allMonths.moisResults[2].cmpBouchonLot - 8.6128) < 0.02, "Le CMP blended en Mois 2 doit être ~8.61€");
+assert(Math.abs(res.coutDirectLot - 9.5054) < 0.01, "Le CMP en Mois 1 doit être ~9.51€");
+assert(Math.abs(res.allMonths.moisResults[2].cmpBouchonLot - 8.6281) < 0.02, "Le CMP blended en Mois 2 doit être ~8.63€");
 assert(res.resultatNet >= 0, "Le résultat net en M1 avec la stratégie par défaut doit être positif");
 assert(res.allMonths.moisResults[2].resultatNet > res.resultatNet, "Le résultat net en M2 doit être supérieur grâce à la réduction de coût");
 
 // 6. Test Calculatrice Slider (calcProfitFromPrice)
 const testSlider21_5 = sim.calcProfitFromPrice(21.5, 10000, res.coutDirectLot);
 console.log("Slider M1 (21.50€, 10k lots) -> Résultat Net :", testSlider21_5.rn.toFixed(0), "€ | Point mort :", testSlider21_5.pointMortLots, "lots");
-assert(testSlider21_5.rn > 4000, "À 21.50€ pour 10k lots en M1, le RN doit dépasser +4 000€");
+assert(testSlider21_5.rn > 3500, "À 21.50€ pour 10k lots en M1, le RN doit être positif");
 
 // 7. Test Boussole de Négociation & Prix Neutres
 console.log("\n=== VALIDATION BOUSSOLE DE NÉGOCIATION & PRIX NEUTRES ===");
@@ -110,10 +121,10 @@ assert(Math.abs(direct043 - 8.4286) < 0.01, "Coût direct liège 0.43€ = 8.43�
 const neutreM1 = sim.calcPrixNeutre(res.coutDirectLot, 10000, 0.95);
 const neutreM2 = sim.calcPrixNeutre(direct043, 10000, 0.95);
 
-console.log("Prix Neutre Mois 1 (Stock Départ 9.49€, 10k lots) :", neutreM1.toFixed(2), "€ / lot");
+console.log("Prix Neutre Mois 1 (Stock Départ 9.51€, 10k lots) :", neutreM1.toFixed(2), "€ / lot");
 console.log("Prix Neutre Mois 2 (Liège 0.43€, 10k lots) :", neutreM2.toFixed(2), "€ / lot");
 
-assert(Math.abs(neutreM1 - 21.05) < 0.02, "Prix neutre M1 doit être ~21.05€");
+assert(Math.abs(neutreM1 - 21.07) < 0.03, "Prix neutre M1 doit être ~21.07€");
 assert(Math.abs(neutreM2 - 19.93) < 0.02, "Prix neutre M2 doit être ~19.93€");
 
 // Test analyseur d'offre

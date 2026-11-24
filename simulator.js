@@ -22,6 +22,10 @@ const PARAMS = {
   rendementMoulage: 0.20, // 100 kg grains -> 20 lots de bouchons (soit 5 kg / lot)
   coutMoulageKg: 0.40,    // 0,40 € / kg grain entré (soit 2 € / lot)
 
+  // Capacités maximales des machines (par mois)
+  capaciteMoulinsKg: 155000,   // Limite Moulins : max 155 000 kg liège brut / mois
+  capaciteMouleusesKg: 45000,  // Limite Mouleuses : max 45 000 kg grains / mois (soit 9 000 lots max / mois)
+
   // Grille de remise producteur espagnol
   getPrixLiege: function(kg) {
     if (kg >= 150000) return 0.43;
@@ -47,8 +51,8 @@ function getDefaultMonthData(m) {
   if (m === 1) {
     return {
       commandeLiegeKg: 150000,
-      liegeABroyerKg: 110000,
-      grainsAMoulerKg: 46000,
+      liegeABroyerKg: 110000, // Stock initial usine (<= 155 000 kg limite moulins)
+      grainsAMoulerKg: 45000, // Plafonné à la capacité machine des mouleuses (45 000 kg max)
       ventes: [
         { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
         { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
@@ -60,8 +64,8 @@ function getDefaultMonthData(m) {
   // Par défaut pour M2, M3, M4
   return {
     commandeLiegeKg: 150000,
-    liegeABroyerKg: 150000,
-    grainsAMoulerKg: 52500,
+    liegeABroyerKg: 150000, // <= 155 000 kg max moulins
+    grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses
     ventes: [
       { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
       { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
@@ -127,10 +131,17 @@ function migrateState(parsed) {
     appState = parsed;
     if (!appState.moisActif) appState.moisActif = 1;
     if (!appState.reglementFournisseur) appState.reglementFournisseur = 'instant';
-    // S'assurer que tous les mois existent
+    // S'assurer que tous les mois existent et respectent les capacités machines
     for (let m = 1; m <= 4; m++) {
       if (!appState.moisData[m]) {
         appState.moisData[m] = getDefaultMonthData(m);
+      } else {
+        if (appState.moisData[m].liegeABroyerKg > PARAMS.capaciteMoulinsKg) {
+          appState.moisData[m].liegeABroyerKg = PARAMS.capaciteMoulinsKg;
+        }
+        if (appState.moisData[m].grainsAMoulerKg > PARAMS.capaciteMouleusesKg) {
+          appState.moisData[m].grainsAMoulerKg = PARAMS.capaciteMouleusesKg;
+        }
       }
     }
   } else if (parsed.ventes) {
@@ -139,8 +150,8 @@ function migrateState(parsed) {
     appState.reglementFournisseur = parsed.reglementFournisseur || 'instant';
     appState.moisData[1] = {
       commandeLiegeKg: parsed.commandeLiegeKg || 150000,
-      liegeABroyerKg: parsed.liegeABroyerKg || 110000,
-      grainsAMoulerKg: parsed.grainsAMoulerKg || 46000,
+      liegeABroyerKg: Math.min(PARAMS.capaciteMoulinsKg, parsed.liegeABroyerKg || 110000),
+      grainsAMoulerKg: Math.min(PARAMS.capaciteMouleusesKg, parsed.grainsAMoulerKg || 45000),
       ventes: parsed.ventes || getDefaultMonthData(1).ventes
     };
   }
@@ -203,8 +214,13 @@ function simulateAllMonths(state) {
     const stockBouchonsEntrantLots = isM1 ? PARAMS.stockInitBouchonsLots : prevResult.stockBouchonsFinLots;
     const valStockBouchonsEntrant = isM1 ? (PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit) : prevResult.valStockBouchonsFin;
 
-    // 3. Transformation & Production
-    const liegeABroyerKg = Math.min(stockLiegeEntrantKg, Number(monthData.liegeABroyerKg) || 0);
+    // 3. Transformation & Production avec contraintes de capacités machines
+    const maxBroyageMachine = PARAMS.capaciteMoulinsKg; // 155 000 kg / mois
+    const liegeDemande = Number(monthData.liegeABroyerKg) || 0;
+    const maxBroyagePossible = Math.min(maxBroyageMachine, stockLiegeEntrantKg);
+    const liegeABroyerKg = Math.min(maxBroyagePossible, Math.max(0, liegeDemande));
+    const alerteDepassementMoulins = liegeDemande > maxBroyageMachine;
+
     const coutBroyage = liegeABroyerKg * PARAMS.coutBroyageKg;
     const grainsProduitsKg = liegeABroyerKg * PARAMS.rendementBroyage;
     const valGrainsProduits = (liegeABroyerKg * cmpLiegeKg) + coutBroyage;
@@ -213,7 +229,12 @@ function simulateAllMonths(state) {
     const totalValGrainsDispo = valStockGrainsEntrant + valGrainsProduits;
     const cmpGrainsDispoKg = totalGrainsDispoKg > 0 ? (totalValGrainsDispo / totalGrainsDispoKg) : 1.30;
 
-    const grainsAMoulerKg = Math.min(totalGrainsDispoKg, Number(monthData.grainsAMoulerKg) || 0);
+    const maxMoulageMachine = PARAMS.capaciteMouleusesKg; // 45 000 kg / mois (soit 9 000 lots)
+    const grainsDemandes = Number(monthData.grainsAMoulerKg) || 0;
+    const maxMoulagePossible = Math.min(maxMoulageMachine, totalGrainsDispoKg);
+    const grainsAMoulerKg = Math.min(maxMoulagePossible, Math.max(0, grainsDemandes));
+    const alerteDepassementMouleuses = grainsDemandes > maxMoulageMachine;
+
     const coutMoulage = grainsAMoulerKg * PARAMS.coutMoulageKg;
     const bouchonsProduitsLots = grainsAMoulerKg * PARAMS.rendementMoulage;
     const valBouchonsProduits = (grainsAMoulerKg * cmpGrainsDispoKg) + coutMoulage;
@@ -326,6 +347,12 @@ function simulateAllMonths(state) {
       livraisonRecueKg,
       stockLiegeEntrantKg,
       liegeABroyerKg,
+      capaciteMoulinsKg: maxBroyageMachine,
+      capaciteMouleusesKg: maxMoulageMachine,
+      maxBroyagePossible,
+      maxMoulagePossible,
+      alerteDepassementMoulins,
+      alerteDepassementMouleuses,
       coutBroyage,
       grainsProduitsKg,
       stockGrainsEntrantKg,

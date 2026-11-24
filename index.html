@@ -320,55 +320,66 @@
 
           <!-- ÉTAPE 2 : PRODUCTION (PHASE 2) -->
           <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-200 space-y-3">
-            <div class="flex items-center justify-between border-b pb-2.5">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-2.5 gap-2">
               <div class="flex items-center space-x-2 font-bold text-slate-900 text-sm">
                 <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
-                <span>Phase 2 : Production Usine (Transformation)</span>
+                <span>Phase 2 : Capacité & Production Usine (Transformation)</span>
               </div>
-              <span id="txt-stock-entrant-resume" class="text-[11px] bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded">Stock entrant disponible</span>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded border border-slate-200">
+                  ⚙️ Limites : Moulins 155k kg • Mouleuses 45k kg (9k lots)
+                </span>
+                <span id="txt-stock-entrant-resume" class="text-[11px] bg-indigo-50 text-indigo-800 font-semibold px-2 py-0.5 rounded border border-indigo-200">Stock usine</span>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <!-- Broyage -->
+              <!-- Moulins (Broyage) -->
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                <div class="flex justify-between text-xs">
-                  <span class="font-bold text-slate-700">1. Broyer le liège brut</span>
-                  <span id="lbl-max-broyage" class="text-[10px] text-slate-500 font-bold">110 000 kg max dispo</span>
+                <div class="flex justify-between items-center text-xs">
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-gears text-indigo-600"></i>
+                    <span class="font-bold text-slate-800">1. Moulins (Liège brut)</span>
+                  </div>
+                  <span id="lbl-max-broyage" class="text-[10px] text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded font-bold border border-indigo-200">Max : 155 000 kg</span>
                 </div>
-                <input type="range" id="rng-broyage" min="0" max="150000" step="5000" value="110000" class="w-full" oninput="syncBroyage(this.value)">
+                <input type="range" id="rng-broyage" min="0" max="155000" step="5000" value="110000" class="w-full accent-indigo-600" oninput="syncBroyage(this.value)">
                 <div class="flex justify-between text-xs">
                   <span class="text-slate-500">Liège broyé :</span>
-                  <strong id="val-broyage-kg" class="text-slate-900">110 000 kg</strong>
+                  <strong id="val-broyage-kg" class="text-slate-900 font-mono">110 000 kg</strong>
                 </div>
                 <div class="text-[11px] text-slate-600 border-t pt-1 flex justify-between">
-                  <span>Grains obtenus :</span>
-                  <strong id="out-grains-obtenus" class="text-emerald-700">38 500 kg</strong>
+                  <span>Grains obtenus (35%) :</span>
+                  <strong id="out-grains-obtenus" class="text-emerald-700 font-mono">38 500 kg</strong>
                 </div>
               </div>
 
-              <!-- Moulage -->
+              <!-- Mouleuses (Fabrication) -->
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                <div class="flex justify-between text-xs">
-                  <span class="font-bold text-slate-700">2. Mouler les grains</span>
-                  <span id="lbl-max-moulage" class="text-[10px] text-slate-500 font-bold">46 000 kg max dispo</span>
+                <div class="flex justify-between items-center text-xs">
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-industry text-indigo-600"></i>
+                    <span class="font-bold text-slate-800">2. Mouleuses (Fabrication lots)</span>
+                  </div>
+                  <span id="lbl-max-moulage" class="text-[10px] text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded font-bold border border-indigo-200">Max : 45 000 kg (9 000 lots)</span>
                 </div>
-                <input type="range" id="rng-moulage" min="0" max="60000" step="1000" value="46000" class="w-full" oninput="syncMoulage(this.value)">
+                <input type="range" id="rng-moulage" min="0" max="45000" step="1000" value="45000" class="w-full accent-indigo-600" oninput="syncMoulage(this.value)">
                 <div class="flex justify-between text-xs">
                   <span class="text-slate-500">Grains moulés :</span>
-                  <strong id="val-moulage-kg" class="text-slate-900">46 000 kg</strong>
+                  <strong id="val-moulage-kg" class="text-slate-900 font-mono">45 000 kg</strong>
                 </div>
                 <div class="text-[11px] text-slate-600 border-t pt-1 flex justify-between">
-                  <span>Bouchons produits :</span>
-                  <strong id="out-bouchons-produits" class="text-emerald-700">9 200 lots</strong>
+                  <span>Bouchons produits (20%) :</span>
+                  <strong id="out-bouchons-produits" class="text-emerald-700 font-mono">9 000 lots</strong>
                 </div>
               </div>
             </div>
 
             <!-- Bilan du stock disponible -->
             <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 flex flex-wrap items-center justify-between text-xs text-indigo-950 gap-2">
-              <div>Stock début : <strong id="out-txt-stock-debut">3 000 lots</strong> + Production : <strong id="out-txt-prod">9 200 lots</strong></div>
+              <div>Stock début : <strong id="out-txt-stock-debut">3 000 lots</strong> + Production : <strong id="out-txt-prod">9 000 lots</strong> <span class="text-slate-500 text-[10px]">(Grains restants reportés : <strong id="out-stock-grains-report" class="text-indigo-800">1 000 kg</strong>)</span></div>
               <div class="bg-white px-3 py-1 rounded-lg border border-indigo-200 font-black text-indigo-700 text-sm">
-                Total Bouchons Disponibles : <span id="out-total-dispo">12 200</span> lots
+                Total Bouchons Disponibles : <span id="out-total-dispo">12 000</span> lots
               </div>
             </div>
           </div>
@@ -1273,28 +1284,43 @@
         }
       }
 
+      // Moulins & Broyage (Plafonné à min(155 000 kg, stock entrant))
+      const maxBroyageMachine = PARAMS.capaciteMoulinsKg; // 155 000 kg
+      const maxBroyagePossible = res.maxBroyagePossible;
       const rngBroyage = document.getElementById('rng-broyage');
       if (rngBroyage) {
-        rngBroyage.max = res.stockLiegeEntrantKg;
-        if (Number(rngBroyage.value) > res.stockLiegeEntrantKg) {
-          rngBroyage.value = res.stockLiegeEntrantKg;
-          document.getElementById('val-broyage-kg').innerText = Number(res.stockLiegeEntrantKg).toLocaleString('fr-FR') + ' kg';
+        rngBroyage.max = maxBroyagePossible;
+        if (Number(rngBroyage.value) > maxBroyagePossible) {
+          rngBroyage.value = maxBroyagePossible;
         }
+        document.getElementById('val-broyage-kg').innerText = Number(res.liegeABroyerKg).toLocaleString('fr-FR') + ' kg';
       }
       const elMaxBroyage = document.getElementById('lbl-max-broyage');
-      if (elMaxBroyage) elMaxBroyage.innerText = Math.round(res.stockLiegeEntrantKg).toLocaleString('fr-FR') + ' kg max dispo';
+      if (elMaxBroyage) {
+        elMaxBroyage.innerHTML = `Plafond : <strong>${maxBroyagePossible.toLocaleString('fr-FR')} kg</strong> <span class="text-[9px] text-slate-500 font-normal">(Moulin: 155k | Dispo: ${Math.round(res.stockLiegeEntrantKg).toLocaleString('fr-FR')})</span>`;
+      }
 
+      // Mouleuses & Moulage (Plafonné à min(45 000 kg, total grains dispo))
+      const maxMoulageMachine = PARAMS.capaciteMouleusesKg; // 45 000 kg
+      const maxMoulagePossible = res.maxMoulagePossible;
       const totalGrainsDispo = res.stockGrainsEntrantKg + res.grainsProduitsKg;
       const rngMoulage = document.getElementById('rng-moulage');
       if (rngMoulage) {
-        rngMoulage.max = totalGrainsDispo;
-        if (Number(rngMoulage.value) > totalGrainsDispo) {
-          rngMoulage.value = totalGrainsDispo;
-          document.getElementById('val-moulage-kg').innerText = Number(totalGrainsDispo).toLocaleString('fr-FR') + ' kg';
+        rngMoulage.max = maxMoulagePossible;
+        if (Number(rngMoulage.value) > maxMoulagePossible) {
+          rngMoulage.value = maxMoulagePossible;
         }
+        document.getElementById('val-moulage-kg').innerText = Number(res.grainsAMoulerKg).toLocaleString('fr-FR') + ' kg';
       }
       const elMaxMoulage = document.getElementById('lbl-max-moulage');
-      if (elMaxMoulage) elMaxMoulage.innerText = Math.round(totalGrainsDispo).toLocaleString('fr-FR') + ' kg max dispo';
+      if (elMaxMoulage) {
+        elMaxMoulage.innerHTML = `Plafond : <strong>${maxMoulagePossible.toLocaleString('fr-FR')} kg</strong> <span class="text-[9px] text-slate-500 font-normal">(Mouleuse: 45k | Dispo: ${Math.round(totalGrainsDispo).toLocaleString('fr-FR')})</span>`;
+      }
+
+      const elStockGrainsReport = document.getElementById('out-stock-grains-report');
+      if (elStockGrainsReport) {
+        elStockGrainsReport.innerText = Math.round(res.stockGrainsFinKg).toLocaleString('fr-FR') + ' kg';
+      }
 
       document.getElementById('out-grains-obtenus').innerText = Math.round(res.grainsProduitsKg).toLocaleString('fr-FR') + ' kg';
       document.getElementById('out-bouchons-produits').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';
@@ -1809,11 +1835,14 @@
       const selReg = document.getElementById('sel-reglement-fournisseur');
       if (selReg) selReg.value = appState.reglementFournisseur || 'instant';
 
+      const broyageKg = Math.min(PARAMS.capaciteMoulinsKg, curData.liegeABroyerKg !== undefined ? curData.liegeABroyerKg : 110000);
+      const moulageKg = Math.min(PARAMS.capaciteMouleusesKg, curData.grainsAMoulerKg !== undefined ? curData.grainsAMoulerKg : 45000);
+
       document.getElementById('inp-commande-liege').value = curData.commandeLiegeKg || 150000;
-      document.getElementById('rng-broyage').value = curData.liegeABroyerKg || 110000;
-      document.getElementById('val-broyage-kg').innerText = (curData.liegeABroyerKg || 110000).toLocaleString('fr-FR') + ' kg';
-      document.getElementById('rng-moulage').value = curData.grainsAMoulerKg || 46000;
-      document.getElementById('val-moulage-kg').innerText = (curData.grainsAMoulerKg || 46000).toLocaleString('fr-FR') + ' kg';
+      document.getElementById('rng-broyage').value = broyageKg;
+      document.getElementById('val-broyage-kg').innerText = broyageKg.toLocaleString('fr-FR') + ' kg';
+      document.getElementById('rng-moulage').value = moulageKg;
+      document.getElementById('val-moulage-kg').innerText = moulageKg.toLocaleString('fr-FR') + ' kg';
 
       if (curData.ventes && curData.ventes.length >= 4) {
         document.getElementById('v-d1-lots').value = curData.ventes[0].lots;
