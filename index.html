@@ -303,6 +303,12 @@
                 </div>
               </div>
             </div>
+
+            <!-- ENCART EXPLICATIF DÉLAI LIVRAISON M+1 -->
+            <div id="txt-alerte-livraison-delai" class="bg-amber-50 border border-amber-200 text-amber-900 p-2.5 rounded-xl text-xs flex items-center space-x-2">
+              <i class="fa-solid fa-clock text-amber-600 shrink-0"></i>
+              <span><strong>Règle de livraison M+1 :</strong> Toute commande passée en Mois 1 arrivera au Mois 2. En Mois 1, seul le stock initial (110 000 kg) est utilisable.</span>
+            </div>
           </div>
 
           <!-- ÉTAPE 2 : PRODUCTION (PHASE 2) -->
@@ -320,7 +326,7 @@
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                 <div class="flex justify-between text-xs">
                   <span class="font-bold text-slate-700">1. Broyer le liège brut</span>
-                  <span class="text-[10px] text-slate-500">Rdt 35% • 0,02€/kg</span>
+                  <span id="lbl-max-broyage" class="text-[10px] text-slate-500 font-bold">110 000 kg max dispo</span>
                 </div>
                 <input type="range" id="rng-broyage" min="0" max="150000" step="5000" value="110000" class="w-full" oninput="syncBroyage(this.value)">
                 <div class="flex justify-between text-xs">
@@ -337,7 +343,7 @@
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                 <div class="flex justify-between text-xs">
                   <span class="font-bold text-slate-700">2. Mouler les grains</span>
-                  <span class="text-[10px] text-slate-500">Rdt 20% • 0,40€/kg</span>
+                  <span id="lbl-max-moulage" class="text-[10px] text-slate-500 font-bold">46 000 kg max dispo</span>
                 </div>
                 <input type="range" id="rng-moulage" min="0" max="60000" step="1000" value="46000" class="w-full" oninput="syncMoulage(this.value)">
                 <div class="flex justify-between text-xs">
@@ -1211,7 +1217,70 @@
       lblTresoCmd.innerText = 'Décaissement ce mois :';
       valTresoCmd.innerText = '0 € (Payable en M' + (m + 2) + ')';
 
+      // Badge et texte explicatif livraison M+1
+      const badgeLivraison = document.getElementById('txt-livraison-delai-badge');
+      const alerteLivraison = document.getElementById('txt-alerte-livraison-delai');
+      if (m === 1) {
+        if (badgeLivraison) {
+          badgeLivraison.innerHTML = '🚚 Commandé en M1 ➔ Livré au début du Mois 2 (Non utilisable en M1)';
+          badgeLivraison.className = 'text-[11px] bg-amber-100 text-amber-900 font-bold px-2.5 py-0.5 rounded border border-amber-300';
+        }
+        if (alerteLivraison) {
+          alerteLivraison.innerHTML = `<i class="fa-solid fa-clock text-amber-600 shrink-0"></i> <span><strong>Règle de livraison M+1 :</strong> Cette commande de <strong>${Math.round(res.commandeLiegeKg).toLocaleString('fr-FR')} kg</strong> sera livrée au <strong>Mois 2</strong>. En Mois 1, seul le <strong>stock initial (110 000 kg)</strong> est disponible au broyage.</span>`;
+        }
+      } else if (m < 4) {
+        if (badgeLivraison) {
+          badgeLivraison.innerHTML = `🚚 Commandé en M${m} ➔ Livré au début du Mois ${m + 1}`;
+          badgeLivraison.className = 'text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded border border-emerald-300';
+        }
+        if (alerteLivraison) {
+          alerteLivraison.innerHTML = `<i class="fa-solid fa-truck-ramp-box text-emerald-600 shrink-0"></i> <span><strong>Livraison reçue ce mois :</strong> Vous avez reçu <strong>${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg</strong> de liège brut (commandés en M${m - 1}). Votre nouvelle commande de <strong>${Math.round(res.commandeLiegeKg).toLocaleString('fr-FR')} kg</strong> sera livrée en Mois ${m + 1}.</span>`;
+        }
+      } else {
+        if (badgeLivraison) {
+          badgeLivraison.innerHTML = `🚚 Commandé en M4 ➔ Livré post-simulation (Mois 5)`;
+          badgeLivraison.className = 'text-[11px] bg-slate-100 text-slate-800 font-bold px-2.5 py-0.5 rounded border border-slate-300';
+        }
+        if (alerteLivraison) {
+          alerteLivraison.innerHTML = `<i class="fa-solid fa-flag-checkered text-indigo-600 shrink-0"></i> <span><strong>Dernier tour (Mois 4) :</strong> Vous transformez la livraison reçue du Mois 3 (<strong>${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg</strong>) + stock restant.</span>`;
+        }
+      }
+
       // MAJ Phase 2 Production
+      const badgeStockEntrant = document.getElementById('txt-stock-entrant-resume');
+      if (badgeStockEntrant) {
+        if (m === 1) {
+          badgeStockEntrant.innerHTML = 'Stock initial usine : 110 000 kg liège brut • 0 kg livré';
+          badgeStockEntrant.className = 'text-[11px] bg-indigo-50 text-indigo-800 font-bold px-2.5 py-0.5 rounded border border-indigo-200';
+        } else {
+          badgeStockEntrant.innerHTML = `📦 Reçu commande M${m - 1} : +${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg ➔ Total liège dispo : ${Math.round(res.stockLiegeEntrantKg).toLocaleString('fr-FR')} kg`;
+          badgeStockEntrant.className = 'text-[11px] bg-emerald-50 text-emerald-800 font-bold px-2.5 py-0.5 rounded border border-emerald-300';
+        }
+      }
+
+      const rngBroyage = document.getElementById('rng-broyage');
+      if (rngBroyage) {
+        rngBroyage.max = res.stockLiegeEntrantKg;
+        if (Number(rngBroyage.value) > res.stockLiegeEntrantKg) {
+          rngBroyage.value = res.stockLiegeEntrantKg;
+          document.getElementById('val-broyage-kg').innerText = Number(res.stockLiegeEntrantKg).toLocaleString('fr-FR') + ' kg';
+        }
+      }
+      const elMaxBroyage = document.getElementById('lbl-max-broyage');
+      if (elMaxBroyage) elMaxBroyage.innerText = Math.round(res.stockLiegeEntrantKg).toLocaleString('fr-FR') + ' kg max dispo';
+
+      const totalGrainsDispo = res.stockGrainsEntrantKg + res.grainsProduitsKg;
+      const rngMoulage = document.getElementById('rng-moulage');
+      if (rngMoulage) {
+        rngMoulage.max = totalGrainsDispo;
+        if (Number(rngMoulage.value) > totalGrainsDispo) {
+          rngMoulage.value = totalGrainsDispo;
+          document.getElementById('val-moulage-kg').innerText = Number(totalGrainsDispo).toLocaleString('fr-FR') + ' kg';
+        }
+      }
+      const elMaxMoulage = document.getElementById('lbl-max-moulage');
+      if (elMaxMoulage) elMaxMoulage.innerText = Math.round(totalGrainsDispo).toLocaleString('fr-FR') + ' kg max dispo';
+
       document.getElementById('out-grains-obtenus').innerText = Math.round(res.grainsProduitsKg).toLocaleString('fr-FR') + ' kg';
       document.getElementById('out-bouchons-produits').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';
       document.getElementById('out-txt-prod').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';

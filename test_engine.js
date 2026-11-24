@@ -125,5 +125,21 @@ const offreDeficitaire = sim.analyzeOffreDistributeur(20.0, 3000, 1, 10000, 'cam
 assert(offreDeficitaire.verdict.includes('DÉFICITAIRE'), "20.00€ en M1 doit être déficitaire");
 assert(offreDeficitaire.benefTotalDeal < 0, "20.00€ sur 3000 lots doit être négatif");
 
-console.log("\n Tous les tests du moteur mathématique et de négociation sont passés avec succès !");
+// 8. Test Règle de Livraison Producteur à M+1 & Paiement à 30j après livraison
+console.log("\n=== VALIDATION RÈGLE LIVRAISON M+1 ===");
+const allM = res.allMonths.moisResults;
+console.log("Mois 1 - Commande :", allM[1].commandeLiegeKg, "kg | Livraison reçue :", allM[1].livraisonRecueKg, "kg | Stock entrant :", allM[1].stockLiegeEntrantKg, "kg");
+console.log("Mois 2 - Commande :", allM[2].commandeLiegeKg, "kg | Livraison reçue :", allM[2].livraisonRecueKg, "kg | Stock entrant :", allM[2].stockLiegeEntrantKg, "kg");
+console.log("Mois 3 - Commande :", allM[3].commandeLiegeKg, "kg | Livraison reçue :", allM[3].livraisonRecueKg, "kg | Décaissement fournisseur :", allM[3].decaissementFournisseur, "€");
+
+assert.strictEqual(allM[1].livraisonRecueKg, 0, "En Mois 1, aucune livraison producteur n'est reçue (arrive en M+1)");
+assert.strictEqual(allM[1].stockLiegeEntrantKg, 110000, "En Mois 1, le liège disponible est strictement le stock initial (110 000 kg)");
+assert.strictEqual(allM[2].livraisonRecueKg, allM[1].commandeLiegeKg, "En Mois 2, la livraison reçue est exactement la commande du Mois 1 (150 000 kg)");
+assert.strictEqual(allM[3].livraisonRecueKg, allM[2].commandeLiegeKg, "En Mois 3, la livraison reçue est la commande du Mois 2 (150 000 kg)");
+assert.strictEqual(allM[1].decaissementFournisseur, 0, "En Mois 1, pas de décaissement fournisseur");
+assert.strictEqual(allM[2].decaissementFournisseur, 0, "En Mois 2, pas de décaissement fournisseur (livré en M2, payé à 30j donc en M3)");
+assert.strictEqual(allM[3].decaissementFournisseur, allM[1].montantCommandeLiege, "En Mois 3, paiement de la commande passée en M1 et livrée en M2 (64 500 €)");
+
+console.log("\n Tous les tests du moteur mathématique, négociation et livraison M+1 sont passés avec succès !");
+
 
