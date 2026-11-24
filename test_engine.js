@@ -77,20 +77,23 @@ const seuilRentabiliteLots = chargesFixes / mscvUnitaire;
 console.log("Marge sur Coûts Variables unitaire :", mscvUnitaire.toFixed(2), "€ / lot");
 console.log("Seuil de rentabilité mensuel :", Math.round(seuilRentabiliteLots), "lots");
 
-// 5. Test P&L avec 10 000 lots vendus à 21 €
-const volumeVendu = 10000;
-const ca = volumeVendu * prixVenteMoyen; // 210 000 €
-const coutProductionVendus = volumeVendu * coutDirect; // 90 000 €
-const coutTransport = volumeVendu * transportMoyen; // 8 690 €
-const coutMarketing = ca * 0.05; // 10 500 €
-const margeBrute = ca - coutProductionVendus - coutTransport - coutMarketing; // 100 810 €
-const resultatNet = margeBrute - chargesFixes;
+// 5. Test Coût Moyen Pondéré (CMP) Mois 1 vs Coût Mois 2 (Livraison producteur M+1)
+const sim = require('./simulator.js');
+const state = sim.getDefaultState();
+const res = sim.calculateSimulation(state);
 
-console.log("Simulation Vente 10 000 lots à 21 € :");
-console.log("  CA :", ca, "€");
-console.log("  Marge sur coûts variables :", margeBrute.toFixed(0), "€");
-console.log("  Charges fixes :", chargesFixes, "€");
-console.log("  Résultat Net :", resultatNet.toFixed(0), "€");
-assert(resultatNet > 0, "Le résultat net doit être positif avec 10 000 lots vendus");
+console.log("\n=== VALIDATION RÈGLES DE GESTION MOIS 1 vs MOIS 2 ===");
+console.log("Coût Moyen Pondéré (CMP) en Mois 1 (Stock Initial consommé) :", res.coutDirectLot.toFixed(4), "€ / lot");
+console.log("Coût unitaire en Mois 2 (Après livraison commande à 0,43€) :", res.coutDirectLotMois2.toFixed(4), "€ / lot");
+
+assert(Math.abs(res.coutDirectLot - 9.4918) < 0.01, "Le CMP en Mois 1 doit être ~9.49€");
+assert(Math.abs(res.coutDirectLotMois2 - 8.4286) < 0.01, "Le coût unitaire en Mois 2 doit être ~8.43€");
+assert(res.resultatNet >= 0, "Le résultat net en M1 avec la stratégie par défaut doit être positif");
+assert(res.resultatNetMois2 > res.resultatNet, "Le résultat net en M2 doit être supérieur grâce à la réduction de coût");
+
+// 6. Test Calculatrice Slider (calcProfitFromPrice)
+const testSlider21_5 = sim.calcProfitFromPrice(21.5, 10000, res.coutDirectLot);
+console.log("Slider M1 (21.50€, 10k lots) -> Résultat Net :", testSlider21_5.rn.toFixed(0), "€ | Point mort :", testSlider21_5.pointMortLots, "lots");
+assert(testSlider21_5.rn > 4000, "À 21.50€ pour 10k lots en M1, le RN doit dépasser +4 000€");
 
 console.log("\n Tous les tests du moteur mathématique sont passés avec succès !");

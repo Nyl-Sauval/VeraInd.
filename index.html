@@ -102,49 +102,122 @@
     <!-- ========================================================= -->
     <div id="tab-simulation" class="tab-content space-y-6">
       
-      <!-- ABAQUE EXPRESS PRIX -> BÉNÉFICE -->
-      <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-5 shadow-lg border border-indigo-900/60 space-y-3">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <!-- BARRE RÉGLABLE & SIMULATEUR EXPRESS PRIX -> BÉNÉFICE -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 shadow-xl border border-indigo-500/30 space-y-4">
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
           <div class="flex items-center space-x-2">
-            <span class="bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded text-xs">ABAQUE DIRECT</span>
-            <h3 class="text-sm font-bold text-white">À quel prix vendre pour quel bénéfice net ? (Base 10 000 lots vendus)</h3>
+            <span class="bg-emerald-400 text-slate-950 font-black px-2.5 py-1 rounded text-xs shadow"><i class="fa-solid fa-sliders mr-1"></i> BARRE RÉGLABLE</span>
+            <div>
+              <h3 class="text-base font-black text-white">Simulateur Rapide : Ajustez le prix de vente et visualisez le bénéfice</h3>
+              <p class="text-[11px] text-slate-300">Comparez en direct la rentabilité en <strong>Mois 1</strong> (stock initial @ 9,49€) et <strong>Mois 2</strong> (livraison commande @ 8,43€)</p>
+            </div>
           </div>
-          <span class="text-[11px] text-slate-300">Charges fixes mensuelles : 95 500 €</span>
+          <button type="button" onclick="appliquerPrixSlider()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs flex items-center space-x-2 shadow-lg hover:scale-105 transition">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Appliquer ce prix (<span id="btn-val-prix">21,50</span> €) aux 4 Distributeurs</span>
+          </button>
         </div>
 
-        <!-- GRILLE COMPARATIVE PRIX / BÉNÉFICE -->
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
-          <div class="bg-white/5 border border-white/10 p-2 rounded-xl">
-            <div class="text-[10px] text-slate-400">Prix : 19,90 €</div>
-            <div class="font-black text-slate-200 mt-0.5">0 €</div>
-            <div class="text-[9px] text-slate-400">Point mort</div>
+        <!-- DOUBLE CURSEUR : PRIX ET VOLUME -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-white/5 p-4 rounded-xl border border-white/10">
+          
+          <!-- SLIDER PRIX -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-tag text-emerald-400"></i>
+                <span>Prix de Vente Unitaire :</span>
+              </span>
+              <span class="bg-emerald-400 text-slate-950 font-black text-base px-3 py-0.5 rounded-lg shadow" id="slider-disp-prix">21,50 € / lot</span>
+            </div>
+            <input type="range" id="inp-slider-prix" min="18.0" max="25.0" step="0.1" value="21.5" class="w-full accent-emerald-400 h-2 bg-slate-700 rounded-lg cursor-pointer" oninput="updatePriceSlider()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
+              <span>18,00 € (Déficitaire)</span>
+              <span>20,00 € (Seuil)</span>
+              <span>21,50 € (Optimal)</span>
+              <span>25,00 € (Max)</span>
+            </div>
           </div>
-          <div class="bg-white/5 border border-white/10 p-2 rounded-xl">
-            <div class="text-[10px] text-slate-400">Prix : 20,50 €</div>
-            <div class="font-black text-emerald-400 mt-0.5">+6 250 €</div>
-            <div class="text-[9px] text-emerald-300/80">Rentable</div>
+
+          <!-- SLIDER VOLUME -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-boxes-stacked text-amber-400"></i>
+                <span>Volume Total Vendu :</span>
+              </span>
+              <span class="bg-amber-400 text-slate-950 font-black text-base px-3 py-0.5 rounded-lg shadow" id="slider-disp-volume">10 000 lots</span>
+            </div>
+            <input type="range" id="inp-slider-volume" min="5000" max="12200" step="100" value="10000" class="w-full accent-amber-400 h-2 bg-slate-700 rounded-lg cursor-pointer" oninput="updatePriceSlider()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
+              <span>5 000 lots</span>
+              <span>10 000 lots (Cible)</span>
+              <span>12 200 lots (Max stock M1)</span>
+            </div>
           </div>
-          <div class="bg-white/5 border border-emerald-500/40 p-2 rounded-xl bg-emerald-500/10">
-            <div class="text-[10px] text-slate-400">Prix : 21,00 €</div>
-            <div class="font-black text-emerald-400 mt-0.5">+11 000 €</div>
-            <div class="text-[9px] text-emerald-300">Prix cible marché</div>
+
+        </div>
+
+        <!-- RÉSULTATS COMPARATIFS LIVE M1 vs M2 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          
+          <!-- RÉSULTAT MOIS 1 -->
+          <div class="bg-slate-800/80 border border-slate-700 p-3.5 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-300 flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                <span>MOIS 1 (Stock de départ consommé)</span>
+              </span>
+              <span class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded">CMP: 9,49 €/lot</span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400">Bénéfice Net estimé :</span>
+              <strong id="slider-out-rn-m1" class="text-xl font-black text-emerald-400">+4 252 €</strong>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400 border-t border-slate-700 pt-1.5">
+              <span>Point mort (Seuil de rentabilité) :</span>
+              <strong id="slider-out-pm-m1" class="text-indigo-300">9 575 lots</strong>
+            </div>
           </div>
-          <div class="bg-white/5 border border-emerald-500/40 p-2 rounded-xl bg-emerald-500/10">
-            <div class="text-[10px] text-slate-400">Prix : 21,50 €</div>
-            <div class="font-black text-emerald-400 mt-0.5">+15 750 €</div>
-            <div class="text-[9px] text-emerald-300">Très bon profil</div>
+
+          <!-- RÉSULTAT MOIS 2 -->
+          <div class="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-300 flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>MOIS 2 (Après livraison commande @ 0,43€)</span>
+              </span>
+              <span class="text-[10px] bg-emerald-500/30 text-emerald-200 px-2 py-0.5 rounded font-bold">Coût: 8,43 €/lot (-1,06€)</span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-emerald-200">Bénéfice Net estimé :</span>
+              <strong id="slider-out-rn-m2" class="text-xl font-black text-emerald-300">+14 884 €</strong>
+            </div>
+            <div class="flex justify-between text-[11px] text-emerald-300/80 border-t border-emerald-800/60 pt-1.5">
+              <span>Point mort (Seuil de rentabilité) :</span>
+              <strong id="slider-out-pm-m2" class="text-emerald-300">8 653 lots</strong>
+            </div>
           </div>
-          <div class="bg-white/5 border border-amber-500/40 p-2 rounded-xl bg-amber-500/10">
-            <div class="text-[10px] text-slate-400">Prix : 22,00 €</div>
-            <div class="font-black text-amber-300 mt-0.5">+20 500 €</div>
-            <div class="text-[9px] text-amber-200">1ère place garantie</div>
+
+        </div>
+
+        <!-- BANDEAU EXPLICATION STOCKS & LIVRAISON M+1 -->
+        <div class="bg-indigo-900/40 border border-indigo-400/20 p-3 rounded-xl text-[11px] text-slate-300 space-y-1">
+          <div class="flex items-center space-x-2 font-bold text-indigo-200">
+            <i class="fa-solid fa-circle-info text-indigo-400"></i>
+            <span>Règle essentielle sur les stocks et les délais de livraison :</span>
           </div>
-          <div class="bg-white/5 border border-amber-500/40 p-2 rounded-xl bg-amber-500/10">
-            <div class="text-[10px] text-slate-400">Prix : 22,50 €</div>
-            <div class="font-black text-amber-300 mt-0.5">+25 250 €</div>
-            <div class="text-[9px] text-amber-200">Jackpot</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 text-[11px]">
+            <div>
+              <strong>📦 En Mois 1 (Ressources mobilisées) :</strong> Vous transformez le stock initial (110 000 kg liège @ 0,50€ + 7 500 kg grains @ 0,56€ + 3 000 bouchons @ 12€) = <strong>12 200 lots disponibles</strong> à un Coût Moyen Pondéré de <strong>9,49 € / lot</strong>.
+            </div>
+            <div>
+              <strong>🚚 Commande Producteur (150 000 kg @ 0,43€) :</strong> Elle est passée en Mois 1 mais arrive à <strong>M+1 (Mois 2)</strong> et payée en Mois 3 (0 € sorti en M1). En Mois 2, le coût tombe à <strong>8,43 € / lot</strong>, ce qui propulse votre bénéfice net !
+            </div>
           </div>
         </div>
+
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -388,8 +461,8 @@
 
               <div class="pl-2 space-y-1 text-slate-600 border-l-2 border-slate-200">
                 <div class="flex justify-between">
-                  <span>- Coût fabrication (<span id="txt-cout-unitaire">8,43</span>€/lot) :</span>
-                  <span id="out-cout-fab">-84 286 €</span>
+                  <span>- Coût fabrication (<span id="txt-cout-unitaire">9,49</span> €/lot CMP) :</span>
+                  <span id="out-cout-fab">-94 918 €</span>
                 </div>
                 <div class="flex justify-between">
                   <span>- Coût transports :</span>
@@ -403,7 +476,7 @@
 
               <div class="flex justify-between font-bold text-emerald-800 bg-emerald-50 p-2 rounded-lg">
                 <span>= Marge sur Coûts Variables</span>
-                <span id="out-mscv">108 412 €</span>
+                <span id="out-mscv">97 780 €</span>
               </div>
 
               <div class="pl-2 space-y-1 text-slate-600 border-l-2 border-slate-200">
@@ -421,17 +494,31 @@
                 </div>
                 <div class="flex justify-between">
                   <span>- Frais stockage final (0,42%) :</span>
-                  <span id="out-frais-stockage">-110 €</span>
+                  <span id="out-frais-stockage">-88 €</span>
                 </div>
               </div>
 
               <div class="border-t-2 pt-2 flex justify-between items-center font-black">
-                <span class="text-slate-800">RÉSULTAT NET</span>
-                <span id="out-rn" class="text-emerald-600 text-base font-black">+12 802 €</span>
+                <span class="text-slate-800">RÉSULTAT NET (Mois 1)</span>
+                <span id="out-rn" class="text-emerald-600 text-base font-black">+2 192 €</span>
               </div>
 
               <div class="text-[11px] text-slate-500 text-right pt-0.5">
-                Point mort : <strong id="out-seuil-rentabilite" class="text-indigo-700">~8 967 lots</strong>
+                Point mort M1 : <strong id="out-seuil-rentabilite" class="text-indigo-700">~9 780 lots</strong>
+              </div>
+
+              <!-- PROJECTION MOIS 2 -->
+              <div class="mt-3 bg-indigo-50 border border-indigo-200 p-2.5 rounded-xl text-[11px] text-indigo-950 space-y-1">
+                <div class="flex justify-between font-bold">
+                  <span class="flex items-center space-x-1">
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i>
+                    <span>Projection Mois 2 (avec commande à 0,43€) :</span>
+                  </span>
+                </div>
+                <div class="flex justify-between items-center pt-0.5">
+                  <span class="text-slate-600">Coût unitaire M2 : <strong>8,43 € / lot</strong> (-1,06€)</span>
+                  <span>RN estimé : <strong id="out-rn-m2" class="text-emerald-700 font-bold">+11 104 €</strong></span>
+                </div>
               </div>
             </div>
           </div>
@@ -738,6 +825,12 @@
       elRn.className = res.resultatNet >= 0 ? 'text-emerald-600 text-base font-black' : 'text-red-600 text-base font-black';
 
       document.getElementById('out-seuil-rentabilite').innerText = '~' + Math.round(res.seuilRentabiliteLots).toLocaleString('fr-FR') + ' lots';
+      
+      const elRnM2 = document.getElementById('out-rn-m2');
+      if (elRnM2) {
+        elRnM2.innerText = (res.resultatNetMois2 >= 0 ? '+' : '') + Math.round(res.resultatNetMois2).toLocaleString('fr-FR') + ' €';
+        elRnM2.className = res.resultatNetMois2 >= 0 ? 'text-emerald-700 font-bold' : 'text-red-600 font-bold';
+      }
 
       // Trésorerie
       document.getElementById('out-encaissement').innerText = '+' + Math.round(res.encaissementM1).toLocaleString('fr-FR') + ' €';
@@ -767,6 +860,49 @@
       document.getElementById('top-ca').innerText = Math.round(res.caTotal).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-treso').innerText = Math.round(res.tresorerieFinMois).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-score').innerText = res.totalPointsMois + ' / 30 pts';
+    }
+
+    function updatePriceSlider() {
+      const prix = Number(document.getElementById('inp-slider-prix').value) || 21.5;
+      const volume = Number(document.getElementById('inp-slider-volume').value) || 10000;
+
+      document.getElementById('slider-disp-prix').innerText = prix.toFixed(2) + ' € / lot';
+      document.getElementById('slider-disp-volume').innerText = volume.toLocaleString('fr-FR') + ' lots';
+      document.getElementById('btn-val-prix').innerText = prix.toFixed(2);
+
+      // Mois 1 (CMP = 9.4918 €)
+      const calcM1 = calcProfitFromPrice(prix, volume, 9.4918);
+      const elRnM1 = document.getElementById('slider-out-rn-m1');
+      if (elRnM1) {
+        elRnM1.innerText = (calcM1.rn >= 0 ? '+' : '') + Math.round(calcM1.rn).toLocaleString('fr-FR') + ' €';
+        elRnM1.className = calcM1.rn >= 0 ? 'text-xl font-black text-emerald-400' : 'text-xl font-black text-red-400';
+      }
+      const elPmM1 = document.getElementById('slider-out-pm-m1');
+      if (elPmM1) {
+        elPmM1.innerText = calcM1.pointMortLots.toLocaleString('fr-FR') + ' lots';
+      }
+
+      // Mois 2 (Coût commande 150k = 8.4286 €)
+      const calcM2 = calcProfitFromPrice(prix, volume, 8.4286);
+      const elRnM2 = document.getElementById('slider-out-rn-m2');
+      if (elRnM2) {
+        elRnM2.innerText = (calcM2.rn >= 0 ? '+' : '') + Math.round(calcM2.rn).toLocaleString('fr-FR') + ' €';
+        elRnM2.className = calcM2.rn >= 0 ? 'text-xl font-black text-emerald-300' : 'text-xl font-black text-red-400';
+      }
+      const elPmM2 = document.getElementById('slider-out-pm-m2');
+      if (elPmM2) {
+        elPmM2.innerText = calcM2.pointMortLots.toLocaleString('fr-FR') + ' lots';
+      }
+    }
+
+    function appliquerPrixSlider() {
+      const prix = Number(document.getElementById('inp-slider-prix').value) || 21.5;
+      document.getElementById('v-d1-prix').value = prix.toFixed(1);
+      document.getElementById('v-d2-prix').value = prix.toFixed(1);
+      document.getElementById('v-d3-prix').value = prix.toFixed(1);
+      document.getElementById('v-d4-prix').value = prix.toFixed(1);
+      runSimulation();
+      showToast('⚡ Prix de ' + prix.toFixed(2) + ' € appliqué aux 4 distributeurs !');
     }
 
     function copierLienPartage() {
@@ -857,6 +993,7 @@
       }
       loadStateIntoUI();
       runSimulation();
+      updatePriceSlider();
     });
   </script>
 
