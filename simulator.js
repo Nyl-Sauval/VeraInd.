@@ -1,15 +1,14 @@
-// simulator.js - Moteur de simulation, persistance multi-mois et synchronisation Équipe 18 Groupe C
+// simulator.js - Moteur simplifié et direct pour l'Équipe 18 Groupe C (Vinego)
 
-// --- CONSTANTES ET RÈGLES OFFICIELLES ---
 const PARAMS = {
   capitalDepart: 500000,
   salairesMensuels: 60000,
   fraisStructureMensuels: 35000,
-  amortissementMensuel: 30000 / (5 * 12), // 500 € / mois
+  amortissementMensuel: 500, // 30 000 € sur 5 ans = 500 € / mois
   tauxMarketing: 0.05, // 5% du CA
-  tauxStockage: 0.0042, // 0.42% de la valeur du stock final
+  tauxStockage: 0.0042, // 0.42% du stock final
 
-  // Stocks initiaux (Mois 1)
+  // Stocks de départ (Mois 1)
   stockInitLiegeKg: 110000,
   prixAchatLiegeInit: 0.50,
   stockInitGrainsKg: 7500,
@@ -17,484 +16,235 @@ const PARAMS = {
   stockInitBouchonsLots: 3000,
   prixAchatBouchonsInit: 12.0,
 
-  // Rendements industriels
+  // Rendements de production
   rendementBroyage: 0.35, // 100 kg liège -> 35 kg grains
-  coutBroyageParKg: 0.02, // 2€ par 100 kg
-  rendementMoulage: 0.20, // 100 kg grains -> 20 lots
-  coutMoulageParKg: 0.40, // 40€ par 100 kg (soit 2€ par lot)
+  coutBroyageKg: 0.02,    // 0,02 € / kg liège entré
+  rendementMoulage: 0.20, // 100 kg grains -> 20 lots de bouchons
+  coutMoulageKg: 0.40,    // 0,40 € / kg grain entré (soit 2 € / lot)
 
-  // Transport
-  transports: {
-    avion: { nom: 'Avion', capacite: 60, cout: 79, rse: 'Très polluant', scoreRse: 1 },
-    bateau: { nom: 'Bateau', capacite: 5760, cout: 4668, rse: 'Polluant', scoreRse: 2 },
-    camion: { nom: 'Camion', capacite: 1980, cout: 1721, rse: 'Plutôt polluant', scoreRse: 2 },
-    train: { nom: 'Train', capacite: 2640, cout: 2768, rse: 'Peu polluant', scoreRse: 4 }
-  },
-
-  // Fournisseur liège espagnol - Grille officielle de remises
-  commandeMinLiege: 35000,
-  paliersLiege: [
-    { seuil: 150000, prix: 0.43, remiseLabel: '-14% (0,43 €/kg)' },
-    { seuil: 130000, prix: 0.44, remiseLabel: '-12% (0,44 €/kg)' },
-    { seuil: 110000, prix: 0.46, remiseLabel: '-8% (0,46 €/kg)' },
-    { seuil: 90000,  prix: 0.47, remiseLabel: '-6% (0,47 €/kg)' },
-    { seuil: 35000,  prix: 0.50, remiseLabel: 'Tarif base (0,50 €/kg)' }
-  ],
+  // Grille de remise producteur espagnol
   getPrixLiege: function(kg) {
     if (kg >= 150000) return 0.43;
     if (kg >= 130000) return 0.44;
     if (kg >= 110000) return 0.46;
     if (kg >= 90000)  return 0.47;
-    return 0.50;
+    return 0.50; // Tarif de base (< 90 000 kg, min 35 000 kg)
   },
 
-  // Barème classement
-  baremePoints: [10, 8, 6, 5, 4, 3, 2, 1],
-  coefficientsMois: [1, 2, 3, 4, 5]
+  // Transports disponibles
+  transports: {
+    bateau: { nom: 'Bateau', capacite: 5760, cout: 4668, rse: 'Polluant' },
+    camion: { nom: 'Camion', capacite: 1980, cout: 1721, rse: 'Plutôt polluant' },
+    train:  { nom: 'Train',  capacite: 2640, cout: 2768, rse: 'Peu polluant' },
+    avion:  { nom: 'Avion',  capacite: 60,   cout: 79,   rse: 'Très polluant' }
+  },
+
+  baremePoints: [10, 8, 6, 5, 4, 3, 2, 1]
 };
 
-// Modèle de données multi-mois par défaut
-function createDefaultCompanyState() {
+// Modèle de données simplifié
+function getDefaultState() {
   return {
-    meta: {
-      equipe: '18',
-      groupe: 'C',
-      entreprise: 'SuberTech Industries',
-      derniereMiseAJour: new Date().toISOString()
-    },
-    activeMonth: 1,
-    months: [
-      {
-        monthIndex: 1,
-        coef: 1,
-        inputs: {
-          commandeLiegeKg: 150000,
-          liegeABroyerKg: 110000,
-          grainsAMoulerKg: 46000,
-          ventesSteckerLots: 2000,
-          prixStecker: 21.0,
-          delaiStecker: 0,
-          distributeurs: [
-            { nom: 'Distributeur 1 (Vignerons/Caves)', lots: 2500, prix: 22.0, delai: 0 },
-            { nom: 'Distributeur 2 (Caves)', lots: 2500, prix: 21.5, delai: 0 },
-            { nom: 'Distributeur 3 (Grands Comptes)', lots: 2000, prix: 21.0, delai: 30 },
-            { nom: 'Distributeur 4 (Régional)', lots: 1000, prix: 21.0, delai: 0 }
-          ],
-          modeTransport: 'optimal_eco'
-        },
-        actual: {
-          isEntered: false,
-          ca: 215500,
-          resultatNet: 8721,
-          tresorerie: 411721,
-          pointsRN: 20,
-          pointsCA: 10,
-          pointsTotal: 30
-        }
-      },
-      {
-        monthIndex: 2,
-        coef: 2,
-        inputs: {
-          commandeLiegeKg: 150000,
-          liegeABroyerKg: 150000,
-          grainsAMoulerKg: 52500,
-          ventesSteckerLots: 2000,
-          prixStecker: 21.0,
-          delaiStecker: 0,
-          distributeurs: [
-            { nom: 'Distributeur 1 (Vignerons/Caves)', lots: 2500, prix: 22.0, delai: 0 },
-            { nom: 'Distributeur 2 (Caves)', lots: 2500, prix: 21.5, delai: 0 },
-            { nom: 'Distributeur 3 (Grands Comptes)', lots: 2500, prix: 21.0, delai: 0 },
-            { nom: 'Distributeur 4 (Régional)', lots: 1000, prix: 21.0, delai: 0 }
-          ],
-          modeTransport: 'optimal_eco'
-        },
-        actual: { isEntered: false, ca: null, resultatNet: null, tresorerie: null, pointsRN: null, pointsCA: null, pointsTotal: null }
-      },
-      {
-        monthIndex: 3,
-        coef: 3,
-        inputs: {
-          commandeLiegeKg: 150000,
-          liegeABroyerKg: 150000,
-          grainsAMoulerKg: 52500,
-          ventesSteckerLots: 2000,
-          prixStecker: 21.0,
-          delaiStecker: 0,
-          distributeurs: [
-            { nom: 'Distributeur 1 (Vignerons/Caves)', lots: 2500, prix: 22.0, delai: 0 },
-            { nom: 'Distributeur 2 (Caves)', lots: 2500, prix: 21.5, delai: 0 },
-            { nom: 'Distributeur 3 (Grands Comptes)', lots: 2500, prix: 21.0, delai: 0 },
-            { nom: 'Distributeur 4 (Régional)', lots: 1000, prix: 21.0, delai: 0 }
-          ],
-          modeTransport: 'optimal_eco'
-        },
-        actual: { isEntered: false, ca: null, resultatNet: null, tresorerie: null, pointsRN: null, pointsCA: null, pointsTotal: null }
-      },
-      {
-        monthIndex: 4,
-        coef: 4,
-        inputs: {
-          commandeLiegeKg: 150000,
-          liegeABroyerKg: 150000,
-          grainsAMoulerKg: 52500,
-          ventesSteckerLots: 2000,
-          prixStecker: 21.0,
-          delaiStecker: 0,
-          distributeurs: [
-            { nom: 'Distributeur 1 (Vignerons/Caves)', lots: 2500, prix: 22.0, delai: 0 },
-            { nom: 'Distributeur 2 (Caves)', lots: 2500, prix: 21.5, delai: 0 },
-            { nom: 'Distributeur 3 (Grands Comptes)', lots: 2500, prix: 21.0, delai: 0 },
-            { nom: 'Distributeur 4 (Régional)', lots: 1000, prix: 21.0, delai: 0 }
-          ],
-          modeTransport: 'optimal_eco'
-        },
-        actual: { isEntered: false, ca: null, resultatNet: null, tresorerie: null, pointsRN: null, pointsCA: null, pointsTotal: null }
-      }
+    moisActif: 1,
+    // Phase 1 : Commande au producteur
+    commandeLiegeKg: 150000,
+
+    // Phase 2 : Production
+    liegeABroyerKg: 110000,
+    grainsAMoulerKg: 46000, // 7 500 kg initiaux + 38 500 kg broyés = 46 000 kg
+
+    // Phase 2 : Ventes aux 4 Équipes Distributeurs
+    ventes: [
+      { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
+      { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
+      { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, delai: 30, transport: 'train' },
+      { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, delai: 0, transport: 'camion' }
+    ],
+
+    // Résultats réels enregistrés par mois
+    historique: [
+      { mois: 1, ca: null, rn: null, treso: null, pts: null },
+      { mois: 2, ca: null, rn: null, treso: null, pts: null },
+      { mois: 3, ca: null, rn: null, treso: null, pts: null },
+      { mois: 4, ca: null, rn: null, treso: null, pts: null }
     ]
   };
 }
 
-// État global en mémoire
-let companyState = createDefaultCompanyState();
+let appState = getDefaultState();
 
-// PERSISTANCE : LocalStorage
-const STORAGE_KEY = 'subertech_vinego_equipe18_state_v1';
+// PERSISTANCE
+const STORAGE_KEY = 'vinego_subertech_equipe18_simple_v2';
 
-function saveStateToStorage() {
+function saveToLocalStorage() {
   try {
-    companyState.meta.derniereMiseAJour = new Date().toISOString();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(companyState));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
     return true;
   } catch (e) {
-    console.error('Erreur sauvegarde LocalStorage:', e);
     return false;
   }
 }
 
-function loadStateFromStorage() {
+function loadFromLocalStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && parsed.months && parsed.months.length > 0) {
-        companyState = parsed;
+      if (parsed && parsed.ventes) {
+        appState = parsed;
         return true;
       }
     }
-  } catch (e) {
-    console.error('Erreur chargement LocalStorage:', e);
-  }
+  } catch (e) {}
   return false;
 }
 
-// SYNCHRONISATION : Export / Import JSON
-function exportStateAsJSON() {
-  companyState.meta.derniereMiseAJour = new Date().toISOString();
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(companyState, null, 2));
-  const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute("href", dataStr);
-  downloadAnchor.setAttribute("download", `subertech_equipe18_sauvegarde_m${companyState.activeMonth}.json`);
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  downloadAnchor.remove();
+function generateShareLink() {
+  const json = JSON.stringify(appState);
+  const b64 = btoa(unescape(encodeURIComponent(json)));
+  return window.location.origin + window.location.pathname + '#data=' + b64;
 }
 
-function importStateFromJSON(jsonString) {
-  try {
-    const parsed = JSON.parse(jsonString);
-    if (parsed && parsed.months) {
-      companyState = parsed;
-      saveStateToStorage();
-      return { success: true, message: 'Sauvegarde importée avec succès !' };
-    }
-  } catch (e) {
-    return { success: false, message: 'Format de fichier JSON invalide.' };
-  }
-  return { success: false, message: 'Données incompatibles.' };
-}
-
-// SYNCHRONISATION : Lien URL partageable instantané
-function generateShareURL() {
-  companyState.meta.derniereMiseAJour = new Date().toISOString();
-  const jsonStr = JSON.stringify(companyState);
-  const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
-  const url = window.location.origin + window.location.pathname + '#data=' + base64;
-  return url;
-}
-
-function loadStateFromURLHash() {
+function loadFromUrlHash() {
   try {
     if (window.location.hash && window.location.hash.startsWith('#data=')) {
-      const base64 = window.location.hash.replace('#data=', '');
-      const jsonStr = decodeURIComponent(escape(atob(base64)));
-      const parsed = JSON.parse(jsonStr);
-      if (parsed && parsed.months) {
-        companyState = parsed;
-        saveStateToStorage();
-        window.history.replaceState(null, null, window.location.pathname); // Nettoie l'URL
+      const b64 = window.location.hash.replace('#data=', '');
+      const json = decodeURIComponent(escape(atob(b64)));
+      const parsed = JSON.parse(json);
+      if (parsed && parsed.ventes) {
+        appState = parsed;
+        saveToLocalStorage();
+        window.history.replaceState(null, null, window.location.pathname);
         return true;
       }
     }
-  } catch (e) {
-    console.error('Erreur lecture hash URL:', e);
-  }
+  } catch (e) {}
   return false;
 }
 
-// MOTEUR DE SIMULATION FINANCIÈRE ET INDUSTRIELLE
-function runFullSimulation(state) {
-  const prixLiegeCommande = PARAMS.getPrixLiege(state.commandeLiegeKg);
+// MOTEUR DE CALCUL DIRECT
+function calculateSimulation(state) {
+  // 1. Commande producteur
+  const prixLiegeKg = PARAMS.getPrixLiege(state.commandeLiegeKg);
+  const montantCommandeLiege = state.commandeLiegeKg * prixLiegeKg;
 
-  // 1. Production
-  const grainsProduits = state.liegeABroyerKg * PARAMS.rendementBroyage;
-  const coutBroyage = state.liegeABroyerKg * PARAMS.coutBroyageParKg;
+  // 2. Production
+  const grainsProduitsKg = state.liegeABroyerKg * PARAMS.rendementBroyage;
+  const coutBroyage = state.liegeABroyerKg * PARAMS.coutBroyageKg;
 
-  const bouchonsProduits = state.grainsAMoulerKg * PARAMS.rendementMoulage;
-  const coutMoulage = state.grainsAMoulerKg * PARAMS.coutMoulageParKg;
+  const bouchonsProduitsLots = state.grainsAMoulerKg * PARAMS.rendementMoulage;
+  const coutMoulage = state.grainsAMoulerKg * PARAMS.coutMoulageKg;
 
-  const stockGrainsFinal = PARAMS.stockInitGrainsKg + grainsProduits - state.grainsAMoulerKg;
-  const stockLiegeFinal = PARAMS.stockInitLiegeKg - state.liegeABroyerKg;
-  const totalBouchonsDisponibles = PARAMS.stockInitBouchonsLots + bouchonsProduits;
+  // Stocks finaux
+  const stockLiegeRestantKg = Math.max(0, PARAMS.stockInitLiegeKg - state.liegeABroyerKg);
+  const stockGrainsRestantKg = Math.max(0, PARAMS.stockInitGrainsKg + grainsProduitsKg - state.grainsAMoulerKg);
+  const totalBouchonsDisponibles = PARAMS.stockInitBouchonsLots + bouchonsProduitsLots;
 
-  // 2. Ventes
-  const lotsVendusStecker = state.ventesSteckerLots;
-  const caStecker = lotsVendusStecker * state.prixStecker;
+  // 3. Ventes aux distributeurs
+  let lotsVendusTotal = 0;
+  let caTotal = 0;
+  let encaissementM1 = 0;
+  let coutTransportTotal = 0;
 
-  let lotsVendusDistrib = 0;
-  let caDistrib = 0;
-  let encaissementM1 = (state.delaiStecker === 0 ? caStecker : 0);
+  state.ventes.forEach(v => {
+    const ca = v.lots * v.prix;
+    lotsVendusTotal += v.lots;
+    caTotal += ca;
 
-  state.distributeurs.forEach(d => {
-    const ca = d.lots * d.prix;
-    lotsVendusDistrib += d.lots;
-    caDistrib += ca;
-    if (d.delai === 0) {
+    if (v.delai === 0) {
       encaissementM1 += ca;
+    }
+
+    // Calcul du transport pour cette vente
+    if (v.lots > 0) {
+      // Calcul du nombre de trajets selon le mode choisi
+      const mode = PARAMS.transports[v.transport] || PARAMS.transports.camion;
+      const nbVehicules = Math.ceil(v.lots / mode.capacite);
+      coutTransportTotal += nbVehicules * mode.cout;
     }
   });
 
-  const totalLotsVendus = lotsVendusStecker + lotsVendusDistrib;
-  const chiffreAffairesTotal = caStecker + caDistrib;
-  const stockBouchonsFinal = totalBouchonsDisponibles - totalLotsVendus;
+  const stockBouchonsRestantLots = Math.max(0, totalBouchonsDisponibles - lotsVendusTotal);
 
-  // 3. Coûts de Transport
-  const transportCalc = computeTransport(totalLotsVendus, state.modeTransport, state.allocTransport);
-
-  // 4. Frais marketing & stockage
-  const fraisMarketing = chiffreAffairesTotal * PARAMS.tauxMarketing;
+  // 4. Frais marketing et stockage
+  const fraisMarketing = caTotal * PARAMS.tauxMarketing; // 5%
 
   const valeurStockFinal =
-    Math.max(0, stockLiegeFinal * PARAMS.prixAchatLiegeInit) +
-    Math.max(0, stockGrainsFinal * PARAMS.prixAchatGrainsInit) +
-    Math.max(0, stockBouchonsFinal * PARAMS.prixAchatBouchonsInit);
+    (stockLiegeRestantKg * PARAMS.prixAchatLiegeInit) +
+    (stockGrainsRestantKg * PARAMS.prixAchatGrainsInit) +
+    (stockBouchonsRestantLots * PARAMS.prixAchatBouchonsInit);
 
-  const fraisStockage = valeurStockFinal * PARAMS.tauxStockage;
+  const fraisStockage = valeurStockFinal * PARAMS.tauxStockage; // 0.42%
 
-  // 5. Coût de fabrication direct par lot selon approvisionnement
-  const coutMatiereLot = (1 / 0.20 / 0.35) * prixLiegeCommande;
-  const coutBroyageLot = (1 / 0.20 / 0.35) * 0.02;
-  const coutMoulageLot = 5 * 0.40;
-  const coutFabricationDirect = coutMatiereLot + coutBroyageLot + coutMoulageLot; // ~8.43€ à 0.43€/kg
-  const coutDirectVendus = totalLotsVendus * coutFabricationDirect;
+  // 5. Coût direct des matières des produits vendus (méthode de gestion)
+  // Pour fabriquer 1 lot : 14.286 kg de liège @ prixLiegeKg + broyage + moulage (2€)
+  const coutDirectLot = (14.2857 * prixLiegeKg) + (14.2857 * 0.02) + 2.0;
+  const coutDirectVendus = lotsVendusTotal * coutDirectLot;
 
-  // 6. Charges Fixes
+  // 6. Charges fixes
   const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel; // 95 500 €
 
   // 7. Compte de Résultat (P&L)
-  const margeSurCoutVariable = chiffreAffairesTotal - coutDirectVendus - transportCalc.coutTotal - fraisMarketing;
-  const resultatNet = margeSurCoutVariable - chargesFixes - fraisStockage;
+  const margeBrute = caTotal - coutDirectVendus - coutTransportTotal - fraisMarketing;
+  const resultatNet = margeBrute - chargesFixes - fraisStockage;
 
-  // 8. Plan de Trésorerie Mois 1
-  const detteStockInitial = (110000 * 0.50) + (7500 * 0.56) + (3000 * 12); // 95 200 €
-  const machinesInvestissement = 30000;
+  // 8. Trésorerie
+  // Dettes de départ payées fin janvier : 110k*0.50 + 7.5k*0.56 + 3000*12 = 95 200 €
+  const detteStockDepart = 95200;
+  const investissementMachines = 30000; // Payé comptant
   const decaissementFixe = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels; // 95 000 €
-  const decaissementVariables = coutBroyage + coutMoulage + transportCalc.coutTotal + fraisMarketing + fraisStockage;
+  const decaissementVariables = coutBroyage + coutMoulage + coutTransportTotal + fraisMarketing + fraisStockage;
   
-  // Commande passée en M1 est livrée en M2 et payée 30j après livraison (M3) !
-  const decaissementFournisseurLiegeM1 = 0;
+  // Commande liège passée en M1 est livrée en M2 et payée 30j après livraison (M3) -> 0 € en M1 !
+  const decaissementCommandeLiegeM1 = 0;
 
-  const totalDecaissementsM1 = detteStockInitial + machinesInvestissement + decaissementFixe + decaissementVariables + decaissementFournisseurLiegeM1;
-  const tresorerieFinM1 = PARAMS.capitalDepart + encaissementM1 - totalDecaissementsM1;
+  const totalDecaissements = detteStockDepart + investissementMachines + decaissementFixe + decaissementVariables + decaissementCommandeLiegeM1;
+  const tresorerieFinMois = PARAMS.capitalDepart + encaissementM1 - totalDecaissements;
 
-  // 9. Seuil de Rentabilité
-  const prixMoyenUnitaire = totalLotsVendus > 0 ? (chiffreAffairesTotal / totalLotsVendus) : 21.0;
-  const coutVariableUnitaire = (coutDirectVendus + transportCalc.coutTotal + fraisMarketing) / (totalLotsVendus || 1);
-  const mscvUnitaire = prixMoyenUnitaire - coutVariableUnitaire;
-  const seuilRentabiliteLots = mscvUnitaire > 0 ? (chargesFixes + fraisStockage) / mscvUnitaire : Infinity;
-  const seuilRentabiliteCA = seuilRentabiliteLots * prixMoyenUnitaire;
+  // 9. Seuil de rentabilité
+  const prixMoyenLot = lotsVendusTotal > 0 ? (caTotal / lotsVendusTotal) : 21.0;
+  const coutVariableUnitaire = lotsVendusTotal > 0 ? ((coutDirectVendus + coutTransportTotal + fraisMarketing) / lotsVendusTotal) : coutDirectLot + 1.8;
+  const mscvUnitaire = prixMoyenLot - coutVariableUnitaire;
+  const seuilRentabiliteLots = mscvUnitaire > 0 ? (chargesFixes + fraisStockage) / mscvUnitaire : 9500;
 
-  // 10. Barème
-  const rangEstimeRN = resultatNet > 0 ? 1 : 4;
-  const rangEstimeCA = chiffreAffairesTotal >= 200000 ? 1 : 2;
-  const pointsRN = (PARAMS.baremePoints[rangEstimeRN - 1] || 1) * 2;
-  const pointsCA = (PARAMS.baremePoints[rangEstimeCA - 1] || 1) * 1;
-  const penaliteTreso = tresorerieFinM1 < 0 ? -10 : 0;
-  const pointsTotaux = pointsRN + pointsCA + penaliteTreso;
+  // 10. Points Barème
+  const pointsRN = (resultatNet > 0 ? 10 : 4) * 2; // 1er = 20 pts
+  const pointsCA = (caTotal >= 200000 ? 10 : 8) * 1; // 1er = 10 pts
+  const penaliteTreso = tresorerieFinMois < 0 ? -10 : 0;
+  const totalPointsMois = pointsRN + pointsCA + penaliteTreso;
 
   return {
-    prixLiegeCommande,
-    coutFabricationDirect,
-    grainsProduits,
+    prixLiegeKg,
+    montantCommandeLiege,
+    grainsProduitsKg,
     coutBroyage,
-    bouchonsProduits,
+    bouchonsProduitsLots,
     coutMoulage,
-    stockGrainsFinal,
-    stockLiegeFinal,
-    stockBouchonsFinal,
-    totalLotsVendus,
-    chiffreAffairesTotal,
-    caStecker,
-    caDistrib,
-    transportCalc,
+    stockLiegeRestantKg,
+    stockGrainsRestantKg,
+    totalBouchonsDisponibles,
+    stockBouchonsRestantLots,
+    lotsVendusTotal,
+    caTotal,
+    coutTransportTotal,
     fraisMarketing,
     fraisStockage,
+    coutDirectLot,
+    coutDirectVendus,
     chargesFixes,
-    margeSurCoutVariable,
     resultatNet,
     encaissementM1,
-    totalDecaissementsM1,
-    tresorerieFinM1,
-    detteStockInitial,
-    decaissementFixe,
-    decaissementVariables,
-    prixMoyenUnitaire,
-    coutVariableUnitaire,
-    mscvUnitaire,
+    totalDecaissements,
+    tresorerieFinMois,
     seuilRentabiliteLots,
-    seuilRentabiliteCA,
     pointsRN,
     pointsCA,
     penaliteTreso,
-    pointsTotaux,
-    rangEstimeRN,
-    rangEstimeCA
+    totalPointsMois
   };
 }
 
-// Logistique
-function computeTransport(lotsVendus, mode, customAlloc) {
-  if (lotsVendus <= 0) {
-    return { coutTotal: 0, coutParLot: 0, capaciteTotale: 0, tauxRemplissage: 100, vehicules: { bateau: 0, train: 0, camion: 0, avion: 0 }, scoreRse: 5, labelRse: 'Neutre' };
-  }
-
-  let vehicules = { bateau: 0, train: 0, camion: 0, avion: 0 };
-
-  if (mode === 'optimal_cost') {
-    let reste = lotsVendus;
-    if (reste >= 4000) {
-      vehicules.bateau = Math.floor(reste / PARAMS.transports.bateau.capacite);
-      reste %= PARAMS.transports.bateau.capacite;
-    }
-    if (reste >= 1500) {
-      vehicules.camion = Math.floor(reste / PARAMS.transports.camion.capacite);
-      reste %= PARAMS.transports.camion.capacite;
-    }
-    if (reste > 0) vehicules.camion += 1;
-  } else if (mode === 'optimal_eco') {
-    let reste = lotsVendus;
-    if (reste >= 5000) {
-      vehicules.bateau = Math.floor(reste / PARAMS.transports.bateau.capacite);
-      reste %= PARAMS.transports.bateau.capacite;
-    }
-    vehicules.train = Math.ceil(reste / PARAMS.transports.train.capacite);
-  } else {
-    vehicules = { ...customAlloc };
-  }
-
-  const capaciteTotale =
-    (vehicules.bateau * PARAMS.transports.bateau.capacite) +
-    (vehicules.train * PARAMS.transports.train.capacite) +
-    (vehicules.camion * PARAMS.transports.camion.capacite) +
-    (vehicules.avion * PARAMS.transports.avion.capacite);
-
-  const coutTotal =
-    (vehicules.bateau * PARAMS.transports.bateau.cout) +
-    (vehicules.train * PARAMS.transports.train.cout) +
-    (vehicules.camion * PARAMS.transports.camion.cout) +
-    (vehicules.avion * PARAMS.transports.avion.cout);
-
-  const coutParLot = lotsVendus > 0 ? (coutTotal / lotsVendus) : 0;
-  const tauxRemplissage = capaciteTotale > 0 ? Math.min(100, (lotsVendus / capaciteTotale) * 100) : 0;
-
-  let scorePondere = 0;
-  if (capaciteTotale > 0) {
-    scorePondere =
-      (vehicules.train * PARAMS.transports.train.capacite * 4 +
-       vehicules.bateau * PARAMS.transports.bateau.capacite * 2.5 +
-       vehicules.camion * PARAMS.transports.camion.capacite * 2 +
-       vehicules.avion * PARAMS.transports.avion.capacite * 0.5) / capaciteTotale;
-  }
-
-  return {
-    coutTotal,
-    coutParLot,
-    capaciteTotale,
-    tauxRemplissage,
-    vehicules,
-    scoreRse: Math.min(5, Math.max(1, scorePondere)),
-    labelRse: scorePondere >= 3.5 ? 'Excellent (Éco-responsable)' : scorePondere >= 2.2 ? 'Bon (Équilibré)' : 'Améliorable'
-  };
-}
-
-// Analyse offre distributeur
-function analyserOffreDistributeur(quantite, prix, delaiJours, typeClient = 'caves') {
-  const coutFabrication = 8.43; // Palier liège 0.43€
-  const transportMoyen = 0.87;
-  const marketing = prix * 0.05;
-  const margeUnitaire = prix - coutFabrication - transportMoyen - marketing;
-  const margeTotale = margeUnitaire * quantite;
-  const caTotal = prix * quantite;
-
-  const prixReventeDistrib = {
-    vignerons: { min: 40, max: 80, moy: 60 },
-    caves: { min: 25, max: 50, moy: 37.5 },
-    grandsComptes: { min: 10, max: 30, moy: 20 }
-  }[typeClient] || { moy: 25 };
-
-  const margeEstimeeDistributeur = (prixReventeDistrib.moy - prix) * quantite;
-  const tauxMargeIndustriel = caTotal > 0 ? (margeTotale / caTotal) * 100 : 0;
-
-  let verdict = 'NEUTRE';
-  let badgeColor = 'bg-yellow-500';
-  let recommandation = '';
-
-  if (prix >= 21.5 && delaiJours <= 30) {
-    verdict = 'TRÈS AVANTAGEUX';
-    badgeColor = 'bg-green-600';
-    recommandation = 'Accepter sans hésiter ! Marge élevée et trésorerie sécurisée.';
-  } else if (prix >= 20.0) {
-    verdict = 'ACCEPTABLE';
-    badgeColor = 'bg-blue-600';
-    recommandation = delaiJours > 0 ? 'Négocier un paiement comptant en échange de 0,50€ de remise.' : 'Offre convenable pour le volume.';
-  } else {
-    verdict = 'TROP BAS';
-    badgeColor = 'bg-red-600';
-    recommandation = 'Prix inférieur aux standards. Exiger 21,00 € minimum.';
-  }
-
-  return {
-    margeUnitaire,
-    margeTotale,
-    caTotal,
-    tauxMargeIndustriel,
-    margeEstimeeDistributeur,
-    verdict,
-    badgeColor,
-    recommandation,
-    contreOffreConseillee: Math.max(21.2, prix + 0.8)
-  };
-}
-
-// Export pour node / navigateur
+// Export pour node si test
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    PARAMS,
-    createDefaultCompanyState,
-    companyState,
-    runFullSimulation,
-    computeTransport,
-    analyserOffreDistributeur
-  };
+  module.exports = { PARAMS, getDefaultState, calculateSimulation };
 }
