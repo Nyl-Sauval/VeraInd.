@@ -484,6 +484,48 @@
               </div>
 
             </div>
+
+            <!-- RÉCAPITULATIF DIRECT DES VENTES & BÉNÉFICE DU MOIS -->
+            <div class="mt-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 rounded-2xl border border-indigo-500/30 shadow-lg">
+              <div class="text-[11px] uppercase tracking-wider font-bold text-indigo-300 flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                <span class="flex items-center space-x-1.5">
+                  <i class="fa-solid fa-scale-balanced text-amber-400"></i>
+                  <span>Synthèse Commerciale & Bénéfice du Mois</span>
+                </span>
+                <span id="badge-recap-ventes-mois" class="bg-indigo-600/70 text-indigo-200 px-2 py-0.5 rounded text-[10px] font-bold">Mois 1</span>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+                <!-- Lots vendus -->
+                <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div class="text-[10px] text-slate-400 font-semibold">Lots Vendus</div>
+                  <div id="out-recap-lots" class="text-base font-black text-white mt-0.5">10 000 lots</div>
+                  <div class="text-[9px] text-slate-400">sur <span id="out-recap-dispo">12 200</span> dispo</div>
+                </div>
+
+                <!-- PRIX MOYEN PAR LOT -->
+                <div class="bg-amber-500/10 border border-amber-400/40 p-2.5 rounded-xl">
+                  <div class="text-[10px] text-amber-300 font-bold">Prix Moyen / Lot</div>
+                  <div id="out-recap-prix-moyen" class="text-lg font-black text-amber-300 mt-0.5">21,30 € / lot</div>
+                  <div class="text-[9px] text-amber-200">CA : <span id="out-recap-ca">213 000 €</span></div>
+                </div>
+
+                <!-- Coût transport moyen -->
+                <div class="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div class="text-[10px] text-slate-400 font-semibold">Transport Total</div>
+                  <div id="out-recap-transport" class="text-base font-black text-slate-200 mt-0.5">9 652 €</div>
+                  <div class="text-[9px] text-slate-400">soit <span id="out-recap-transport-lot">0,97 €</span> / lot</div>
+                </div>
+
+                <!-- BÉNÉFICE TOTAL DU MOIS -->
+                <div class="bg-emerald-500/10 border border-emerald-400/40 p-2.5 rounded-xl">
+                  <div class="text-[10px] text-emerald-300 font-black uppercase">Bénéfice Total Mois</div>
+                  <div id="out-recap-benef-total" class="text-lg font-black text-emerald-400 mt-0.5">+471 €</div>
+                  <div class="text-[9px] text-emerald-200">Marge nette : <span id="out-recap-marge-lot">+0,05 €</span> / lot</div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -499,9 +541,12 @@
             </h3>
 
             <div class="space-y-2 text-xs">
-              <div class="flex justify-between font-bold text-slate-900 text-sm">
-                <span>Chiffre d'Affaires</span>
-                <span id="out-ca" class="text-indigo-600 font-black">213 000 €</span>
+              <div class="flex justify-between items-start font-bold text-slate-900 text-sm">
+                <div>
+                  <span>Chiffre d'Affaires</span>
+                  <div class="text-[10px] text-slate-500 font-normal">Prix moyen : <strong id="out-pnl-prix-moyen" class="text-amber-600 font-bold">21,30 € / lot</strong></div>
+                </div>
+                <span id="out-ca" class="text-indigo-600 font-black text-base">213 000 €</span>
               </div>
 
               <div class="pl-2 space-y-1 text-slate-600 border-l-2 border-slate-200">
@@ -1029,6 +1074,37 @@
         badgeVendu.className = 'text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full';
       }
 
+      // Recap commercial : Prix moyen, volume, transport, bénéfice
+      const prixMoyen = res.lotsVendusTotal > 0 ? (res.caTotal / res.lotsVendusTotal) : 0;
+      const elRecapLots = document.getElementById('out-recap-lots');
+      if (elRecapLots) elRecapLots.innerText = res.lotsVendusTotal.toLocaleString('fr-FR') + ' lots';
+      const elRecapDispo = document.getElementById('out-recap-dispo');
+      if (elRecapDispo) elRecapDispo.innerText = res.totalBouchonsDispoLots.toLocaleString('fr-FR');
+      const elRecapPm = document.getElementById('out-recap-prix-moyen');
+      if (elRecapPm) elRecapPm.innerText = prixMoyen.toFixed(2) + ' € / lot';
+      const elPnlPm = document.getElementById('out-pnl-prix-moyen');
+      if (elPnlPm) elPnlPm.innerText = prixMoyen.toFixed(2) + ' € / lot';
+      const elRecapCa = document.getElementById('out-recap-ca');
+      if (elRecapCa) elRecapCa.innerText = Math.round(res.caTotal).toLocaleString('fr-FR') + ' €';
+
+      const transportMoyen = res.lotsVendusTotal > 0 ? (res.coutTransportTotal / res.lotsVendusTotal) : 0;
+      const elRecapTr = document.getElementById('out-recap-transport');
+      if (elRecapTr) elRecapTr.innerText = Math.round(res.coutTransportTotal).toLocaleString('fr-FR') + ' €';
+      const elRecapTrLot = document.getElementById('out-recap-transport-lot');
+      if (elRecapTrLot) elRecapTrLot.innerText = transportMoyen.toFixed(2) + ' €';
+
+      const benefTotal = res.resultatNet;
+      const elRecapBenef = document.getElementById('out-recap-benef-total');
+      if (elRecapBenef) {
+        elRecapBenef.innerText = (benefTotal >= 0 ? '+' : '') + Math.round(benefTotal).toLocaleString('fr-FR') + ' €';
+        elRecapBenef.className = benefTotal >= 0 ? 'text-lg font-black text-emerald-400 mt-0.5' : 'text-lg font-black text-red-400 mt-0.5';
+      }
+      const margeNetteLot = res.lotsVendusTotal > 0 ? (benefTotal / res.lotsVendusTotal) : 0;
+      const elRecapMarge = document.getElementById('out-recap-marge-lot');
+      if (elRecapMarge) elRecapMarge.innerText = (margeNetteLot >= 0 ? '+' : '') + margeNetteLot.toFixed(2) + ' €';
+      const elBadgeRecapVentes = document.getElementById('badge-recap-ventes-mois');
+      if (elBadgeRecapVentes) elBadgeRecapVentes.innerText = 'Mois ' + m;
+
       // P&L du mois actif
       document.getElementById('out-ca').innerText = Math.round(res.caTotal).toLocaleString('fr-FR') + ' €';
       document.getElementById('txt-cout-unitaire').innerText = res.cmpBouchonLot.toFixed(2);
@@ -1126,7 +1202,7 @@
 
         { section: '🤝 COMMERCIALISATION & VENTES' },
         { label: 'Lots vendus aux distributeurs', u: 'lots', v1: r1.lotsVendusTotal, v2: r2.lotsVendusTotal, v3: r3.lotsVendusTotal, v4: r4.lotsVendusTotal, tot: all.totaux.lotsCumule },
-        { label: 'Prix moyen de vente', u: '€/lot', v1: r1.prixMoyenLot.toFixed(2), v2: r2.prixMoyenLot.toFixed(2), v3: r3.prixMoyenLot.toFixed(2), v4: r4.prixMoyenLot.toFixed(2), tot: (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) },
+        { label: 'PRIX MOYEN PAR LOT', u: '€/lot', highlightGold: true, v1: r1.prixMoyenLot.toFixed(2), v2: r2.prixMoyenLot.toFixed(2), v3: r3.prixMoyenLot.toFixed(2), v4: r4.prixMoyenLot.toFixed(2), tot: (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) },
         { label: 'Coûts de transport pris en charge', u: '€', v1: r1.coutTransportTotal, v2: r2.coutTransportTotal, v3: r3.coutTransportTotal, v4: r4.coutTransportTotal, tot: r1.coutTransportTotal + r2.coutTransportTotal + r3.coutTransportTotal + r4.coutTransportTotal },
         { label: 'Frais de marketing (5%)', u: '€', v1: r1.fraisMarketing, v2: r2.fraisMarketing, v3: r3.fraisMarketing, v4: r4.fraisMarketing, tot: r1.fraisMarketing + r2.fraisMarketing + r3.fraisMarketing + r4.fraisMarketing },
 
@@ -1138,8 +1214,8 @@
         { label: '= Marge sur Coûts Variables', u: '€', v1: r1.margeBrute, v2: r2.margeBrute, v3: r3.margeBrute, v4: r4.margeBrute, tot: r1.margeBrute + r2.margeBrute + r3.margeBrute + r4.margeBrute },
         { label: '- Charges fixes (Salaires + Structure)', u: '€', v1: -r1.chargesFixes, v2: -r2.chargesFixes, v3: -r3.chargesFixes, v4: -r4.chargesFixes, tot: -(r1.chargesFixes * 4) },
         { label: '- Frais de stockage (0,42%)', u: '€', v1: -r1.fraisStockage, v2: -r2.fraisStockage, v3: -r3.fraisStockage, v4: -r4.fraisStockage, tot: -(r1.fraisStockage + r2.fraisStockage + r3.fraisStockage + r4.fraisStockage) },
-        { label: '= RÉSULTAT NET DU MOIS', u: '€', highlightGreen: true, v1: r1.resultatNet, v2: r2.resultatNet, v3: r3.resultatNet, v4: r4.resultatNet, tot: all.totaux.rnCumule },
-        { label: '= RÉSULTAT NET CUMULÉ', u: '€', bold: true, v1: r1.rnCumule, v2: r2.rnCumule, v3: r3.rnCumule, v4: r4.rnCumule, tot: all.totaux.rnCumule },
+        { label: '= BÉNÉFICE TOTAL DU MOIS (RN)', u: '€', highlightGreen: true, v1: r1.resultatNet, v2: r2.resultatNet, v3: r3.resultatNet, v4: r4.resultatNet, tot: all.totaux.rnCumule },
+        { label: '= BÉNÉFICE CUMULÉ', u: '€', bold: true, v1: r1.rnCumule, v2: r2.rnCumule, v3: r3.rnCumule, v4: r4.rnCumule, tot: all.totaux.rnCumule },
 
         { section: '💰 TRÉSORERIE & FINANCES' },
         { label: 'Trésorerie début de mois', u: '€', v1: r1.tresoDebut, v2: r2.tresoDebut, v3: r3.tresoDebut, v4: r4.tresoDebut, tot: 500000 },
