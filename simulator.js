@@ -1,4 +1,4 @@
-// simulator.js - Moteur simplifié et direct pour l'Équipe 18 Groupe C (Vinego)
+// simulator.js - Moteur décisionnel & Récapitulatif Mois par Mois pour l'Équipe 18 Groupe C (Vinego)
 
 const PARAMS = {
   capitalDepart: 500000,
@@ -6,7 +6,7 @@ const PARAMS = {
   fraisStructureMensuels: 35000,
   amortissementMensuel: 500, // 30 000 € sur 5 ans = 500 € / mois
   tauxMarketing: 0.05, // 5% du CA
-  tauxStockage: 0.0042, // 0.42% du stock final
+  tauxStockage: 0.0042, // 0.42% de la valeur du stock final
 
   // Stocks de départ (Mois 1)
   stockInitLiegeKg: 110000,
@@ -19,7 +19,7 @@ const PARAMS = {
   // Rendements de production
   rendementBroyage: 0.35, // 100 kg liège -> 35 kg grains
   coutBroyageKg: 0.02,    // 0,02 € / kg liège entré
-  rendementMoulage: 0.20, // 100 kg grains -> 20 lots de bouchons
+  rendementMoulage: 0.20, // 100 kg grains -> 20 lots de bouchons (soit 5 kg / lot)
   coutMoulageKg: 0.40,    // 0,40 € / kg grain entré (soit 2 € / lot)
 
   // Grille de remise producteur espagnol
@@ -31,50 +31,63 @@ const PARAMS = {
     return 0.50; // Tarif de base (< 90 000 kg, min 35 000 kg)
   },
 
-  // Transports disponibles
+  // Modes de transport disponibles
   transports: {
-    bateau: { nom: 'Bateau', capacite: 5760, cout: 4668, rse: 'Polluant' },
-    camion: { nom: 'Camion', capacite: 1980, cout: 1721, rse: 'Plutôt polluant' },
-    train:  { nom: 'Train',  capacite: 2640, cout: 2768, rse: 'Peu polluant' },
-    avion:  { nom: 'Avion',  capacite: 60,   cout: 79,   rse: 'Très polluant' }
+    camion: { id: 'camion', nom: 'Camion', capacite: 1980, cout: 1721, rse: 'Plutôt polluant', icone: 'fa-truck' },
+    train:  { id: 'train',  nom: 'Train',  capacite: 2640, cout: 2768, rse: 'Peu polluant (RSE)', icone: 'fa-train' },
+    bateau: { id: 'bateau', nom: 'Bateau', capacite: 5760, cout: 4668, rse: 'Économique gros volume', icone: 'fa-ship' },
+    avion:  { id: 'avion',  nom: 'Avion',  capacite: 60,   cout: 79,   rse: 'Très polluant (Urgence)', icone: 'fa-plane' }
   },
 
   baremePoints: [10, 8, 6, 5, 4, 3, 2, 1]
 };
 
-// Modèle de données simplifié
-function getDefaultState() {
+// Modèle par défaut pour un mois
+function getDefaultMonthData(m) {
+  if (m === 1) {
+    return {
+      commandeLiegeKg: 150000,
+      liegeABroyerKg: 110000,
+      grainsAMoulerKg: 46000,
+      ventes: [
+        { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
+        { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
+        { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, delai: 30, transport: 'train' },
+        { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, delai: 0, transport: 'camion' }
+      ]
+    };
+  }
+  // Par défaut pour M2, M3, M4
   return {
-    moisActif: 1,
-    // Phase 1 : Commande au producteur
     commandeLiegeKg: 150000,
-
-    // Phase 2 : Production
-    liegeABroyerKg: 110000,
-    grainsAMoulerKg: 46000, // 7 500 kg initiaux + 38 500 kg broyés = 46 000 kg
-
-    // Phase 2 : Ventes aux 4 Équipes Distributeurs
+    liegeABroyerKg: 150000,
+    grainsAMoulerKg: 52500,
     ventes: [
       { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
       { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
-      { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, delai: 30, transport: 'train' },
-      { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, delai: 0, transport: 'camion' }
-    ],
-
-    // Résultats réels enregistrés par mois
-    historique: [
-      { mois: 1, ca: null, rn: null, treso: null, pts: null },
-      { mois: 2, ca: null, rn: null, treso: null, pts: null },
-      { mois: 3, ca: null, rn: null, treso: null, pts: null },
-      { mois: 4, ca: null, rn: null, treso: null, pts: null }
+      { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.5, delai: 0, transport: 'train' },
+      { client: 'Équipe Distributeur 4', lots: 2000, prix: 21.5, delai: 0, transport: 'camion' }
     ]
+  };
+}
+
+// Modèle de données complet multi-mois
+function getDefaultState() {
+  return {
+    moisActif: 1,
+    moisData: {
+      1: getDefaultMonthData(1),
+      2: getDefaultMonthData(2),
+      3: getDefaultMonthData(3),
+      4: getDefaultMonthData(4)
+    }
   };
 }
 
 let appState = getDefaultState();
 
-// PERSISTANCE
-const STORAGE_KEY = 'vinego_subertech_equipe18_simple_v2';
+// PERSISTANCE LOCALSTORAGE & URL
+const STORAGE_KEY = 'vinego_subertech_equipe18_multimois_v1';
 
 function saveToLocalStorage() {
   try {
@@ -90,13 +103,44 @@ function loadFromLocalStorage() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && parsed.ventes) {
-        appState = parsed;
+      if (parsed) {
+        migrateState(parsed);
+        return true;
+      }
+    }
+    // Tentative de récupération ancienne clé v2
+    const oldRaw = localStorage.getItem('vinego_subertech_equipe18_simple_v2');
+    if (oldRaw) {
+      const oldParsed = JSON.parse(oldRaw);
+      if (oldParsed) {
+        migrateState(oldParsed);
         return true;
       }
     }
   } catch (e) {}
   return false;
+}
+
+function migrateState(parsed) {
+  if (parsed.moisData && parsed.moisData[1]) {
+    appState = parsed;
+    if (!appState.moisActif) appState.moisActif = 1;
+    // S'assurer que tous les mois existent
+    for (let m = 1; m <= 4; m++) {
+      if (!appState.moisData[m]) {
+        appState.moisData[m] = getDefaultMonthData(m);
+      }
+    }
+  } else if (parsed.ventes) {
+    // Migration depuis ancien format mono-mois
+    appState = getDefaultState();
+    appState.moisData[1] = {
+      commandeLiegeKg: parsed.commandeLiegeKg || 150000,
+      liegeABroyerKg: parsed.liegeABroyerKg || 110000,
+      grainsAMoulerKg: parsed.grainsAMoulerKg || 46000,
+      ventes: parsed.ventes || getDefaultMonthData(1).ventes
+    };
+  }
 }
 
 function generateShareLink() {
@@ -111,8 +155,8 @@ function loadFromUrlHash() {
       const b64 = window.location.hash.replace('#data=', '');
       const json = decodeURIComponent(escape(atob(b64)));
       const parsed = JSON.parse(json);
-      if (parsed && parsed.ventes) {
-        appState = parsed;
+      if (parsed) {
+        migrateState(parsed);
         saveToLocalStorage();
         window.history.replaceState(null, null, window.location.pathname);
         return true;
@@ -122,160 +166,244 @@ function loadFromUrlHash() {
   return false;
 }
 
-// MOTEUR DE CALCUL DIRECT
-function calculateSimulation(state) {
-  // 1. Commande producteur
-  const prixLiegeKg = PARAMS.getPrixLiege(state.commandeLiegeKg);
-  const montantCommandeLiege = state.commandeLiegeKg * prixLiegeKg;
+// MOTEUR DE SIMULATION ENCHAÎNÉE SUR LES 4 MOIS
+function simulateAllMonths(state) {
+  const results = {};
+  let prevResult = null;
+  let caCumule = 0;
+  let rnCumule = 0;
+  let scoreCumule = 0;
+  let lotsCumule = 0;
 
-  // 2. Production
-  const grainsProduitsKg = state.liegeABroyerKg * PARAMS.rendementBroyage;
-  const coutBroyage = state.liegeABroyerKg * PARAMS.coutBroyageKg;
+  for (let m = 1; m <= 4; m++) {
+    const isM1 = (m === 1);
+    const monthData = (state.moisData && state.moisData[m]) ? state.moisData[m] : getDefaultMonthData(m);
+    
+    // 1. Commande au producteur espagnol
+    const commandeLiegeKg = Number(monthData.commandeLiegeKg) || 0;
+    const prixLiegeKg = PARAMS.getPrixLiege(commandeLiegeKg);
+    const montantCommandeLiege = commandeLiegeKg * prixLiegeKg;
 
-  const bouchonsProduitsLots = state.grainsAMoulerKg * PARAMS.rendementMoulage;
-  const coutMoulage = state.grainsAMoulerKg * PARAMS.coutMoulageKg;
+    // 2. Stocks entrants au début du mois
+    // En M1 : stock initial. En M2..M4 : stock restant du mois précédent + commande du mois précédent livrée !
+    const livraisonRecueKg = isM1 ? 0 : (prevResult.commandeLiegeKg || 0);
+    const livraisonRecueVal = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
 
-  // 3. Stocks disponibles et Coût Moyen Pondéré (CMP) en Mois 1
-  // Mois 1 consomme UNIQUEMENT le stock initial car la commande producteur arrive à M+1 (Mois 2)
-  const valStockLiegeInitial = PARAMS.stockInitLiegeKg * PARAMS.prixAchatLiegeInit; // 55 000 €
-  const valStockGrainsInitial = PARAMS.stockInitGrainsKg * PARAMS.prixAchatGrainsInit; // 4 200 €
-  const valStockBouchonsInitial = PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit; // 36 000 €
-  const totalDetteStockInitial = valStockLiegeInitial + valStockGrainsInitial + valStockBouchonsInitial; // 95 200 €
+    const stockLiegeEntrantKg = isM1 ? PARAMS.stockInitLiegeKg : (prevResult.stockLiegeFinKg + livraisonRecueKg);
+    const valStockLiegeEntrant = isM1 ? (PARAMS.stockInitLiegeKg * PARAMS.prixAchatLiegeInit) : (prevResult.valStockLiegeFin + livraisonRecueVal);
+    const cmpLiegeKg = stockLiegeEntrantKg > 0 ? (valStockLiegeEntrant / stockLiegeEntrantKg) : 0.43;
 
-  // Coût des grains obtenus après broyage du stock initial
-  const coutGrainsObtenus = (state.liegeABroyerKg * PARAMS.prixAchatLiegeInit) + coutBroyage;
-  const coutMoyenGrainKg = (valStockGrainsInitial + coutGrainsObtenus) / (PARAMS.stockInitGrainsKg + grainsProduitsKg); // ~1,335 €/kg
+    const stockGrainsEntrantKg = isM1 ? PARAMS.stockInitGrainsKg : prevResult.stockGrainsFinKg;
+    const valStockGrainsEntrant = isM1 ? (PARAMS.stockInitGrainsKg * PARAMS.prixAchatGrainsInit) : prevResult.valStockGrainsFin;
+    const cmpGrainsKg = stockGrainsEntrantKg > 0 ? (valStockGrainsEntrant / stockGrainsEntrantKg) : 1.335;
 
-  // Coût de fabrication des 9 200 lots moulés en Mois 1
-  const coutBouchonsMoulageM1 = (state.grainsAMoulerKg * coutMoyenGrainKg) + coutMoulage; // 79 800 €
-  const coutUnitaireLotMouleM1 = bouchonsProduitsLots > 0 ? (coutBouchonsMoulageM1 / bouchonsProduitsLots) : 8.674; // ~8,67 €/lot
+    const stockBouchonsEntrantLots = isM1 ? PARAMS.stockInitBouchonsLots : prevResult.stockBouchonsFinLots;
+    const valStockBouchonsEntrant = isM1 ? (PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit) : prevResult.valStockBouchonsFin;
 
-  // Coût Moyen Pondéré (CMP) des bouchons disponibles en Mois 1 (3 000 initiaux @ 12€ + 9 200 moulés @ 8,67€)
-  const totalBouchonsDisponibles = PARAMS.stockInitBouchonsLots + bouchonsProduitsLots;
-  const valTotaleBouchonsDispoM1 = valStockBouchonsInitial + coutBouchonsMoulageM1; // 115 800 €
-  const cmpLotBouchonMois1 = totalBouchonsDisponibles > 0 ? (valTotaleBouchonsDispoM1 / totalBouchonsDisponibles) : 9.492; // ~9,49 €/lot
+    // 3. Transformation & Production
+    const liegeABroyerKg = Math.min(stockLiegeEntrantKg, Number(monthData.liegeABroyerKg) || 0);
+    const coutBroyage = liegeABroyerKg * PARAMS.coutBroyageKg;
+    const grainsProduitsKg = liegeABroyerKg * PARAMS.rendementBroyage;
+    const valGrainsProduits = (liegeABroyerKg * cmpLiegeKg) + coutBroyage;
 
-  // Coût direct futur en Mois 2 (quand la livraison fournisseur arrive à M+1)
-  // 14.286 kg de liège @ prixLiegeKg + broyage + moulage (2€)
-  const coutDirectLotMois2 = (14.2857 * prixLiegeKg) + (14.2857 * PARAMS.coutBroyageKg) + 2.0; // ~8,43 €/lot pour 150k kg
+    const totalGrainsDispoKg = stockGrainsEntrantKg + grainsProduitsKg;
+    const totalValGrainsDispo = valStockGrainsEntrant + valGrainsProduits;
+    const cmpGrainsDispoKg = totalGrainsDispoKg > 0 ? (totalValGrainsDispo / totalGrainsDispoKg) : 1.30;
 
-  // Stocks finaux
-  const stockLiegeRestantKg = Math.max(0, PARAMS.stockInitLiegeKg - state.liegeABroyerKg);
-  const stockGrainsRestantKg = Math.max(0, PARAMS.stockInitGrainsKg + grainsProduitsKg - state.grainsAMoulerKg);
+    const grainsAMoulerKg = Math.min(totalGrainsDispoKg, Number(monthData.grainsAMoulerKg) || 0);
+    const coutMoulage = grainsAMoulerKg * PARAMS.coutMoulageKg;
+    const bouchonsProduitsLots = grainsAMoulerKg * PARAMS.rendementMoulage;
+    const valBouchonsProduits = (grainsAMoulerKg * cmpGrainsDispoKg) + coutMoulage;
 
-  // 4. Ventes aux distributeurs
-  let lotsVendusTotal = 0;
-  let caTotal = 0;
-  let encaissementM1 = 0;
-  let coutTransportTotal = 0;
+    const totalBouchonsDispoLots = stockBouchonsEntrantLots + bouchonsProduitsLots;
+    const totalValBouchonsDispo = valStockBouchonsEntrant + valBouchonsProduits;
+    const cmpBouchonLot = totalBouchonsDispoLots > 0 ? (totalValBouchonsDispo / totalBouchonsDispoLots) : 9.0;
 
-  state.ventes.forEach(v => {
-    const ca = v.lots * v.prix;
-    lotsVendusTotal += v.lots;
-    caTotal += ca;
+    // 4. Ventes aux distributeurs
+    let lotsVendusTotal = 0;
+    let caTotal = 0;
+    let encaissementVentesMois = 0;
+    let creances30jMois = 0;
+    let coutTransportTotal = 0;
 
-    if (v.delai === 0) {
-      encaissementM1 += ca;
+    (monthData.ventes || []).forEach(v => {
+      const qte = Number(v.lots) || 0;
+      const prix = Number(v.prix) || 0;
+      const ca = qte * prix;
+      lotsVendusTotal += qte;
+      caTotal += ca;
+
+      if (Number(v.delai) === 0) {
+        encaissementVentesMois += ca;
+      } else {
+        creances30jMois += ca;
+      }
+
+      if (qte > 0) {
+        const mode = PARAMS.transports[v.transport] || PARAMS.transports.camion;
+        const nbVehicules = Math.ceil(qte / mode.capacite);
+        coutTransportTotal += nbVehicules * mode.cout;
+      }
+    });
+
+    // 5. Stocks de fin de mois
+    const stockLiegeFinKg = Math.max(0, stockLiegeEntrantKg - liegeABroyerKg);
+    const valStockLiegeFin = stockLiegeFinKg * cmpLiegeKg;
+
+    const stockGrainsFinKg = Math.max(0, totalGrainsDispoKg - grainsAMoulerKg);
+    const valStockGrainsFin = stockGrainsFinKg * cmpGrainsDispoKg;
+
+    const stockBouchonsFinLots = Math.max(0, totalBouchonsDispoLots - lotsVendusTotal);
+    const valStockBouchonsFin = stockBouchonsFinLots * cmpBouchonLot;
+
+    const valeurStockTotalFin = valStockLiegeFin + valStockGrainsFin + valStockBouchonsFin;
+    const fraisStockage = valeurStockTotalFin * PARAMS.tauxStockage; // 0,42%
+
+    // 6. P&L (Compte de résultat)
+    const coutDirectVendus = lotsVendusTotal * cmpBouchonLot;
+    const fraisMarketing = caTotal * PARAMS.tauxMarketing; // 5%
+    const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel; // 95 500 €
+    const margeBrute = caTotal - coutDirectVendus - coutTransportTotal - fraisMarketing;
+    const resultatNet = margeBrute - chargesFixes - fraisStockage;
+
+    // 7. Trésorerie
+    const tresoDebut = isM1 ? PARAMS.capitalDepart : prevResult.tresorerieFinMois;
+    const encaissementCreancesPrecedentes = isM1 ? 0 : prevResult.creances30jMois;
+    const totalEncaissements = encaissementVentesMois + encaissementCreancesPrecedentes;
+
+    const detteStockInitDecaissee = isM1 ? 95200 : 0;
+    const machinesDecaissees = isM1 ? 30000 : 0;
+    const decaissementFixe = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels; // 95 000 €
+    const decaissementVariables = coutBroyage + coutMoulage + coutTransportTotal + fraisMarketing + fraisStockage;
+    
+    // Décaissement commande producteur : payée 30 jours après livraison (M1 livrée M2 -> payée M3)
+    let decaissementFournisseur = 0;
+    if (m === 3 && results[1]) {
+      decaissementFournisseur = results[1].montantCommandeLiege;
+    } else if (m === 4 && results[2]) {
+      decaissementFournisseur = results[2].montantCommandeLiege;
     }
 
-    // Calcul du transport pour cette vente
-    if (v.lots > 0) {
-      const mode = PARAMS.transports[v.transport] || PARAMS.transports.camion;
-      const nbVehicules = Math.ceil(v.lots / mode.capacite);
-      coutTransportTotal += nbVehicules * mode.cout;
-    }
-  });
+    const totalDecaissements = detteStockInitDecaissee + machinesDecaissees + decaissementFixe + decaissementVariables + decaissementFournisseur;
+    const tresorerieFinMois = tresoDebut + totalEncaissements - totalDecaissements;
 
-  const stockBouchonsRestantLots = Math.max(0, totalBouchonsDisponibles - lotsVendusTotal);
+    // 8. Seuil de rentabilité (Point mort)
+    const prixMoyenLot = lotsVendusTotal > 0 ? (caTotal / lotsVendusTotal) : 21.0;
+    const coutVariableUnitaire = lotsVendusTotal > 0 ? ((coutDirectVendus + coutTransportTotal + fraisMarketing) / lotsVendusTotal) : cmpBouchonLot + 1.8;
+    const mscvUnitaire = prixMoyenLot - coutVariableUnitaire;
+    const seuilRentabiliteLots = mscvUnitaire > 0 ? Math.ceil((chargesFixes + fraisStockage) / mscvUnitaire) : 10000;
 
-  // 5. Frais marketing et stockage
-  const fraisMarketing = caTotal * PARAMS.tauxMarketing; // 5%
+    // 9. Points au barème officiel (avec coefficient du mois : M1 x1, M2 x2, M3 x3, M4 x4)
+    const coefMois = m;
+    const pointsRN = (resultatNet > 0 ? 10 : 4) * 2;
+    const pointsCA = (caTotal >= 200000 ? 10 : 8) * 1;
+    const penaliteTreso = tresorerieFinMois < 0 ? -10 : 0;
+    const scoreMois = (pointsRN + pointsCA + penaliteTreso) * coefMois;
 
-  const valeurStockFinal =
-    (stockLiegeRestantKg * PARAMS.prixAchatLiegeInit) +
-    (stockGrainsRestantKg * coutMoyenGrainKg) +
-    (stockBouchonsRestantLots * cmpLotBouchonMois1);
+    caCumule += caTotal;
+    rnCumule += resultatNet;
+    scoreCumule += scoreMois;
+    lotsCumule += lotsVendusTotal;
 
-  const fraisStockage = valeurStockFinal * PARAMS.tauxStockage; // 0.42%
+    const resMois = {
+      mois: m,
+      commandeLiegeKg,
+      prixLiegeKg,
+      montantCommandeLiege,
+      livraisonRecueKg,
+      stockLiegeEntrantKg,
+      liegeABroyerKg,
+      coutBroyage,
+      grainsProduitsKg,
+      stockGrainsEntrantKg,
+      grainsAMoulerKg,
+      coutMoulage,
+      stockLiegeFinKg,
+      valStockLiegeFin,
+      stockGrainsFinKg,
+      valStockGrainsFin,
+      stockBouchonsEntrantLots,
+      bouchonsProduitsLots,
+      totalBouchonsDispoLots,
+      stockBouchonsFinLots,
+      valStockBouchonsFin,
+      cmpBouchonLot,
+      lotsVendusTotal,
+      prixMoyenLot,
+      caTotal,
+      coutDirectVendus,
+      coutTransportTotal,
+      fraisMarketing,
+      margeBrute,
+      chargesFixes,
+      fraisStockage,
+      resultatNet,
+      rnCumule,
+      tresoDebut,
+      encaissementVentesMois,
+      encaissementCreancesPrecedentes,
+      totalEncaissements,
+      detteStockInitDecaissee,
+      machinesDecaissees,
+      decaissementFixe,
+      decaissementVariables,
+      decaissementFournisseur,
+      totalDecaissements,
+      tresorerieFinMois,
+      creances30jMois,
+      seuilRentabiliteLots,
+      pointsRN,
+      pointsCA,
+      penaliteTreso,
+      scoreMois,
+      scoreCumule
+    };
 
-  // 6. Coût direct des matières des produits vendus en Mois 1 (selon le CMP réel du stock consommé)
-  const coutDirectLot = cmpLotBouchonMois1; // 9,49 € / lot en M1
-  const coutDirectVendus = lotsVendusTotal * coutDirectLot;
-
-  // 7. Charges fixes
-  const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel; // 95 500 €
-
-  // 8. Compte de Résultat (P&L Mois 1)
-  const margeBrute = caTotal - coutDirectVendus - coutTransportTotal - fraisMarketing;
-  const resultatNet = margeBrute - chargesFixes - fraisStockage;
-
-  // Simulation comparative pour Mois 2 (avec le coût remisé de 8,43 €/lot)
-  const coutDirectVendusMois2 = lotsVendusTotal * coutDirectLotMois2;
-  const margeBruteMois2 = caTotal - coutDirectVendusMois2 - coutTransportTotal - fraisMarketing;
-  const resultatNetMois2 = margeBruteMois2 - chargesFixes - fraisStockage;
-
-  // 9. Trésorerie
-  // Dettes de départ payées fin janvier : 110k*0.50 + 7.5k*0.56 + 3000*12 = 95 200 €
-  const detteStockDepart = totalDetteStockInitial;
-  const investissementMachines = 30000; // Payé comptant
-  const decaissementFixe = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels; // 95 000 €
-  const decaissementVariables = coutBroyage + coutMoulage + coutTransportTotal + fraisMarketing + fraisStockage;
-  
-  // Commande liège passée en M1 est LIVRÉE en M2 et PAYÉE 30j après livraison (M3) -> 0 € en M1 !
-  const decaissementCommandeLiegeM1 = 0;
-
-  const totalDecaissements = detteStockDepart + investissementMachines + decaissementFixe + decaissementVariables + decaissementCommandeLiegeM1;
-  const tresorerieFinMois = PARAMS.capitalDepart + encaissementM1 - totalDecaissements;
-
-  // 10. Seuil de rentabilité (Point mort)
-  const prixMoyenLot = lotsVendusTotal > 0 ? (caTotal / lotsVendusTotal) : 21.0;
-  const coutVariableUnitaire = lotsVendusTotal > 0 ? ((coutDirectVendus + coutTransportTotal + fraisMarketing) / lotsVendusTotal) : coutDirectLot + 1.8;
-  const mscvUnitaire = prixMoyenLot - coutVariableUnitaire;
-  const seuilRentabiliteLots = mscvUnitaire > 0 ? (chargesFixes + fraisStockage) / mscvUnitaire : 10000;
-
-  // 11. Points Barème
-  const pointsRN = (resultatNet > 0 ? 10 : 4) * 2; // 1er = 20 pts
-  const pointsCA = (caTotal >= 200000 ? 10 : 8) * 1; // 1er = 10 pts
-  const penaliteTreso = tresorerieFinMois < 0 ? -10 : 0;
-  const totalPointsMois = pointsRN + pointsCA + penaliteTreso;
+    results[m] = resMois;
+    prevResult = resMois;
+  }
 
   return {
-    prixLiegeKg,
-    montantCommandeLiege,
-    grainsProduitsKg,
-    coutBroyage,
-    bouchonsProduitsLots,
-    coutMoulage,
-    stockLiegeRestantKg,
-    stockGrainsRestantKg,
-    totalBouchonsDisponibles,
-    stockBouchonsRestantLots,
-    lotsVendusTotal,
-    caTotal,
-    coutTransportTotal,
-    fraisMarketing,
-    fraisStockage,
-    coutDirectLot,          // 9.49 € en Mois 1
-    coutDirectLotMois2,     // 8.43 € en Mois 2 (avec commande à 0.43€)
-    coutDirectVendus,
-    chargesFixes,
-    resultatNet,
-    resultatNetMois2,       // Résultat projeté en Mois 2
-    encaissementM1,
-    totalDecaissements,
-    tresorerieFinMois,
-    seuilRentabiliteLots,
-    pointsRN,
-    pointsCA,
-    penaliteTreso,
-    totalPointsMois
+    moisResults: results,
+    totaux: {
+      caCumule,
+      rnCumule,
+      scoreCumule,
+      lotsCumule
+    }
   };
 }
 
-// Fonction calculatrice rapide pour la barre réglable (slider)
+// Fonction passerelle pour calculer et renvoyer le mois actif
+function calculateSimulation(state) {
+  const mActif = state.moisActif || 1;
+  const all = simulateAllMonths(state);
+  const cur = all.moisResults[mActif] || all.moisResults[1];
+
+  return {
+    ...cur,
+    // Alias pour compatibilité interface
+    grainsProduitsKg: cur.grainsProduitsKg,
+    coutBroyage: cur.coutBroyage,
+    bouchonsProduitsLots: cur.bouchonsProduitsLots,
+    coutMoulage: cur.coutMoulage,
+    stockLiegeRestantKg: cur.stockLiegeFinKg,
+    stockGrainsRestantKg: cur.stockGrainsFinKg,
+    totalBouchonsDisponibles: cur.totalBouchonsDispoLots,
+    stockBouchonsRestantLots: cur.stockBouchonsFinLots,
+    coutDirectLot: cur.cmpBouchonLot,
+    coutDirectLotMois2: (all.moisResults[2] ? all.moisResults[2].cmpBouchonLot : 8.43),
+    resultatNetMois2: (all.moisResults[2] ? all.moisResults[2].resultatNet : 15000),
+    encaissementM1: cur.totalEncaissements,
+    totalPointsMois: cur.scoreMois,
+    allMonths: all
+  };
+}
+
+// Calculatrice pour le slider direct
 function calcProfitFromPrice(prix, volume = 10000, coutUnitaireLot = 9.4918) {
   const ca = volume * prix;
-  const transportEstime = volume * 0.95; // estimation moyenne camion/train plein
+  const transportEstime = volume * 0.95;
   const marketing = ca * PARAMS.tauxMarketing; // 5%
   const coutMatiere = volume * coutUnitaireLot;
   const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel + 80; // ~95 580 €
@@ -301,5 +429,12 @@ function calcProfitFromPrice(prix, volume = 10000, coutUnitaireLot = 9.4918) {
 
 // Export pour node si test
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { PARAMS, getDefaultState, calculateSimulation, calcProfitFromPrice };
+  module.exports = {
+    PARAMS,
+    getDefaultMonthData,
+    getDefaultState,
+    simulateAllMonths,
+    calculateSimulation,
+    calcProfitFromPrice
+  };
 }

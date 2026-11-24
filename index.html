@@ -15,6 +15,17 @@
     .card-shadow {
       box-shadow: 0 4px 15px -1px rgba(0, 0, 0, 0.07), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
     }
+    @media print {
+      header, .no-print {
+        display: none !important;
+      }
+      main {
+        padding: 0 !important;
+      }
+      .tab-content {
+        display: block !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
@@ -42,7 +53,7 @@
             <h1 class="text-lg font-black tracking-tight">SuberTech Industries</h1>
             <span class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black px-2.5 py-0.5 rounded-full text-[10px] tracking-wider shadow">ÉQUIPE 18 • GROUPE C</span>
           </div>
-          <p class="text-[11px] text-emerald-200">Simulateur Décisionnel Simplifié - Simulation Vinego</p>
+          <p class="text-[11px] text-emerald-200">Tableau de Bord & Simulateur Décisionnel Multi-Mois (Vinego)</p>
         </div>
       </div>
 
@@ -68,27 +79,32 @@
     <div class="bg-slate-950/70 border-t border-white/10 py-2 px-4 text-xs">
       <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center space-x-5">
-          <div><span class="text-slate-400">Résultat Net (x2) :</span> <strong id="top-rn" class="text-emerald-400 font-bold text-sm">+0 €</strong></div>
-          <div><span class="text-slate-400">Chiffre d'Affaires (x1) :</span> <strong id="top-ca" class="text-amber-300 font-bold text-sm">0 €</strong></div>
-          <div><span class="text-slate-400">Trésorerie Fin de Mois :</span> <strong id="top-treso" class="text-white font-bold text-sm">500 000 €</strong></div>
+          <div><span class="text-slate-400">Résultat Mois :</span> <strong id="top-rn" class="text-emerald-400 font-bold text-sm">+0 €</strong></div>
+          <div><span class="text-slate-400">CA Mois :</span> <strong id="top-ca" class="text-amber-300 font-bold text-sm">0 €</strong></div>
+          <div><span class="text-slate-400">Trésorerie Fin :</span> <strong id="top-treso" class="text-white font-bold text-sm">500 000 €</strong></div>
+          <div class="border-l border-white/20 pl-4 hidden sm:block"><span class="text-slate-400">RN Cumulé :</span> <strong id="top-rn-cumul" class="text-emerald-300 font-bold text-sm">+0 €</strong></div>
         </div>
         <div class="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full font-black text-xs border border-emerald-400/30 flex items-center space-x-2">
           <i class="fa-solid fa-medal text-amber-400"></i>
-          <span>Score Estimé : <strong id="top-score">30 / 30 pts</strong></span>
+          <span>Score Cumulé : <strong id="top-score">300 / 300 pts</strong></span>
         </div>
       </div>
     </div>
 
-    <!-- ONGLETS SIMPLES -->
+    <!-- ONGLETS PRINCIPAUX -->
     <div class="bg-slate-900 border-t border-white/10">
-      <div class="max-w-7xl mx-auto px-4 flex space-x-4 text-xs sm:text-sm">
-        <button onclick="switchTab('simulation')" id="tab-btn-simulation" class="tab-btn py-2.5 px-4 font-bold border-b-2 border-emerald-400 text-emerald-300 flex items-center space-x-2">
+      <div class="max-w-7xl mx-auto px-4 flex space-x-3 text-xs sm:text-sm overflow-x-auto">
+        <button onclick="switchTab('simulation')" id="tab-btn-simulation" class="tab-btn py-2.5 px-3 font-bold border-b-2 border-emerald-400 text-emerald-300 flex items-center space-x-2 shrink-0">
           <i class="fa-solid fa-sliders"></i>
-          <span>Simulateur de Décisions (Mois 1)</span>
+          <span>Simulateur & Décisions</span>
         </button>
-        <button onclick="switchTab('challenge')" id="tab-btn-challenge" class="tab-btn py-2.5 px-4 font-bold border-b-2 border-transparent text-slate-300 hover:text-white flex items-center space-x-2">
+        <button onclick="switchTab('recap')" id="tab-btn-recap" class="tab-btn py-2.5 px-3 font-bold border-b-2 border-transparent text-slate-300 hover:text-white flex items-center space-x-2 shrink-0">
+          <i class="fa-solid fa-table-list text-indigo-400"></i>
+          <span>Récapitulatif Mois par Mois</span>
+        </button>
+        <button onclick="switchTab('challenge')" id="tab-btn-challenge" class="tab-btn py-2.5 px-3 font-bold border-b-2 border-transparent text-slate-300 hover:text-white flex items-center space-x-2 shrink-0">
           <i class="fa-solid fa-trophy text-amber-400"></i>
-          <span>Challenge 1 : Logo & Slogan (2 000 lots)</span>
+          <span>Challenge 1 : Logo & Dossier (2 000 lots)</span>
         </button>
       </div>
     </div>
@@ -98,19 +114,64 @@
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
     <!-- ========================================================= -->
-    <!-- ONGLET 1 : SIMULATEUR COMPLET & DIRECT EN 3 ÉTAPES -->
+    <!-- ONGLET 1 : SIMULATEUR & DÉCISIONS PAR MOIS -->
     <!-- ========================================================= -->
     <div id="tab-simulation" class="tab-content space-y-6">
       
+      <!-- SÉLECTEUR DE MOIS & CONTEXTE -->
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sélectionnez le Mois à configurer :</div>
+          <div class="flex items-center space-x-2 mt-1.5" id="month-selector-btns">
+            <button type="button" onclick="selectMois(1)" id="btn-m-1" class="month-btn px-4 py-2 rounded-xl font-black text-xs transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow">
+              <i class="fa-solid fa-calendar-check"></i>
+              <span>Mois 1 (Janvier)</span>
+            </button>
+            <button type="button" onclick="selectMois(2)" id="btn-m-2" class="month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 2 (Février)</span>
+            </button>
+            <button type="button" onclick="selectMois(3)" id="btn-m-3" class="month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 3 (Mars)</span>
+            </button>
+            <button type="button" onclick="selectMois(4)" id="btn-m-4" class="month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 4 (Avril)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-end">
+          <div class="text-right">
+            <div class="text-[11px] text-slate-500">Coefficient Score :</div>
+            <div class="font-black text-sm text-indigo-700" id="badge-mois-coef">Mois 1 : Coeff x1</div>
+          </div>
+          <button type="button" onclick="switchTab('recap')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition">
+            <i class="fa-solid fa-table-list"></i>
+            <span>Voir le Récap Global</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- BANDEAU D'ÉTAT DU MOIS ACTIF -->
+      <div id="banner-mois-status" class="bg-indigo-50/80 border border-indigo-200 p-3.5 rounded-2xl text-xs text-indigo-950 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center space-x-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500 shrink-0"></span>
+          <span id="txt-mois-contexte"><strong>Mois 1 (Janvier) :</strong> Clôturé. Consommation du stock initial (110k kg liège @ 0,50€, 7,5k grains @ 0,56€, 3k bouchons @ 12€). Coût de revient moyen : 9,49 € / lot.</span>
+        </div>
+        <span class="text-[11px] bg-white text-indigo-700 font-bold px-2.5 py-1 rounded-lg border border-indigo-200" id="badge-stock-dispo-mois">12 200 lots dispo</span>
+      </div>
+
       <!-- BARRE RÉGLABLE & SIMULATEUR EXPRESS PRIX -> BÉNÉFICE -->
       <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 shadow-xl border border-indigo-500/30 space-y-4">
         
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
           <div class="flex items-center space-x-2">
-            <span class="bg-emerald-400 text-slate-950 font-black px-2.5 py-1 rounded text-xs shadow"><i class="fa-solid fa-sliders mr-1"></i> BARRE RÉGLABLE</span>
+            <span class="bg-emerald-400 text-slate-950 font-black px-2.5 py-1 rounded text-xs shadow"><i class="fa-solid fa-sliders mr-1"></i> CURSEUR INTERACTIF</span>
             <div>
-              <h3 class="text-base font-black text-white">Simulateur Rapide : Ajustez le prix de vente et visualisez le bénéfice</h3>
-              <p class="text-[11px] text-slate-300">Comparez en direct la rentabilité en <strong>Mois 1</strong> (stock initial @ 9,49€) et <strong>Mois 2</strong> (livraison commande @ 8,43€)</p>
+              <h3 class="text-base font-black text-white">Ajustez le prix de vente et visualisez le bénéfice net direct</h3>
+              <p class="text-[11px] text-slate-300">Testez différents scénarios de prix pour le <strong id="lbl-curseur-mois">Mois 1</strong></p>
             </div>
           </div>
           <button type="button" onclick="appliquerPrixSlider()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs flex items-center space-x-2 shadow-lg hover:scale-105 transition">
@@ -133,7 +194,7 @@
             </div>
             <input type="range" id="inp-slider-prix" min="18.0" max="25.0" step="0.1" value="21.5" class="w-full accent-emerald-400 h-2 bg-slate-700 rounded-lg cursor-pointer" oninput="updatePriceSlider()">
             <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
-              <span>18,00 € (Déficitaire)</span>
+              <span>18,00 € (Déficit)</span>
               <span>20,00 € (Seuil)</span>
               <span>21,50 € (Optimal)</span>
               <span>25,00 € (Max)</span>
@@ -149,71 +210,43 @@
               </span>
               <span class="bg-amber-400 text-slate-950 font-black text-base px-3 py-0.5 rounded-lg shadow" id="slider-disp-volume">10 000 lots</span>
             </div>
-            <input type="range" id="inp-slider-volume" min="5000" max="12200" step="100" value="10000" class="w-full accent-amber-400 h-2 bg-slate-700 rounded-lg cursor-pointer" oninput="updatePriceSlider()">
+            <input type="range" id="inp-slider-volume" min="5000" max="15000" step="100" value="10000" class="w-full accent-amber-400 h-2 bg-slate-700 rounded-lg cursor-pointer" oninput="updatePriceSlider()">
             <div class="flex justify-between text-[10px] text-slate-400 font-semibold">
               <span>5 000 lots</span>
               <span>10 000 lots (Cible)</span>
-              <span>12 200 lots (Max stock M1)</span>
+              <span>15 000 lots</span>
             </div>
           </div>
 
         </div>
 
-        <!-- RÉSULTATS COMPARATIFS LIVE M1 vs M2 -->
+        <!-- RÉSULTAT LIVE DU SLIDER -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          
-          <!-- RÉSULTAT MOIS 1 -->
           <div class="bg-slate-800/80 border border-slate-700 p-3.5 rounded-xl space-y-2">
             <div class="flex items-center justify-between">
               <span class="font-bold text-slate-300 flex items-center space-x-1.5">
                 <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-                <span>MOIS 1 (Stock de départ consommé)</span>
+                <span>MOIS 1 (Stock départ • CMP 9,49 €)</span>
               </span>
-              <span class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded">CMP: 9,49 €/lot</span>
-            </div>
-            <div class="flex justify-between items-baseline">
-              <span class="text-slate-400">Bénéfice Net estimé :</span>
               <strong id="slider-out-rn-m1" class="text-xl font-black text-emerald-400">+4 252 €</strong>
             </div>
             <div class="flex justify-between text-[11px] text-slate-400 border-t border-slate-700 pt-1.5">
-              <span>Point mort (Seuil de rentabilité) :</span>
-              <strong id="slider-out-pm-m1" class="text-indigo-300">9 575 lots</strong>
+              <span>Point mort : <strong id="slider-out-pm-m1" class="text-indigo-300">9 575 lots</strong></span>
+              <span>Marge nette : <strong class="text-slate-200">~0,43 €/lot</strong></span>
             </div>
           </div>
 
-          <!-- RÉSULTAT MOIS 2 -->
           <div class="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-xl space-y-2">
             <div class="flex items-center justify-between">
               <span class="font-bold text-emerald-300 flex items-center space-x-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>MOIS 2 (Après livraison commande @ 0,43€)</span>
+                <span>MOIS 2+ (Après livraison • Coût 8,43 €)</span>
               </span>
-              <span class="text-[10px] bg-emerald-500/30 text-emerald-200 px-2 py-0.5 rounded font-bold">Coût: 8,43 €/lot (-1,06€)</span>
-            </div>
-            <div class="flex justify-between items-baseline">
-              <span class="text-emerald-200">Bénéfice Net estimé :</span>
               <strong id="slider-out-rn-m2" class="text-xl font-black text-emerald-300">+14 884 €</strong>
             </div>
             <div class="flex justify-between text-[11px] text-emerald-300/80 border-t border-emerald-800/60 pt-1.5">
-              <span>Point mort (Seuil de rentabilité) :</span>
-              <strong id="slider-out-pm-m2" class="text-emerald-300">8 653 lots</strong>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- BANDEAU EXPLICATION STOCKS & LIVRAISON M+1 -->
-        <div class="bg-indigo-900/40 border border-indigo-400/20 p-3 rounded-xl text-[11px] text-slate-300 space-y-1">
-          <div class="flex items-center space-x-2 font-bold text-indigo-200">
-            <i class="fa-solid fa-circle-info text-indigo-400"></i>
-            <span>Règle essentielle sur les stocks et les délais de livraison :</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 text-[11px]">
-            <div>
-              <strong>📦 En Mois 1 (Ressources mobilisées) :</strong> Vous transformez le stock initial (110 000 kg liège @ 0,50€ + 7 500 kg grains @ 0,56€ + 3 000 bouchons @ 12€) = <strong>12 200 lots disponibles</strong> à un Coût Moyen Pondéré de <strong>9,49 € / lot</strong>.
-            </div>
-            <div>
-              <strong>🚚 Commande Producteur (150 000 kg @ 0,43€) :</strong> Elle est passée en Mois 1 mais arrive à <strong>M+1 (Mois 2)</strong> et payée en Mois 3 (0 € sorti en M1). En Mois 2, le coût tombe à <strong>8,43 € / lot</strong>, ce qui propulse votre bénéfice net !
+              <span>Point mort : <strong id="slider-out-pm-m2" class="text-emerald-300">8 653 lots</strong></span>
+              <span>Gain de coût : <strong class="text-emerald-200">+1,06 €/lot</strong></span>
             </div>
           </div>
         </div>
@@ -222,7 +255,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- COLONNE GAUCHE (2/3) : LES 3 DÉCISIONS CLÉS -->
+        <!-- COLONNE GAUCHE (2/3) : LES 3 DÉCISIONS CLÉS DU MOIS -->
         <div class="lg:col-span-2 space-y-5">
           
           <!-- ÉTAPE 1 : COMMANDE PRODUCTEUR (PHASE 1) -->
@@ -232,14 +265,14 @@
                 <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
                 <span>Phase 1 : Commande au Producteur Espagnol</span>
               </div>
-              <span class="text-[11px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded">Livré en M2 • Payé en M3 (0 € décaissé en M1)</span>
+              <span id="txt-livraison-delai-badge" class="text-[11px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded">Livré en M+1 • Payé à 30j après livraison</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Liège à broyer commandé :</label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Liège brut à broyer commandé :</label>
                 <div class="relative">
-                  <input type="number" id="inp-commande-liege" value="150000" step="5000" min="35000" class="w-full pl-3 pr-10 py-2 border rounded-xl font-bold text-slate-900 text-sm" onchange="runSimulation()">
+                  <input type="number" id="inp-commande-liege" value="150000" step="5000" min="35000" class="w-full pl-3 pr-10 py-2 border rounded-xl font-bold text-slate-900 text-sm" onchange="handleInputChange()">
                   <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">kg</span>
                 </div>
                 <!-- BOUTONS PALIERS -->
@@ -261,8 +294,8 @@
                   <strong id="out-montant-commande">64 500 €</strong>
                 </div>
                 <div class="flex justify-between border-t pt-1 font-semibold text-emerald-800">
-                  <span>Impact trésorerie M1 :</span>
-                  <span>0 € (Payable en M3)</span>
+                  <span id="lbl-impact-treso-cmd">Décaissement ce mois :</span>
+                  <span id="val-impact-treso-cmd">0 € (Payable à 30j de livraison)</span>
                 </div>
               </div>
             </div>
@@ -275,7 +308,7 @@
                 <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
                 <span>Phase 2 : Production Usine (Transformation)</span>
               </div>
-              <span class="text-[11px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded">Moulins & Mouleuses</span>
+              <span id="txt-stock-entrant-resume" class="text-[11px] bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded">Stock entrant disponible</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
@@ -285,7 +318,7 @@
                   <span class="font-bold text-slate-700">1. Broyer le liège brut</span>
                   <span class="text-[10px] text-slate-500">Rdt 35% • 0,02€/kg</span>
                 </div>
-                <input type="range" id="rng-broyage" min="0" max="110000" step="5000" value="110000" class="w-full" oninput="syncBroyage(this.value)">
+                <input type="range" id="rng-broyage" min="0" max="150000" step="5000" value="110000" class="w-full" oninput="syncBroyage(this.value)">
                 <div class="flex justify-between text-xs">
                   <span class="text-slate-500">Liège broyé :</span>
                   <strong id="val-broyage-kg" class="text-slate-900">110 000 kg</strong>
@@ -302,7 +335,7 @@
                   <span class="font-bold text-slate-700">2. Mouler les grains</span>
                   <span class="text-[10px] text-slate-500">Rdt 20% • 0,40€/kg</span>
                 </div>
-                <input type="range" id="rng-moulage" min="0" max="46000" step="1000" value="46000" class="w-full" oninput="syncMoulage(this.value)">
+                <input type="range" id="rng-moulage" min="0" max="60000" step="1000" value="46000" class="w-full" oninput="syncMoulage(this.value)">
                 <div class="flex justify-between text-xs">
                   <span class="text-slate-500">Grains moulés :</span>
                   <strong id="val-moulage-kg" class="text-slate-900">46 000 kg</strong>
@@ -316,9 +349,9 @@
 
             <!-- Bilan du stock disponible -->
             <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 flex flex-wrap items-center justify-between text-xs text-indigo-950 gap-2">
-              <div>Stock initial : <strong>3 000 lots</strong> + Production : <strong id="out-txt-prod">9 200 lots</strong></div>
+              <div>Stock début : <strong id="out-txt-stock-debut">3 000 lots</strong> + Production : <strong id="out-txt-prod">9 200 lots</strong></div>
               <div class="bg-white px-3 py-1 rounded-lg border border-indigo-200 font-black text-indigo-700 text-sm">
-                Total Bouchons Disponibles à la Vente : <span id="out-total-dispo">12 200</span> lots
+                Total Bouchons Disponibles : <span id="out-total-dispo">12 200</span> lots
               </div>
             </div>
           </div>
@@ -333,107 +366,119 @@
               <span id="badge-total-vendu" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">10 000 lots vendus</span>
             </div>
 
-            <p class="text-xs text-slate-500">Vous négociez directement avec les 4 équipes distributeurs : Quantité, Prix, Délai de paiement et Mode de transport pris en charge.</p>
+            <p class="text-xs text-slate-500">Choisissez pour chaque équipe distributeur : la quantité de lots, le prix convenu, le délai de paiement et le mode de transport.</p>
 
             <!-- TABLE SIMPLE DES VENTES -->
             <div class="space-y-2 text-xs pt-1">
               
               <!-- D1 -->
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800">Équipe Distributeur 1</div>
+                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span>Équipe Distributeur 1</span>
+                </div>
                 <div class="flex flex-wrap items-center gap-2">
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d1-lots" value="3000" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="runSimulation()">
+                    <input type="number" id="v-d1-lots" value="3000" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
                   </label>
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d1-prix" value="21.5" step="0.5" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="runSimulation()">
+                    <input type="number" id="v-d1-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
                   </label>
-                  <select id="v-d1-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
+                  <select id="v-d1-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
                     <option value="0" selected>Comptant</option>
                     <option value="30">30 jours</option>
                   </select>
-                  <select id="v-d1-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
-                    <option value="camion" selected>Camion (1980 lots / 1721€)</option>
-                    <option value="train">Train (2640 lots / 2768€)</option>
-                    <option value="bateau">Bateau (5760 lots / 4668€)</option>
-                    <option value="avion">Avion (60 lots / 79€)</option>
+                  <select id="v-d1-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
+                    <option value="camion" selected>🚚 Camion (1 980 / 1 721€)</option>
+                    <option value="train">🚆 Train (2 640 / 2 768€)</option>
+                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
+                    <option value="avion">✈️ Avion (60 / 79€)</option>
                   </select>
                 </div>
               </div>
 
               <!-- D2 -->
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800">Équipe Distributeur 2</div>
+                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span>Équipe Distributeur 2</span>
+                </div>
                 <div class="flex flex-wrap items-center gap-2">
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d2-lots" value="3000" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="runSimulation()">
+                    <input type="number" id="v-d2-lots" value="3000" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
                   </label>
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d2-prix" value="21.5" step="0.5" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="runSimulation()">
+                    <input type="number" id="v-d2-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
                   </label>
-                  <select id="v-d2-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
+                  <select id="v-d2-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
                     <option value="0" selected>Comptant</option>
                     <option value="30">30 jours</option>
                   </select>
-                  <select id="v-d2-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
-                    <option value="camion" selected>Camion (1980 lots / 1721€)</option>
-                    <option value="train">Train (2640 lots / 2768€)</option>
-                    <option value="bateau">Bateau (5760 lots / 4668€)</option>
-                    <option value="avion">Avion (60 lots / 79€)</option>
+                  <select id="v-d2-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
+                    <option value="camion" selected>🚚 Camion (1 980 / 1 721€)</option>
+                    <option value="train">🚆 Train (2 640 / 2 768€)</option>
+                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
+                    <option value="avion">✈️ Avion (60 / 79€)</option>
                   </select>
                 </div>
               </div>
 
               <!-- D3 -->
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800">Équipe Distributeur 3</div>
+                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span>Équipe Distributeur 3</span>
+                </div>
                 <div class="flex flex-wrap items-center gap-2">
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d3-lots" value="2500" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="runSimulation()">
+                    <input type="number" id="v-d3-lots" value="2500" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
                   </label>
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d3-prix" value="21.0" step="0.5" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="runSimulation()">
+                    <input type="number" id="v-d3-prix" value="21.0" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
                   </label>
-                  <select id="v-d3-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
+                  <select id="v-d3-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
                     <option value="0">Comptant</option>
                     <option value="30" selected>30 jours</option>
                   </select>
-                  <select id="v-d3-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
-                    <option value="train" selected>Train (2640 lots / 2768€)</option>
-                    <option value="camion">Camion (1980 lots / 1721€)</option>
-                    <option value="bateau">Bateau (5760 lots / 4668€)</option>
-                    <option value="avion">Avion (60 lots / 79€)</option>
+                  <select id="v-d3-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
+                    <option value="train" selected>🚆 Train (2 640 / 2 768€)</option>
+                    <option value="camion">🚚 Camion (1 980 / 1 721€)</option>
+                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
+                    <option value="avion">✈️ Avion (60 / 79€)</option>
                   </select>
                 </div>
               </div>
 
               <!-- D4 -->
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800">Équipe Distributeur 4</div>
+                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span>Équipe Distributeur 4</span>
+                </div>
                 <div class="flex flex-wrap items-center gap-2">
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d4-lots" value="1500" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="runSimulation()">
+                    <input type="number" id="v-d4-lots" value="1500" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
                   </label>
                   <label class="flex items-center space-x-1">
                     <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d4-prix" value="21.0" step="0.5" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="runSimulation()">
+                    <input type="number" id="v-d4-prix" value="21.0" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
                   </label>
-                  <select id="v-d4-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
+                  <select id="v-d4-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
                     <option value="0" selected>Comptant</option>
                     <option value="30">30 jours</option>
                   </select>
-                  <select id="v-d4-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="runSimulation()">
-                    <option value="camion" selected>Camion (1980 lots / 1721€)</option>
-                    <option value="train">Train (2640 lots / 2768€)</option>
-                    <option value="bateau">Bateau (5760 lots / 4668€)</option>
-                    <option value="avion">Avion (60 lots / 79€)</option>
+                  <select id="v-d4-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
+                    <option value="camion" selected>🚚 Camion (1 980 / 1 721€)</option>
+                    <option value="train">🚆 Train (2 640 / 2 768€)</option>
+                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
+                    <option value="avion">✈️ Avion (60 / 79€)</option>
                   </select>
                 </div>
               </div>
@@ -443,14 +488,14 @@
 
         </div>
 
-        <!-- COLONNE DROITE (1/3) : SYNTHÈSE COMPTABLE & TRÉSORERIE DIRECTE -->
+        <!-- COLONNE DROITE (1/3) : SYNTHÈSE COMPTABLE & TRÉSORERIE DU MOIS -->
         <div class="space-y-5">
           
-          <!-- BILAN FINANCIER -->
+          <!-- BILAN FINANCIER DU MOIS -->
           <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-200 space-y-4">
             <h3 class="font-bold text-slate-900 text-sm flex items-center justify-between border-b pb-2">
               <span>Compte de Résultat</span>
-              <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold">Mois 1</span>
+              <span id="badge-pnl-mois" class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold">Mois 1</span>
             </h3>
 
             <div class="space-y-2 text-xs">
@@ -461,7 +506,7 @@
 
               <div class="pl-2 space-y-1 text-slate-600 border-l-2 border-slate-200">
                 <div class="flex justify-between">
-                  <span>- Coût fabrication (<span id="txt-cout-unitaire">9,49</span> €/lot CMP) :</span>
+                  <span>- Coût matières vendues (<span id="txt-cout-unitaire">9,49</span> €/lot CMP) :</span>
                   <span id="out-cout-fab">-94 918 €</span>
                 </div>
                 <div class="flex justify-between">
@@ -499,68 +544,66 @@
               </div>
 
               <div class="border-t-2 pt-2 flex justify-between items-center font-black">
-                <span class="text-slate-800">RÉSULTAT NET (Mois 1)</span>
-                <span id="out-rn" class="text-emerald-600 text-base font-black">+2 192 €</span>
+                <span class="text-slate-800">RÉSULTAT NET DU MOIS</span>
+                <span id="out-rn" class="text-emerald-600 text-base font-black">+471 €</span>
               </div>
 
-              <div class="text-[11px] text-slate-500 text-right pt-0.5">
-                Point mort M1 : <strong id="out-seuil-rentabilite" class="text-indigo-700">~9 780 lots</strong>
+              <div class="flex justify-between text-[11px] text-slate-500 pt-0.5">
+                <span>Résultat Net Cumulé :</span>
+                <strong id="out-rn-cumule" class="text-emerald-700 font-bold">+471 €</strong>
               </div>
-
-              <!-- PROJECTION MOIS 2 -->
-              <div class="mt-3 bg-indigo-50 border border-indigo-200 p-2.5 rounded-xl text-[11px] text-indigo-950 space-y-1">
-                <div class="flex justify-between font-bold">
-                  <span class="flex items-center space-x-1">
-                    <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i>
-                    <span>Projection Mois 2 (avec commande à 0,43€) :</span>
-                  </span>
-                </div>
-                <div class="flex justify-between items-center pt-0.5">
-                  <span class="text-slate-600">Coût unitaire M2 : <strong>8,43 € / lot</strong> (-1,06€)</span>
-                  <span>RN estimé : <strong id="out-rn-m2" class="text-emerald-700 font-bold">+11 104 €</strong></span>
-                </div>
+              <div class="text-[11px] text-slate-500 text-right">
+                Point mort : <strong id="out-seuil-rentabilite" class="text-indigo-700">~9 575 lots</strong>
               </div>
             </div>
           </div>
 
-          <!-- TRÉSORERIE -->
+          <!-- TRÉSORERIE DU MOIS -->
           <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-200 space-y-3">
             <h3 class="font-bold text-slate-900 text-sm flex items-center justify-between border-b pb-2">
-              <span>Trésorerie Fin de Mois</span>
-              <span id="badge-treso" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Saine</span>
+              <span>Trésorerie du Mois</span>
+              <span id="badge-treso" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Trésorerie Saine</span>
             </h3>
 
             <div class="space-y-1.5 text-xs text-slate-600">
               <div class="flex justify-between">
-                <span>Capital de départ :</span>
-                <strong>500 000 €</strong>
+                <span>Solde en début de mois :</span>
+                <strong id="out-treso-debut">500 000 €</strong>
               </div>
               <div class="flex justify-between text-emerald-700 font-semibold">
                 <span>+ Ventes encaissées comptant :</span>
-                <span id="out-encaissement">+160 500 €</span>
+                <span id="out-encaissement-comptant">+160 500 €</span>
               </div>
-              <div class="flex justify-between text-red-600">
+              <div class="flex justify-between text-emerald-700 font-semibold" id="row-creances-recues">
+                <span>+ Créances 30j encaissées :</span>
+                <span id="out-encaissement-creances">+0 €</span>
+              </div>
+              <div class="flex justify-between text-red-600" id="row-dette-stock-init">
                 <span>- Dette stock départ (fin M1) :</span>
-                <span>-95 200 €</span>
+                <span id="out-decaisse-dette-init">-95 200 €</span>
               </div>
-              <div class="flex justify-between text-red-600">
+              <div class="flex justify-between text-red-600" id="row-investissement-machines">
                 <span>- Investissement machines :</span>
-                <span>-30 000 €</span>
+                <span id="out-decaisse-machines">-30 000 €</span>
               </div>
               <div class="flex justify-between text-red-600">
                 <span>- Salaires + Structure :</span>
                 <span>-95 000 €</span>
               </div>
               <div class="flex justify-between text-red-600">
-                <span>- Coûts variables décaissés :</span>
-                <span id="out-decaissements-var">-41 012 €</span>
+                <span>- Frais variables décaissés :</span>
+                <span id="out-decaissements-var">-42 711 €</span>
+              </div>
+              <div class="flex justify-between text-red-600" id="row-decaisse-fournisseur">
+                <span>- Paiement commande producteur :</span>
+                <span id="out-decaisse-fournisseur">0 €</span>
               </div>
             </div>
 
             <div class="bg-slate-900 text-white p-3 rounded-xl flex justify-between items-center mt-2">
               <div>
-                <div class="text-[10px] text-slate-400 font-semibold">SOLDE DISPONIBLE</div>
-                <div id="out-treso-finale" class="text-lg font-black text-emerald-400">399 288 €</div>
+                <div class="text-[10px] text-slate-400 font-semibold">SOLDE FIN DU MOIS</div>
+                <div id="out-treso-finale" class="text-lg font-black text-emerald-400">397 589 €</div>
               </div>
               <i class="fa-solid fa-shield-halved text-2xl text-emerald-400"></i>
             </div>
@@ -568,27 +611,37 @@
 
           <!-- POINTS BARÈME OFFICIEL -->
           <div class="bg-gradient-to-br from-indigo-950 to-slate-900 text-white rounded-2xl p-5 card-shadow space-y-2.5 text-xs">
-            <h4 class="font-bold uppercase tracking-wider text-indigo-300 flex items-center space-x-2">
-              <i class="fa-solid fa-medal text-amber-400"></i>
-              <span>Points au Barème Officiel</span>
+            <h4 class="font-bold uppercase tracking-wider text-indigo-300 flex items-center justify-between">
+              <span class="flex items-center space-x-1.5"><i class="fa-solid fa-medal text-amber-400"></i><span>Points Barème Vinego</span></span>
+              <span id="out-badge-coef" class="text-[10px] bg-indigo-500/30 text-indigo-200 px-2 py-0.5 rounded">Coeff x1</span>
             </h4>
             <div class="flex justify-between">
-              <span>Résultat Net (1er place x2) :</span>
+              <span>Résultat Net (1ère place x2) :</span>
               <strong id="out-pts-rn" class="text-emerald-300">20 pts</strong>
             </div>
             <div class="flex justify-between">
-              <span>Chiffre d'Affaires (1er place x1) :</span>
+              <span>Chiffre d'Affaires (1ère place x1) :</span>
               <strong id="out-pts-ca" class="text-amber-300">10 pts</strong>
             </div>
             <div class="flex justify-between">
-              <span>Pénalité Tréso (< 0 €) :</span>
+              <span>Pénalité Tréso (&lt; 0 €) :</span>
               <strong id="out-pts-penalite" class="text-slate-300">0 pt</strong>
             </div>
             <div class="border-t border-white/20 pt-2 flex justify-between items-center font-bold text-sm">
-              <span>TOTAL MOIS 1 :</span>
-              <span id="out-pts-total" class="text-xl text-emerald-400 font-black">30 / 30 pts</span>
+              <span id="lbl-pts-mois">SCORE MOIS 1 :</span>
+              <span id="out-pts-total" class="text-xl text-emerald-400 font-black">30 pts</span>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-300 border-t border-white/10 pt-1">
+              <span>Score Total Cumulé :</span>
+              <strong id="out-pts-cumule" class="text-amber-300 font-bold">300 pts</strong>
             </div>
           </div>
+
+          <!-- BOUTON NAVIGATION MOIS SUIVANT -->
+          <button type="button" id="btn-next-mois" onclick="passerMoisSuivant()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-3.5 rounded-2xl text-xs flex items-center justify-center space-x-2 shadow-lg transition">
+            <span>Passer au Mois 2 (Février)</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
 
         </div>
 
@@ -598,7 +651,99 @@
 
 
     <!-- ========================================================= -->
-    <!-- ONGLET 2 : CHALLENGE IDENTITÉ (ÉQUIPE 18 GROUPE C) -->
+    <!-- ONGLET 2 : GRAND RÉCAPITULATIF MOIS PAR MOIS -->
+    <!-- ========================================================= -->
+    <div id="tab-recap" class="tab-content hidden space-y-6">
+      
+      <!-- EN-TÊTE RÉCAPITULATIF -->
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-200 space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-4">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold mb-1">
+              <i class="fa-solid fa-chart-line text-indigo-600"></i>
+              <span>Tableau de Bord Exécutif</span>
+            </div>
+            <h2 class="text-xl font-black text-slate-900">Récapitulatif Complet Mois par Mois</h2>
+            <p class="text-xs text-slate-500">Visualisez la trajectoire complète de SuberTech Industries (Mois 1 à 4) : achats, production, ventes par distributeur, transport et finances.</p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition">
+              <i class="fa-solid fa-print"></i>
+              <span>Imprimer / PDF</span>
+            </button>
+            <button onclick="copierRecapTexte()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition">
+              <i class="fa-solid fa-copy"></i>
+              <span>Copier le Bilan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 CARTES KPIS GLOBAUX -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+          <div class="bg-indigo-50/70 border border-indigo-100 p-3.5 rounded-2xl">
+            <div class="text-[10px] uppercase font-bold text-indigo-600 tracking-wider">Chiffre d'Affaires Cumulé</div>
+            <div id="kpi-ca-cumul" class="text-lg md:text-xl font-black text-slate-900 mt-0.5">890 250 €</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="kpi-lots-cumul">40 000 lots vendus</div>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-100 p-3.5 rounded-2xl">
+            <div class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Résultat Net Cumulé</div>
+            <div id="kpi-rn-cumul" class="text-lg md:text-xl font-black text-emerald-600 mt-0.5">+50 014 €</div>
+            <div class="text-[10px] text-emerald-700/80 mt-0.5">Marge globale sécurisée</div>
+          </div>
+          <div class="bg-blue-50/70 border border-blue-100 p-3.5 rounded-2xl">
+            <div class="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Trésorerie Finale (Fin M4)</div>
+            <div id="kpi-treso-fin" class="text-lg md:text-xl font-black text-blue-900 mt-0.5">567 959 €</div>
+            <div class="text-[10px] text-blue-700/80 mt-0.5">Zéro découvert</div>
+          </div>
+          <div class="bg-amber-50/70 border border-amber-100 p-3.5 rounded-2xl">
+            <div class="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Score Total Cumulé</div>
+            <div id="kpi-score-cumul" class="text-lg md:text-xl font-black text-amber-600 mt-0.5">300 / 300 pts</div>
+            <div class="text-[10px] text-amber-800/80 mt-0.5">Coeffs x1, x2, x3, x4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LE GRAND TABLEAU COMPARATIF MOIS PAR MOIS -->
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-200 space-y-4 overflow-x-auto">
+        <h3 class="font-black text-slate-900 text-sm flex items-center space-x-2">
+          <i class="fa-solid fa-table text-indigo-600"></i>
+          <span>Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à 4)</span>
+        </h3>
+
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-900 text-white border-b">
+              <th class="p-3 font-bold rounded-l-xl">POSTE DE GESTION</th>
+              <th class="p-3 text-right font-bold">MOIS 1</th>
+              <th class="p-3 text-right font-bold">MOIS 2</th>
+              <th class="p-3 text-right font-bold">MOIS 3</th>
+              <th class="p-3 text-right font-bold">MOIS 4</th>
+              <th class="p-3 text-right font-black bg-indigo-900 text-amber-300 rounded-r-xl">TOTAL CUMULÉ</th>
+            </tr>
+          </thead>
+          <tbody id="recap-table-body" class="divide-y divide-slate-200">
+            <!-- Rempli dynamiquement en JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOUTONS D'ÉDITION DIRECTE DU MOIS -->
+      <div class="bg-white rounded-2xl p-4 card-shadow border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <span class="font-semibold text-slate-600">Modifier les décisions d'un mois spécifique :</span>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="selectMois(1); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 1</button>
+          <button onclick="selectMois(2); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 2</button>
+          <button onclick="selectMois(3); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 3</button>
+          <button onclick="selectMois(4); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 4</button>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- ONGLET 3 : CHALLENGE IDENTITÉ (ÉQUIPE 18 GROUPE C) -->
     <!-- ========================================================= -->
     <div id="tab-challenge" class="tab-content hidden space-y-6">
       
@@ -694,7 +839,7 @@
   <footer class="bg-slate-900 text-slate-400 py-4 border-t border-slate-800 text-center text-xs">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
       <div>SuberTech Industries • <strong>Équipe 18 (Groupe C)</strong> © 2026 • Simulation Vinego (Sciado Partenaires)</div>
-      <div class="text-slate-500">Prêt pour déploiement GitHub Pages • Persistance collaborative activée</div>
+      <div class="text-slate-500">Prêt pour déploiement GitHub Pages • Persistance multi-jours collaborative</div>
     </div>
   </footer>
 
@@ -737,22 +882,72 @@
       }
     }
 
+    function selectMois(m) {
+      appState.moisActif = m;
+      saveToLocalStorage();
+
+      // Mettre à jour l'état visuel des boutons de mois
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById('btn-m-' + i);
+        if (btn) {
+          if (i === m) {
+            btn.className = 'month-btn px-4 py-2 rounded-xl font-black text-xs transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow';
+          } else {
+            btn.className = 'month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200';
+          }
+        }
+      }
+
+      // Mettre à jour les badges et labels du mois
+      document.getElementById('badge-mois-coef').innerText = `Mois ${m} : Coeff x${m}`;
+      document.getElementById('badge-pnl-mois').innerText = `Mois ${m}`;
+      document.getElementById('lbl-pts-mois').innerText = `SCORE MOIS ${m} :`;
+      document.getElementById('out-badge-coef').innerText = `Coeff x${m}`;
+      document.getElementById('lbl-curseur-mois').innerText = `Mois ${m}`;
+
+      const btnNext = document.getElementById('btn-next-mois');
+      if (m < 4) {
+        btnNext.innerHTML = `<span>Passer au Mois ${m + 1}</span> <i class="fa-solid fa-arrow-right"></i>`;
+      } else {
+        btnNext.innerHTML = `<span>Voir le Récapitulatif Final</span> <i class="fa-solid fa-trophy text-amber-400"></i>`;
+      }
+
+      loadStateIntoUI();
+      runSimulation();
+      updatePriceSlider();
+    }
+
+    function passerMoisSuivant() {
+      const cur = appState.moisActif || 1;
+      if (cur < 4) {
+        selectMois(cur + 1);
+        showToast(`Passage au Mois ${cur + 1} ! Stocks et livraisons reportés.`);
+      } else {
+        switchTab('recap');
+        showToast('Voici le récapitulatif complet de votre simulation !');
+      }
+    }
+
     function syncBroyage(val) {
       document.getElementById('val-broyage-kg').innerText = Number(val).toLocaleString('fr-FR') + ' kg';
-      runSimulation();
+      handleInputChange();
     }
 
     function syncMoulage(val) {
       document.getElementById('val-moulage-kg').innerText = Number(val).toLocaleString('fr-FR') + ' kg';
-      runSimulation();
+      handleInputChange();
     }
 
     function setLiege(kg) {
       document.getElementById('inp-commande-liege').value = kg;
-      runSimulation();
+      handleInputChange();
     }
 
-    function runSimulation() {
+    function handleInputChange() {
+      const m = appState.moisActif || 1;
+      if (!appState.moisData) appState = getDefaultState();
+      if (!appState.moisData[m]) appState.moisData[m] = getDefaultMonthData(m);
+
       const commandeLiegeKg = Number(document.getElementById('inp-commande-liege').value) || 0;
       const liegeABroyerKg = Number(document.getElementById('rng-broyage').value) || 0;
       const grainsAMoulerKg = Number(document.getElementById('rng-moulage').value) || 0;
@@ -777,64 +972,95 @@
       const v4Delai = Number(document.getElementById('v-d4-delai').value) || 0;
       const v4Transport = document.getElementById('v-d4-transport').value;
 
-      appState.commandeLiegeKg = commandeLiegeKg;
-      appState.liegeABroyerKg = liegeABroyerKg;
-      appState.grainsAMoulerKg = grainsAMoulerKg;
-      appState.ventes = [
-        { client: 'D1', lots: v1Lots, prix: v1Prix, delai: v1Delai, transport: v1Transport },
-        { client: 'D2', lots: v2Lots, prix: v2Prix, delai: v2Delai, transport: v2Transport },
-        { client: 'D3', lots: v3Lots, prix: v3Prix, delai: v3Delai, transport: v3Transport },
-        { client: 'D4', lots: v4Lots, prix: v4Prix, delai: v4Delai, transport: v4Transport }
-      ];
+      appState.moisData[m] = {
+        commandeLiegeKg,
+        liegeABroyerKg,
+        grainsAMoulerKg,
+        ventes: [
+          { client: 'D1', lots: v1Lots, prix: v1Prix, delai: v1Delai, transport: v1Transport },
+          { client: 'D2', lots: v2Lots, prix: v2Prix, delai: v2Delai, transport: v2Transport },
+          { client: 'D3', lots: v3Lots, prix: v3Prix, delai: v3Delai, transport: v3Transport },
+          { client: 'D4', lots: v4Lots, prix: v4Prix, delai: v4Delai, transport: v4Transport }
+        ]
+      };
 
       saveToLocalStorage();
+      runSimulation();
+    }
 
+    function runSimulation() {
       const res = calculateSimulation(appState);
+      const m = appState.moisActif || 1;
+      const all = res.allMonths;
 
-      // MAJ Interface
+      // MAJ Phase 1 Commande
       const remisePct = Math.round((1 - (res.prixLiegeKg / 0.50)) * 100);
       document.getElementById('out-prix-liege').innerText = res.prixLiegeKg.toFixed(2) + ' € / kg' + (remisePct > 0 ? ` (-${remisePct}%)` : ' (Base)');
       document.getElementById('out-montant-commande').innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €';
 
+      const lblTresoCmd = document.getElementById('lbl-impact-treso-cmd');
+      const valTresoCmd = document.getElementById('val-impact-treso-cmd');
+      lblTresoCmd.innerText = 'Décaissement ce mois :';
+      valTresoCmd.innerText = '0 € (Payable en M' + (m + 2) + ')';
+
+      // MAJ Phase 2 Production
       document.getElementById('out-grains-obtenus').innerText = Math.round(res.grainsProduitsKg).toLocaleString('fr-FR') + ' kg';
       document.getElementById('out-bouchons-produits').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';
       document.getElementById('out-txt-prod').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';
-      document.getElementById('out-total-dispo').innerText = Math.round(res.totalBouchonsDisponibles).toLocaleString('fr-FR');
+      document.getElementById('out-txt-stock-debut').innerText = Math.round(res.stockBouchonsEntrantLots).toLocaleString('fr-FR') + ' lots';
+      document.getElementById('out-total-dispo').innerText = Math.round(res.totalBouchonsDispoLots).toLocaleString('fr-FR');
+      document.getElementById('badge-stock-dispo-mois').innerText = Math.round(res.totalBouchonsDispoLots).toLocaleString('fr-FR') + ' lots dispos';
 
-      // Ventes
+      // Bannière contexte du mois
+      const txtContexte = document.getElementById('txt-mois-contexte');
+      if (m === 1) {
+        txtContexte.innerHTML = `<strong>Mois 1 (Janvier) :</strong> Consommation du stock initial (110k kg liège @ 0,50€, 7,5k grains @ 0,56€, 3k bouchons @ 12€). Coût Moyen Pondéré réel : <strong>${res.cmpBouchonLot.toFixed(2)} € / lot</strong>.`;
+      } else {
+        txtContexte.innerHTML = `<strong>Mois ${m} :</strong> Réception de la commande du mois précédent (<strong>${(res.livraisonRecueKg || 0).toLocaleString('fr-FR')} kg</strong>) + stock restant reporté. CMP unitaire : <strong>${res.cmpBouchonLot.toFixed(2)} € / lot</strong>.`;
+      }
+
+      // MAJ Ventes
       const badgeVendu = document.getElementById('badge-total-vendu');
       badgeVendu.innerText = res.lotsVendusTotal.toLocaleString('fr-FR') + ' lots vendus';
-      if (res.lotsVendusTotal > res.totalBouchonsDisponibles) {
+      if (res.lotsVendusTotal > res.totalBouchonsDispoLots) {
         badgeVendu.className = 'text-xs bg-red-600 text-white font-bold px-2.5 py-0.5 rounded-full animate-pulse';
-        badgeVendu.innerText = 'ATTENTION : Ventes (' + res.lotsVendusTotal + ') > Disponibles (' + res.totalBouchonsDisponibles + ') !';
+        badgeVendu.innerText = 'ATTENTION : Ventes (' + res.lotsVendusTotal + ') > Disponibles (' + res.totalBouchonsDispoLots + ') !';
       } else {
         badgeVendu.className = 'text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full';
       }
 
-      // P&L
+      // P&L du mois actif
       document.getElementById('out-ca').innerText = Math.round(res.caTotal).toLocaleString('fr-FR') + ' €';
-      document.getElementById('txt-cout-unitaire').innerText = res.coutDirectLot.toFixed(2);
+      document.getElementById('txt-cout-unitaire').innerText = res.cmpBouchonLot.toFixed(2);
       document.getElementById('out-cout-fab').innerText = '-' + Math.round(res.coutDirectVendus).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-cout-transport').innerText = '-' + Math.round(res.coutTransportTotal).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-cout-mkt').innerText = '-' + Math.round(res.fraisMarketing).toLocaleString('fr-FR') + ' €';
-      document.getElementById('out-mscv').innerText = Math.round(res.caTotal - res.coutDirectVendus - res.coutTransportTotal - res.fraisMarketing).toLocaleString('fr-FR') + ' €';
+      document.getElementById('out-mscv').innerText = Math.round(res.margeBrute).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-frais-stockage').innerText = '-' + Math.round(res.fraisStockage).toLocaleString('fr-FR') + ' €';
 
       const elRn = document.getElementById('out-rn');
       elRn.innerText = (res.resultatNet >= 0 ? '+' : '') + Math.round(res.resultatNet).toLocaleString('fr-FR') + ' €';
       elRn.className = res.resultatNet >= 0 ? 'text-emerald-600 text-base font-black' : 'text-red-600 text-base font-black';
 
+      document.getElementById('out-rn-cumule').innerText = (res.rnCumule >= 0 ? '+' : '') + Math.round(res.rnCumule).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-seuil-rentabilite').innerText = '~' + Math.round(res.seuilRentabiliteLots).toLocaleString('fr-FR') + ' lots';
-      
-      const elRnM2 = document.getElementById('out-rn-m2');
-      if (elRnM2) {
-        elRnM2.innerText = (res.resultatNetMois2 >= 0 ? '+' : '') + Math.round(res.resultatNetMois2).toLocaleString('fr-FR') + ' €';
-        elRnM2.className = res.resultatNetMois2 >= 0 ? 'text-emerald-700 font-bold' : 'text-red-600 font-bold';
-      }
 
-      // Trésorerie
-      document.getElementById('out-encaissement').innerText = '+' + Math.round(res.encaissementM1).toLocaleString('fr-FR') + ' €';
-      document.getElementById('out-decaissements-var').innerText = '-' + Math.round(res.coutBroyage + res.coutMoulage + res.coutTransportTotal + res.fraisMarketing + res.fraisStockage).toLocaleString('fr-FR') + ' €';
+      // Trésorerie du mois actif
+      document.getElementById('out-treso-debut').innerText = Math.round(res.tresoDebut).toLocaleString('fr-FR') + ' €';
+      document.getElementById('out-encaissement-comptant').innerText = '+' + Math.round(res.encaissementVentesMois).toLocaleString('fr-FR') + ' €';
+      document.getElementById('out-encaissement-creances').innerText = '+' + Math.round(res.encaissementCreancesPrecedentes).toLocaleString('fr-FR') + ' €';
+
+      // Lignes conditionnelles
+      const rowDette = document.getElementById('row-dette-stock-init');
+      const rowMach = document.getElementById('row-investissement-machines');
+      const rowFourn = document.getElementById('row-decaisse-fournisseur');
+
+      rowDette.style.display = m === 1 ? 'flex' : 'none';
+      rowMach.style.display = m === 1 ? 'flex' : 'none';
+      rowFourn.style.display = res.decaissementFournisseur > 0 ? 'flex' : 'none';
+      document.getElementById('out-decaisse-fournisseur').innerText = '-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' €';
+
+      document.getElementById('out-decaissements-var').innerText = '-' + Math.round(res.decaissementVariables).toLocaleString('fr-FR') + ' €';
 
       const elTreso = document.getElementById('out-treso-finale');
       elTreso.innerText = Math.round(res.tresorerieFinMois).toLocaleString('fr-FR') + ' €';
@@ -849,17 +1075,130 @@
         badgeTr.innerText = 'Trésorerie Saine';
       }
 
-      // Barème
+      // Barème du mois actif
       document.getElementById('out-pts-rn').innerText = res.pointsRN + ' pts';
       document.getElementById('out-pts-ca').innerText = res.pointsCA + ' pts';
       document.getElementById('out-pts-penalite').innerText = res.penaliteTreso + ' pt';
-      document.getElementById('out-pts-total').innerText = res.totalPointsMois + ' / 30 pts';
+      document.getElementById('out-pts-total').innerText = res.scoreMois + ' pts';
+      document.getElementById('out-pts-cumule').innerText = all.totaux.scoreCumule + ' pts';
 
-      // Top bar
+      // Top bar header
       document.getElementById('top-rn').innerText = (res.resultatNet >= 0 ? '+' : '') + Math.round(res.resultatNet).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-ca').innerText = Math.round(res.caTotal).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-treso').innerText = Math.round(res.tresorerieFinMois).toLocaleString('fr-FR') + ' €';
-      document.getElementById('top-score').innerText = res.totalPointsMois + ' / 30 pts';
+      document.getElementById('top-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
+      document.getElementById('top-score').innerText = all.totaux.scoreCumule + ' / 300 pts';
+
+      // MAJ Grand Récapitulatif
+      renderRecap(all);
+    }
+
+    function renderRecap(all) {
+      document.getElementById('kpi-ca-cumul').innerText = Math.round(all.totaux.caCumule).toLocaleString('fr-FR') + ' €';
+      document.getElementById('kpi-lots-cumul').innerText = Math.round(all.totaux.lotsCumule).toLocaleString('fr-FR') + ' lots vendus';
+      document.getElementById('kpi-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
+      
+      const finM4Treso = all.moisResults[4] ? all.moisResults[4].tresorerieFinMois : 500000;
+      document.getElementById('kpi-treso-fin').innerText = Math.round(finM4Treso).toLocaleString('fr-FR') + ' €';
+      document.getElementById('kpi-score-cumul').innerText = all.totaux.scoreCumule + ' / 300 pts';
+
+      const tbody = document.getElementById('recap-table-body');
+      if (!tbody) return;
+
+      const r1 = all.moisResults[1];
+      const r2 = all.moisResults[2];
+      const r3 = all.moisResults[3];
+      const r4 = all.moisResults[4];
+
+      const rows = [
+        { section: '📦 APPROVISIONNEMENT & FOURNISSEUR' },
+        { label: 'Liège brut commandé', u: 'kg', v1: r1.commandeLiegeKg, v2: r2.commandeLiegeKg, v3: r3.commandeLiegeKg, v4: r4.commandeLiegeKg, tot: r1.commandeLiegeKg + r2.commandeLiegeKg + r3.commandeLiegeKg + r4.commandeLiegeKg },
+        { label: 'Prix d\'achat liège', u: '€/kg', v1: r1.prixLiegeKg.toFixed(2), v2: r2.prixLiegeKg.toFixed(2), v3: r3.prixLiegeKg.toFixed(2), v4: r4.prixLiegeKg.toFixed(2), tot: '-' },
+        { label: 'Montant facture commande', u: '€', v1: r1.montantCommandeLiege, v2: r2.montantCommandeLiege, v3: r3.montantCommandeLiege, v4: r4.montantCommandeLiege, tot: r1.montantCommandeLiege + r2.montantCommandeLiege + r3.montantCommandeLiege + r4.montantCommandeLiege },
+        { label: 'Livraison reçue du fournisseur', u: 'kg', v1: 0, v2: r2.livraisonRecueKg, v3: r3.livraisonRecueKg, v4: r4.livraisonRecueKg, tot: r2.livraisonRecueKg + r3.livraisonRecueKg + r4.livraisonRecueKg },
+
+        { section: '🏭 PRODUCTION & GESTION DES STOCKS' },
+        { label: 'Liège brut broyé', u: 'kg', v1: r1.liegeABroyerKg, v2: r2.liegeABroyerKg, v3: r3.liegeABroyerKg, v4: r4.liegeABroyerKg, tot: r1.liegeABroyerKg + r2.liegeABroyerKg + r3.liegeABroyerKg + r4.liegeABroyerKg },
+        { label: 'Grains moulés', u: 'kg', v1: r1.grainsAMoulerKg, v2: r2.grainsAMoulerKg, v3: r3.grainsAMoulerKg, v4: r4.grainsAMoulerKg, tot: r1.grainsAMoulerKg + r2.grainsAMoulerKg + r3.grainsAMoulerKg + r4.grainsAMoulerKg },
+        { label: 'Bouchons produits', u: 'lots', v1: r1.bouchonsProduitsLots, v2: r2.bouchonsProduitsLots, v3: r3.bouchonsProduitsLots, v4: r4.bouchonsProduitsLots, tot: r1.bouchonsProduitsLots + r2.bouchonsProduitsLots + r3.bouchonsProduitsLots + r4.bouchonsProduitsLots },
+        { label: 'Coût unitaire moyen (CMP)', u: '€/lot', v1: r1.cmpBouchonLot.toFixed(2), v2: r2.cmpBouchonLot.toFixed(2), v3: r3.cmpBouchonLot.toFixed(2), v4: r4.cmpBouchonLot.toFixed(2), tot: '-' },
+        { label: 'Stock final de bouchons', u: 'lots', v1: r1.stockBouchonsFinLots, v2: r2.stockBouchonsFinLots, v3: r3.stockBouchonsFinLots, v4: r4.stockBouchonsFinLots, tot: r4.stockBouchonsFinLots },
+
+        { section: '🤝 COMMERCIALISATION & VENTES' },
+        { label: 'Lots vendus aux distributeurs', u: 'lots', v1: r1.lotsVendusTotal, v2: r2.lotsVendusTotal, v3: r3.lotsVendusTotal, v4: r4.lotsVendusTotal, tot: all.totaux.lotsCumule },
+        { label: 'Prix moyen de vente', u: '€/lot', v1: r1.prixMoyenLot.toFixed(2), v2: r2.prixMoyenLot.toFixed(2), v3: r3.prixMoyenLot.toFixed(2), v4: r4.prixMoyenLot.toFixed(2), tot: (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) },
+        { label: 'Coûts de transport pris en charge', u: '€', v1: r1.coutTransportTotal, v2: r2.coutTransportTotal, v3: r3.coutTransportTotal, v4: r4.coutTransportTotal, tot: r1.coutTransportTotal + r2.coutTransportTotal + r3.coutTransportTotal + r4.coutTransportTotal },
+        { label: 'Frais de marketing (5%)', u: '€', v1: r1.fraisMarketing, v2: r2.fraisMarketing, v3: r3.fraisMarketing, v4: r4.fraisMarketing, tot: r1.fraisMarketing + r2.fraisMarketing + r3.fraisMarketing + r4.fraisMarketing },
+
+        { section: '📊 COMPTE DE RÉSULTAT (P&L)' },
+        { label: 'CHIFFRE D\'AFFAIRES', u: '€', highlight: true, v1: r1.caTotal, v2: r2.caTotal, v3: r3.caTotal, v4: r4.caTotal, tot: all.totaux.caCumule },
+        { label: '- Coût matières vendues', u: '€', v1: -r1.coutDirectVendus, v2: -r2.coutDirectVendus, v3: -r3.coutDirectVendus, v4: -r4.coutDirectVendus, tot: -(r1.coutDirectVendus + r2.coutDirectVendus + r3.coutDirectVendus + r4.coutDirectVendus) },
+        { label: '- Coûts transports', u: '€', v1: -r1.coutTransportTotal, v2: -r2.coutTransportTotal, v3: -r3.coutTransportTotal, v4: -r4.coutTransportTotal, tot: -(r1.coutTransportTotal + r2.coutTransportTotal + r3.coutTransportTotal + r4.coutTransportTotal) },
+        { label: '- Marketing (5%)', u: '€', v1: -r1.fraisMarketing, v2: -r2.fraisMarketing, v3: -r3.fraisMarketing, v4: -r4.fraisMarketing, tot: -(r1.fraisMarketing + r2.fraisMarketing + r3.fraisMarketing + r4.fraisMarketing) },
+        { label: '= Marge sur Coûts Variables', u: '€', v1: r1.margeBrute, v2: r2.margeBrute, v3: r3.margeBrute, v4: r4.margeBrute, tot: r1.margeBrute + r2.margeBrute + r3.margeBrute + r4.margeBrute },
+        { label: '- Charges fixes (Salaires + Structure)', u: '€', v1: -r1.chargesFixes, v2: -r2.chargesFixes, v3: -r3.chargesFixes, v4: -r4.chargesFixes, tot: -(r1.chargesFixes * 4) },
+        { label: '- Frais de stockage (0,42%)', u: '€', v1: -r1.fraisStockage, v2: -r2.fraisStockage, v3: -r3.fraisStockage, v4: -r4.fraisStockage, tot: -(r1.fraisStockage + r2.fraisStockage + r3.fraisStockage + r4.fraisStockage) },
+        { label: '= RÉSULTAT NET DU MOIS', u: '€', highlightGreen: true, v1: r1.resultatNet, v2: r2.resultatNet, v3: r3.resultatNet, v4: r4.resultatNet, tot: all.totaux.rnCumule },
+        { label: '= RÉSULTAT NET CUMULÉ', u: '€', bold: true, v1: r1.rnCumule, v2: r2.rnCumule, v3: r3.rnCumule, v4: r4.rnCumule, tot: all.totaux.rnCumule },
+
+        { section: '💰 TRÉSORERIE & FINANCES' },
+        { label: 'Trésorerie début de mois', u: '€', v1: r1.tresoDebut, v2: r2.tresoDebut, v3: r3.tresoDebut, v4: r4.tresoDebut, tot: 500000 },
+        { label: 'Total encaissements', u: '€', v1: r1.totalEncaissements, v2: r2.totalEncaissements, v3: r3.totalEncaissements, v4: r4.totalEncaissements, tot: r1.totalEncaissements + r2.totalEncaissements + r3.totalEncaissements + r4.totalEncaissements },
+        { label: 'Total décaissements', u: '€', v1: -r1.totalDecaissements, v2: -r2.totalDecaissements, v3: -r3.totalDecaissements, v4: -r4.totalDecaissements, tot: -(r1.totalDecaissements + r2.totalDecaissements + r3.totalDecaissements + r4.totalDecaissements) },
+        { label: 'TRÉSORERIE FIN DE MOIS', u: '€', highlightBlue: true, v1: r1.tresorerieFinMois, v2: r2.tresorerieFinMois, v3: r3.tresorerieFinMois, v4: r4.tresorerieFinMois, tot: r4.tresorerieFinMois },
+
+        { section: '🎯 SCORE & POINTS OFFICIELS' },
+        { label: 'Coefficient du mois', u: '', v1: 'x1', v2: 'x2', v3: 'x3', v4: 'x4', tot: '-' },
+        { label: 'Points du mois', u: 'pts', v1: r1.scoreMois, v2: r2.scoreMois, v3: r3.scoreMois, v4: r4.scoreMois, tot: all.totaux.scoreCumule },
+        { label: 'SCORE TOTAL CUMULÉ', u: 'pts', highlightGold: true, v1: r1.scoreCumule, v2: r2.scoreCumule, v3: r3.scoreCumule, v4: r4.scoreCumule, tot: all.totaux.scoreCumule }
+      ];
+
+      function fmt(val, u) {
+        if (typeof val === 'string') return val;
+        if (val === undefined || val === null) return '-';
+        const num = Math.round(val).toLocaleString('fr-FR');
+        return u ? `${num} ${u}` : num;
+      }
+
+      let html = '';
+      rows.forEach(row => {
+        if (row.section) {
+          html += `<tr class="bg-slate-100 font-black text-slate-800 text-[11px]"><td colspan="6" class="p-2.5 uppercase tracking-wider">${row.section}</td></tr>`;
+        } else {
+          let trClass = 'hover:bg-slate-50 transition';
+          let tdClass = 'p-2.5 font-medium text-slate-700';
+          let totClass = 'p-2.5 text-right font-black bg-indigo-50/50 text-indigo-950';
+
+          if (row.highlight) {
+            trClass = 'bg-indigo-50/30 font-bold';
+            tdClass = 'p-2.5 font-black text-indigo-900';
+            totClass = 'p-2.5 text-right font-black bg-indigo-100 text-indigo-900 text-sm';
+          } else if (row.highlightGreen) {
+            trClass = 'bg-emerald-50/50 font-bold';
+            tdClass = 'p-2.5 font-black text-emerald-800';
+            totClass = 'p-2.5 text-right font-black bg-emerald-100 text-emerald-800 text-sm';
+          } else if (row.highlightBlue) {
+            trClass = 'bg-blue-50/50 font-bold';
+            tdClass = 'p-2.5 font-black text-blue-900';
+            totClass = 'p-2.5 text-right font-black bg-blue-100 text-blue-900 text-sm';
+          } else if (row.highlightGold) {
+            trClass = 'bg-amber-50/50 font-bold';
+            tdClass = 'p-2.5 font-black text-amber-900';
+            totClass = 'p-2.5 text-right font-black bg-amber-100 text-amber-900 text-sm';
+          }
+
+          html += `<tr class="${trClass}">
+            <td class="${tdClass}">${row.label}</td>
+            <td class="p-2.5 text-right font-semibold">${fmt(row.v1, row.u)}</td>
+            <td class="p-2.5 text-right font-semibold">${fmt(row.v2, row.u)}</td>
+            <td class="p-2.5 text-right font-semibold">${fmt(row.v3, row.u)}</td>
+            <td class="p-2.5 text-right font-semibold">${fmt(row.v4, row.u)}</td>
+            <td class="${totClass}">${fmt(row.tot, row.u)}</td>
+          </tr>`;
+        }
+      });
+
+      tbody.innerHTML = html;
     }
 
     function updatePriceSlider() {
@@ -901,8 +1240,8 @@
       document.getElementById('v-d2-prix').value = prix.toFixed(1);
       document.getElementById('v-d3-prix').value = prix.toFixed(1);
       document.getElementById('v-d4-prix').value = prix.toFixed(1);
-      runSimulation();
-      showToast('⚡ Prix de ' + prix.toFixed(2) + ' € appliqué aux 4 distributeurs !');
+      handleInputChange();
+      showToast('⚡ Prix de ' + prix.toFixed(2) + ' € appliqué aux 4 distributeurs pour ce mois !');
     }
 
     function copierLienPartage() {
@@ -918,11 +1257,11 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
       const dl = document.createElement('a');
       dl.setAttribute("href", dataStr);
-      dl.setAttribute("download", "subertech_equipe18_decisions.json");
+      dl.setAttribute("download", "subertech_equipe18_multimois.json");
       document.body.appendChild(dl);
       dl.click();
       dl.remove();
-      showToast('Fichier JSON de sauvegarde téléchargé !');
+      showToast('Fichier JSON de sauvegarde multi-mois téléchargé !');
     }
 
     function handleFileImport(e) {
@@ -933,11 +1272,12 @@
       reader.onload = function(evt) {
         try {
           const parsed = JSON.parse(evt.target.result);
-          if (parsed && parsed.ventes) {
-            appState = parsed;
+          if (parsed) {
+            migrateState(parsed);
             saveToLocalStorage();
             loadStateIntoUI();
             runSimulation();
+            updatePriceSlider();
             showToast('Fichier JSON importé avec succès !');
           }
         } catch (err) {
@@ -948,32 +1288,36 @@
     }
 
     function loadStateIntoUI() {
-      document.getElementById('inp-commande-liege').value = appState.commandeLiegeKg || 150000;
-      document.getElementById('rng-broyage').value = appState.liegeABroyerKg || 110000;
-      document.getElementById('val-broyage-kg').innerText = (appState.liegeABroyerKg || 110000).toLocaleString('fr-FR') + ' kg';
-      document.getElementById('rng-moulage').value = appState.grainsAMoulerKg || 46000;
-      document.getElementById('val-moulage-kg').innerText = (appState.grainsAMoulerKg || 46000).toLocaleString('fr-FR') + ' kg';
+      const m = appState.moisActif || 1;
+      if (!appState.moisData) appState = getDefaultState();
+      const curData = appState.moisData[m] || getDefaultMonthData(m);
 
-      if (appState.ventes && appState.ventes.length >= 4) {
-        document.getElementById('v-d1-lots').value = appState.ventes[0].lots;
-        document.getElementById('v-d1-prix').value = appState.ventes[0].prix;
-        document.getElementById('v-d1-delai').value = appState.ventes[0].delai;
-        document.getElementById('v-d1-transport').value = appState.ventes[0].transport;
+      document.getElementById('inp-commande-liege').value = curData.commandeLiegeKg || 150000;
+      document.getElementById('rng-broyage').value = curData.liegeABroyerKg || 110000;
+      document.getElementById('val-broyage-kg').innerText = (curData.liegeABroyerKg || 110000).toLocaleString('fr-FR') + ' kg';
+      document.getElementById('rng-moulage').value = curData.grainsAMoulerKg || 46000;
+      document.getElementById('val-moulage-kg').innerText = (curData.grainsAMoulerKg || 46000).toLocaleString('fr-FR') + ' kg';
 
-        document.getElementById('v-d2-lots').value = appState.ventes[1].lots;
-        document.getElementById('v-d2-prix').value = appState.ventes[1].prix;
-        document.getElementById('v-d2-delai').value = appState.ventes[1].delai;
-        document.getElementById('v-d2-transport').value = appState.ventes[1].transport;
+      if (curData.ventes && curData.ventes.length >= 4) {
+        document.getElementById('v-d1-lots').value = curData.ventes[0].lots;
+        document.getElementById('v-d1-prix').value = curData.ventes[0].prix;
+        document.getElementById('v-d1-delai').value = curData.ventes[0].delai;
+        document.getElementById('v-d1-transport').value = curData.ventes[0].transport;
 
-        document.getElementById('v-d3-lots').value = appState.ventes[2].lots;
-        document.getElementById('v-d3-prix').value = appState.ventes[2].prix;
-        document.getElementById('v-d3-delai').value = appState.ventes[2].delai;
-        document.getElementById('v-d3-transport').value = appState.ventes[2].transport;
+        document.getElementById('v-d2-lots').value = curData.ventes[1].lots;
+        document.getElementById('v-d2-prix').value = curData.ventes[1].prix;
+        document.getElementById('v-d2-delai').value = curData.ventes[1].delai;
+        document.getElementById('v-d2-transport').value = curData.ventes[1].transport;
 
-        document.getElementById('v-d4-lots').value = appState.ventes[3].lots;
-        document.getElementById('v-d4-prix').value = appState.ventes[3].prix;
-        document.getElementById('v-d4-delai').value = appState.ventes[3].delai;
-        document.getElementById('v-d4-transport').value = appState.ventes[3].transport;
+        document.getElementById('v-d3-lots').value = curData.ventes[2].lots;
+        document.getElementById('v-d3-prix').value = curData.ventes[2].prix;
+        document.getElementById('v-d3-delai').value = curData.ventes[2].delai;
+        document.getElementById('v-d3-transport').value = curData.ventes[2].transport;
+
+        document.getElementById('v-d4-lots').value = curData.ventes[3].lots;
+        document.getElementById('v-d4-prix').value = curData.ventes[3].prix;
+        document.getElementById('v-d4-delai').value = curData.ventes[3].delai;
+        document.getElementById('v-d4-transport').value = curData.ventes[3].transport;
       }
     }
 
@@ -984,6 +1328,29 @@
       });
     }
 
+    function copierRecapTexte() {
+      const all = simulateAllMonths(appState);
+      let t = "BILAN MULTI-MOIS VINEGO - ÉQUIPE 18 (SUBERTECH INDUSTRIES)\n\n";
+      for (let m = 1; m <= 4; m++) {
+        const r = all.moisResults[m];
+        t += `MOIS ${m} :\n`;
+        t += `  CA : ${Math.round(r.caTotal).toLocaleString('fr-FR')} €\n`;
+        t += `  Lots vendus : ${Math.round(r.lotsVendusTotal).toLocaleString('fr-FR')} lots (Prix moyen : ${r.prixMoyenLot.toFixed(2)} €/lot)\n`;
+        t += `  Coût CMP : ${r.cmpBouchonLot.toFixed(2)} €/lot | Transport : ${Math.round(r.coutTransportTotal).toLocaleString('fr-FR')} €\n`;
+        t += `  Résultat Net : ${Math.round(r.resultatNet).toLocaleString('fr-FR')} € (Cumulé : ${Math.round(r.rnCumule).toLocaleString('fr-FR')} €)\n`;
+        t += `  Trésorerie Fin : ${Math.round(r.tresorerieFinMois).toLocaleString('fr-FR')} €\n`;
+        t += `  Score : ${r.scoreMois} pts (Coeff x${m})\n\n`;
+      }
+      t += `TOTAUX CUMULÉS :\n`;
+      t += `  CA Cumulé : ${Math.round(all.totaux.caCumule).toLocaleString('fr-FR')} €\n`;
+      t += `  Résultat Net Cumulé : ${Math.round(all.totaux.rnCumule).toLocaleString('fr-FR')} €\n`;
+      t += `  Score Total : ${all.totaux.scoreCumule} / 300 pts\n`;
+
+      navigator.clipboard.writeText(t).then(() => {
+        showToast('Bilan textuel copié dans le presse-papier !');
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const fromUrl = loadFromUrlHash();
       if (!fromUrl) {
@@ -991,9 +1358,7 @@
       } else {
         showToast('Données chargées depuis le lien de partage !');
       }
-      loadStateIntoUI();
-      runSimulation();
-      updatePriceSlider();
+      selectMois(appState.moisActif || 1);
     });
   </script>
 

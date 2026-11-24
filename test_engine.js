@@ -84,12 +84,13 @@ const res = sim.calculateSimulation(state);
 
 console.log("\n=== VALIDATION RÈGLES DE GESTION MOIS 1 vs MOIS 2 ===");
 console.log("Coût Moyen Pondéré (CMP) en Mois 1 (Stock Initial consommé) :", res.coutDirectLot.toFixed(4), "€ / lot");
-console.log("Coût unitaire en Mois 2 (Après livraison commande à 0,43€) :", res.coutDirectLotMois2.toFixed(4), "€ / lot");
+console.log("CMP blended en Mois 2 (Stock restant M1 + Production M2) :", res.allMonths.moisResults[2].cmpBouchonLot.toFixed(4), "€ / lot");
+console.log("Coût unitaire de fabrication brute en M2 :", res.coutDirectLotMois2.toFixed(4), "€ / lot");
 
 assert(Math.abs(res.coutDirectLot - 9.4918) < 0.01, "Le CMP en Mois 1 doit être ~9.49€");
-assert(Math.abs(res.coutDirectLotMois2 - 8.4286) < 0.01, "Le coût unitaire en Mois 2 doit être ~8.43€");
+assert(Math.abs(res.allMonths.moisResults[2].cmpBouchonLot - 8.6128) < 0.02, "Le CMP blended en Mois 2 doit être ~8.61€");
 assert(res.resultatNet >= 0, "Le résultat net en M1 avec la stratégie par défaut doit être positif");
-assert(res.resultatNetMois2 > res.resultatNet, "Le résultat net en M2 doit être supérieur grâce à la réduction de coût");
+assert(res.allMonths.moisResults[2].resultatNet > res.resultatNet, "Le résultat net en M2 doit être supérieur grâce à la réduction de coût");
 
 // 6. Test Calculatrice Slider (calcProfitFromPrice)
 const testSlider21_5 = sim.calcProfitFromPrice(21.5, 10000, res.coutDirectLot);
