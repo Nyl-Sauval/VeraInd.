@@ -542,6 +542,16 @@
                       <span>Lots produits :</span>
                       <strong id="out-lots-tubage-a" class="text-amber-800 font-bold">1 000 lots</strong>
                     </div>
+                    <div class="border-t pt-1 space-y-0.5">
+                      <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-slate-500">Prix de revient direct :</span>
+                        <strong id="out-cmp-nat-a" class="text-emerald-700 font-black">20,30 € / lot</strong>
+                      </div>
+                      <div class="flex justify-between items-center text-[9px]">
+                        <span class="text-slate-600">🎯 Gagne dès : <strong class="text-emerald-700">> 20,30 €</strong></span>
+                        <span class="text-indigo-600 font-bold">Marché : ~55 €</span>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Planches Espagne B -->
@@ -558,6 +568,16 @@
                       <span>Lots produits :</span>
                       <strong id="out-lots-tubage-b" class="text-amber-800 font-bold">1 000 lots</strong>
                     </div>
+                    <div class="border-t pt-1 space-y-0.5">
+                      <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-slate-500">Prix de revient direct :</span>
+                        <strong id="out-cmp-nat-b" class="text-emerald-700 font-black">25,30 € / lot</strong>
+                      </div>
+                      <div class="flex justify-between items-center text-[9px]">
+                        <span class="text-slate-600">🎯 Gagne dès : <strong class="text-emerald-700">> 25,30 €</strong></span>
+                        <span class="text-indigo-600 font-bold">Marché : ~60 €</span>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Planches Espagne C -->
@@ -573,6 +593,16 @@
                     <div class="flex justify-between text-[10px] text-slate-500">
                       <span>Lots produits :</span>
                       <strong id="out-lots-tubage-c" class="text-amber-800 font-bold">1 000 lots</strong>
+                    </div>
+                    <div class="border-t pt-1 space-y-0.5">
+                      <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-slate-500">Prix de revient direct :</span>
+                        <strong id="out-cmp-nat-c" class="text-emerald-700 font-black">30,30 € / lot</strong>
+                      </div>
+                      <div class="flex justify-between items-center text-[9px]">
+                        <span class="text-slate-600">🎯 Gagne dès : <strong class="text-emerald-700">> 30,30 €</strong></span>
+                        <span class="text-indigo-600 font-bold">Marché : ~65 €</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -827,7 +857,46 @@
                 </div>
               </div>
 
+              <!-- BILAN FABRICANT SUBERTECH (COÛT DE REVIENT & SEUIL DE RENTABILITÉ) -->
+              <div class="bg-indigo-950/70 p-3 rounded-xl border border-indigo-400/40 space-y-1.5">
+                <div class="flex items-center justify-between text-[11px] text-indigo-200 border-b border-indigo-500/30 pb-1">
+                  <span class="font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-industry text-amber-400"></i>
+                    <span>Votre Bilan Fabricant SuberTech (<span id="out-suber-sim-nom-planche" class="text-amber-300 font-bold">Espagne B</span>) :</span>
+                  </span>
+                  <span id="badge-suber-seuil-renta" class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-black border border-emerald-500/40 text-[10px]">
+                    🎯 Rentable dès > 25,30 € / lot
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                  <div class="bg-slate-900/70 p-2 rounded-lg border border-slate-700">
+                    <div class="text-slate-400 text-[10px]">Coût Direct SuberTech</div>
+                    <div class="font-bold text-slate-200 text-xs mt-0.5" id="out-suber-sim-cout">25,30 € / lot</div>
+                    <div class="text-[9px] text-slate-400" id="out-suber-sim-detail">10 planches @ 2,50€ + tubage 0,30€</div>
+                  </div>
+                  <div class="bg-slate-900/70 p-2 rounded-lg border border-slate-700">
+                    <div class="text-slate-400 text-[10px]">Votre Prix de Vente</div>
+                    <div class="font-bold text-amber-300 text-xs mt-0.5" id="out-suber-sim-prix">60,00 € / lot</div>
+                    <div class="text-[9px] text-slate-400">Tarif proposé distributeur</div>
+                  </div>
+                  <div class="bg-emerald-950/50 p-2 rounded-lg border border-emerald-500/40">
+                    <div class="text-emerald-300 text-[10px] font-bold">Votre Marge Brute</div>
+                    <div class="font-black text-emerald-400 text-sm mt-0.5" id="out-suber-sim-marge">+34,70 € / lot</div>
+                    <div class="text-[9px] text-emerald-300" id="out-suber-sim-taux">+137 % de marge</div>
+                  </div>
+                  <div class="bg-emerald-950/50 p-2 rounded-lg border border-emerald-500/40">
+                    <div class="text-emerald-300 text-[10px] font-bold">Votre Bénéfice Deal</div>
+                    <div class="font-black text-emerald-300 text-sm mt-0.5" id="out-suber-sim-benef-global">+34 700 €</div>
+                    <div class="text-[9px] text-slate-300">sur ce contrat</div>
+                  </div>
+                </div>
+              </div>
+
               <!-- RÉSULTAT DU CALCUL POUR LE DISTRIBUTEUR -->
+              <div class="text-[11px] text-slate-300 font-bold flex items-center gap-1.5 pt-0.5">
+                <i class="fa-solid fa-store text-indigo-400"></i>
+                <span>Bilan Distributeur (Revente Clients après Machine de Tri) :</span>
+              </div>
               <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-center text-xs">
                 <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700">
                   <div class="text-slate-400 text-[10px]">Coût d'Achat + Tri (2€)</div>
@@ -2084,6 +2153,13 @@
       const totalNatDispo = (res.stockNatAFinLots + res.lotsVendusNatATotal) + (res.stockNatBFinLots + res.lotsVendusNatBTotal) + (res.stockNatCFinLots + res.lotsVendusNatCTotal);
       if (elTotNatDispo) elTotNatDispo.innerText = Math.round(totalNatDispo).toLocaleString('fr-FR');
 
+      const elCmpA = document.getElementById('out-cmp-nat-a');
+      if (elCmpA && res.cmpNatALot) elCmpA.innerText = res.cmpNatALot.toFixed(2) + ' € / lot';
+      const elCmpB = document.getElementById('out-cmp-nat-b');
+      if (elCmpB && res.cmpNatBLot) elCmpB.innerText = res.cmpNatBLot.toFixed(2) + ' € / lot';
+      const elCmpC = document.getElementById('out-cmp-nat-c');
+      if (elCmpC && res.cmpNatCLot) elCmpC.innerText = res.cmpNatCLot.toFixed(2) + ' € / lot';
+
       // Bannière contexte du mois
       const txtContexte = document.getElementById('txt-mois-contexte');
       if (m === 1) {
@@ -2954,6 +3030,48 @@
 
       const info = calcMargeDistributeur(type, prix);
 
+      // 1. Bilan Fabricant SuberTech
+      const subNom = document.getElementById('out-suber-sim-nom-planche');
+      if (subNom) subNom.innerText = `Espagne ${type}`;
+
+      const elSubCout = document.getElementById('out-suber-sim-cout');
+      if (elSubCout) elSubCout.innerText = info.coutDirectFabricant.toFixed(2) + ' € / lot';
+
+      const elSubDet = document.getElementById('out-suber-sim-detail');
+      const pInit = (type === 'A') ? 2.00 : (type === 'B' ? 2.50 : 3.00);
+      if (elSubDet) elSubDet.innerText = `10 planches @ ${pInit.toFixed(2)}€ + tubage 0,30€`;
+
+      const elSubPrix = document.getElementById('out-suber-sim-prix');
+      if (elSubPrix) elSubPrix.innerText = prix.toFixed(2) + ' € / lot';
+
+      const elSubMarge = document.getElementById('out-suber-sim-marge');
+      if (elSubMarge) {
+        elSubMarge.innerText = (info.margeBruteFabricant >= 0 ? '+' : '') + info.margeBruteFabricant.toFixed(2) + ' € / lot';
+        elSubMarge.className = info.margeBruteFabricant >= 0 ? 'font-black text-emerald-400 text-sm mt-0.5' : 'font-black text-red-400 text-sm mt-0.5';
+      }
+
+      const elSubTaux = document.getElementById('out-suber-sim-taux');
+      if (elSubTaux) elSubTaux.innerText = (info.tauxMargeFabricant >= 0 ? '+' : '') + info.tauxMargeFabricant.toFixed(0) + ' % de marge';
+
+      const elSubBenef = document.getElementById('out-suber-sim-benef-global');
+      if (elSubBenef) {
+        const totalGainSub = info.margeBruteFabricant * vol;
+        elSubBenef.innerText = (totalGainSub >= 0 ? '+' : '') + Math.round(totalGainSub).toLocaleString('fr-FR') + ' €';
+        elSubBenef.className = totalGainSub >= 0 ? 'font-black text-emerald-300 text-sm mt-0.5' : 'font-black text-red-400 text-sm mt-0.5';
+      }
+
+      const elSubSeuil = document.getElementById('badge-suber-seuil-renta');
+      if (elSubSeuil) {
+        if (prix >= info.coutDirectFabricant) {
+          elSubSeuil.className = 'bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-black border border-emerald-500/40 text-[10px]';
+          elSubSeuil.innerHTML = `🎯 Rentable dès <strong>> ${info.coutDirectFabricant.toFixed(2)} €</strong> (+${info.margeBruteFabricant.toFixed(2)} € / lot)`;
+        } else {
+          elSubSeuil.className = 'bg-red-500/20 text-red-300 px-2 py-0.5 rounded font-black border border-red-500/40 text-[10px]';
+          elSubSeuil.innerHTML = `⚠️ Vente à perte (Seuil minimum : <strong>${info.coutDirectFabricant.toFixed(2)} €</strong>)`;
+        }
+      }
+
+      // 2. Bilan Distributeur
       const elCout = document.getElementById('out-dist-sim-cout');
       if (elCout) elCout.innerText = info.coutTotalDistributeur.toFixed(2) + ' € / lot';
       const elCoutDet = document.getElementById('out-dist-sim-cout-detail');

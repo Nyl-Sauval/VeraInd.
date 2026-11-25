@@ -960,21 +960,31 @@ function analyzeOffreDistributeur(prixOffert, volume = 3000, mois = 1, volumeTot
   };
 }
 
-// Calcule la rentabilité d'un distributeur lorsqu'il achète un lot de bouchons naturels
+// Calcule la rentabilité du fabricant SuberTech et du distributeur pour les bouchons naturels
 function calcMargeDistributeur(type = 'B', prixAchat = 60.0) {
   const rep = PARAMS.trieuse.repartition[type] || PARAMS.trieuse.repartition.B;
   const p = PARAMS.trieuse.prixClientsMoyens;
   const coutTri = PARAMS.trieuse.coutTriLot; // 2.00 €
   
+  // Coût direct de fabrication pour SuberTech (10 planches + 0,30 € tubage)
+  const coutPlancheInit = (type === 'A') ? PARAMS.prixAchatPlanchesAInit : (type === 'B' ? PARAMS.prixAchatPlanchesBInit : PARAMS.prixAchatPlanchesCInit);
+  const coutDirectFabricant = (PARAMS.ratioPlanchesParLot * coutPlancheInit) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+  const margeBruteFabricant = prixAchat - coutDirectFabricant;
+  const tauxMargeFabricant = coutDirectFabricant > 0 ? (margeBruteFabricant / coutDirectFabricant) * 100 : 0;
+
   // Revenu moyen client = Somme(part * prixMoyenClient)
   const revenuReventeLot = (rep.Q1 * p.Q1) + (rep.Q2 * p.Q2) + (rep.Q3 * p.Q3) + (rep.Q4 * p.Q4);
   const coutTotalDistributeur = prixAchat + coutTri;
   const margeBruteDistributeur = revenuReventeLot - coutTotalDistributeur;
-  const tauxMargeDistributeur = (margeBruteDistributeur / coutTotalDistributeur) * 100;
+  const tauxMargeDistributeur = coutTotalDistributeur > 0 ? (margeBruteDistributeur / coutTotalDistributeur) * 100 : 0;
 
   return {
     type,
     prixAchat,
+    coutDirectFabricant,
+    margeBruteFabricant,
+    tauxMargeFabricant,
+    seuilRentabiliteFabricant: coutDirectFabricant,
     coutTri,
     revenuReventeLot,
     coutTotalDistributeur,
