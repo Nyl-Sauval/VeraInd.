@@ -153,7 +153,8 @@ function getDefaultMonthData(m) {
         { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 30, transport: 'train' },
         { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
       ],
-      bonusBouchonsLots: 0
+      bonusBouchonsLots: 0,
+      tresoDebutForce: null
     };
   }
   if (m === 2) {
@@ -168,6 +169,7 @@ function getDefaultMonthData(m) {
       planchesATuberBKg: 0,
       planchesATuberCKg: 0,
       bonusBouchonsLots: 0,
+      tresoDebutForce: null,
       ventes: [
         { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
         { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
@@ -190,6 +192,7 @@ function getDefaultMonthData(m) {
       planchesATuberBKg: 10000, // 1 000 lots B
       planchesATuberCKg: 10000, // 1 000 lots C
       bonusBouchonsLots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars
+      tresoDebutForce: null,
       ventes: [
         { client: 'Équipe Distributeur 1', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
         { client: 'Équipe Distributeur 2', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
@@ -210,6 +213,7 @@ function getDefaultMonthData(m) {
     planchesATuberBKg: 10000, // 1 000 lots B
     planchesATuberCKg: 10000, // 1 000 lots C
     bonusBouchonsLots: 0,
+    tresoDebutForce: null,
     ventes: [
       { client: 'Équipe Distributeur 1', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
       { client: 'Équipe Distributeur 2', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
@@ -590,7 +594,10 @@ function simulateAllMonths(state) {
     const resultatNet = margeBrute - chargesFixes - fraisStockage;
 
     // 8. Trésorerie
-    const tresoDebut = isM1 ? PARAMS.capitalDepart : prevResult.tresorerieFinMois;
+    const tresoDebutEstimee = isM1 ? PARAMS.capitalDepart : prevResult.tresorerieFinMois;
+    const hasTresoDebutForcee = (monthData.tresoDebutForce !== undefined && monthData.tresoDebutForce !== null && monthData.tresoDebutForce !== '' && !isNaN(Number(monthData.tresoDebutForce)));
+    const tresoDebut = hasTresoDebutForcee ? Number(monthData.tresoDebutForce) : tresoDebutEstimee;
+
     const encaissementCreances30jPrecedentes = isM1 ? 0 : (prevResult.creances30jMois || 0);
     const encaissementCreances60jPrecedentes = (m >= 3 && results[m - 2]) ? (results[m - 2].creances60jMois || 0) : 0;
     const encaissementCreancesPrecedentes = encaissementCreances30jPrecedentes + encaissementCreances60jPrecedentes;
@@ -744,6 +751,9 @@ function simulateAllMonths(state) {
       resultatNet,
       rnCumule,
       tresoDebut,
+      tresoDebutEstimee,
+      tresoDebutForce: hasTresoDebutForcee ? Number(monthData.tresoDebutForce) : null,
+      hasTresoDebutForcee,
       encaissementVentesMois,
       encaissementCreancesPrecedentes,
       totalEncaissements,

@@ -267,6 +267,24 @@ console.log("Mois 3 avec +2 000 lots bonus -> CA Total :", Math.round(m3.caTotal
 assert(m3.caTotal >= 415000, "Le CA en Mois 3 dépasse 415 000 € grâce aux 2 000 bouchons bonus");
 assert(m3.resultatNet > 80000, "Le résultat net en Mois 3 dépasse 80 000 €");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage (75k cap, 30k/22k/20k stocks), prix planches, trieuse et +2 000 bouchons bonus sont passés avec succès !");
+// 12. Validation de la surcharge manuelle du solde de début (tresoDebutForce)
+console.log("\n--- Validation de l'ajustement manuel du solde de début (tresoDebutForce) ---");
+const stateForce = sim.getDefaultState();
+// Sans surcharge : M3 tresoDebut = tresoDebutEstimee
+const resSansForce = sim.simulateAllMonths(stateForce);
+assert.strictEqual(resSansForce.moisResults[3].hasTresoDebutForcee, false, "Sans surcharge, hasTresoDebutForcee = false");
+assert.strictEqual(resSansForce.moisResults[3].tresoDebut, resSansForce.moisResults[3].tresoDebutEstimee, "Sans surcharge, tresoDebut === tresoDebutEstimee");
+
+// Avec surcharge sur le Mois 3 (solde réel du jeu : 321 186.30 €)
+stateForce.moisData[3].tresoDebutForce = 321186.30;
+const resAvecForce = sim.simulateAllMonths(stateForce);
+assert.strictEqual(resAvecForce.moisResults[3].hasTresoDebutForcee, true, "Avec surcharge, hasTresoDebutForcee = true");
+assert.strictEqual(resAvecForce.moisResults[3].tresoDebut, 321186.30, "Mois 3 utilise exactement le solde forcé (321 186.30 €)");
+assert.strictEqual(resAvecForce.moisResults[3].tresoDebutEstimee, resSansForce.moisResults[3].tresoDebutEstimee, "tresoDebutEstimee reste conservé en mémoire pour comparaison");
+// Vérification que le Mois 4 cascade bien depuis la nouvelle fin de Mois 3
+assert.strictEqual(resAvecForce.moisResults[4].tresoDebutEstimee, resAvecForce.moisResults[3].tresorerieFinMois, "Le Mois 4 cascade automatiquement depuis la fin du Mois 3 ajusté");
+console.log("Solde forcé M3 :", resAvecForce.moisResults[3].tresoDebut, "€ | Solde estimé M3 :", Math.round(resAvecForce.moisResults[3].tresoDebutEstimee), "€ | Cascade M4 début :", Math.round(resAvecForce.moisResults[4].tresoDebut), "€");
+
+console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage (75k cap, 30k/22k/20k stocks), prix planches, trieuse, +2 000 bouchons bonus et surcharge tresoDebutForce sont passés avec succès !");
 
 

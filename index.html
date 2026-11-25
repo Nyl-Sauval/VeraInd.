@@ -1268,11 +1268,39 @@
               <span id="badge-treso" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Trésorerie Saine</span>
             </h3>
 
-            <div class="space-y-1.5 text-xs text-slate-600">
-              <div class="flex justify-between">
-                <span>Solde en début de mois :</span>
-                <strong id="out-treso-debut">500 000 €</strong>
+            <!-- Bloc Solde de début de mois avec option d'ajustement / alignement réel -->
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">Solde début de mois (actif) :</span>
+                <strong id="out-treso-debut" class="text-sm font-black text-indigo-700">500 000 €</strong>
               </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500">
+                <span>Solde estimé (calculé auto) :</span>
+                <span id="out-treso-debut-estime" class="font-mono text-slate-600 font-semibold">500 000 €</span>
+              </div>
+              
+              <!-- Ajustement manuel / Réel -->
+              <div class="pt-2 border-t border-slate-200/80">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <label for="inp-treso-debut-force" class="text-[11px] text-slate-600 flex items-center space-x-1 font-medium">
+                    <i class="fa-solid fa-pen-to-square text-indigo-600"></i>
+                    <span>Ajuster avec le solde du jeu réel :</span>
+                  </label>
+                  <div class="flex items-center space-x-1.5">
+                    <input type="number" step="0.01" id="inp-treso-debut-force" 
+                           placeholder="Automatique" 
+                           class="w-32 text-right px-2 py-1 text-xs font-mono font-bold border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                           oninput="handleTresoDebutForceChange(this.value)">
+                    <button type="button" onclick="reinitialiserTresoDebutForce()" title="Réinitialiser sur le solde calculé automatiquement" class="px-2 py-1 text-[11px] font-bold text-slate-600 hover:text-slate-800 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg shadow-sm transition">
+                      <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                  </div>
+                </div>
+                <div id="box-treso-force-info" class="mt-1.5 text-[10px] hidden rounded-lg p-1.5 border"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 text-xs text-slate-600 pt-1">
               <div class="flex justify-between text-emerald-700 font-semibold">
                 <span>+ Ventes encaissées comptant :</span>
                 <span id="out-encaissement-comptant">+160 500 €</span>
@@ -2049,6 +2077,24 @@
 
       // Trésorerie du mois actif
       document.getElementById('out-treso-debut').innerText = Math.round(res.tresoDebut).toLocaleString('fr-FR') + ' €';
+      const elTresoDebutEstime = document.getElementById('out-treso-debut-estime');
+      if (elTresoDebutEstime) {
+        elTresoDebutEstime.innerText = Math.round(res.tresoDebutEstimee).toLocaleString('fr-FR') + ' €';
+      }
+
+      const boxTresoInfo = document.getElementById('box-treso-force-info');
+      if (boxTresoInfo) {
+        if (res.hasTresoDebutForcee) {
+          const diff = res.tresoDebut - res.tresoDebutEstimee;
+          const diffSign = diff >= 0 ? '+' : '';
+          boxTresoInfo.classList.remove('hidden');
+          boxTresoInfo.className = 'mt-1.5 text-[10px] rounded-lg p-1.5 border flex items-center justify-between bg-amber-50 text-amber-800 border-amber-300';
+          boxTresoInfo.innerHTML = `<span><i class="fa-solid fa-triangle-exclamation mr-1 text-amber-600"></i> Solde réel forcé : <strong>${Number(res.tresoDebut).toLocaleString('fr-FR')} €</strong> (Écart vs calculé : <strong>${diffSign}${Math.round(diff).toLocaleString('fr-FR')} €</strong>)</span> <button type="button" onclick="reinitialiserTresoDebutForce()" class="underline font-bold ml-1 text-amber-900">Rétablir calculé</button>`;
+        } else {
+          boxTresoInfo.classList.add('hidden');
+        }
+      }
+
       document.getElementById('out-encaissement-comptant').innerText = '+' + Math.round(res.encaissementVentesMois).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-encaissement-creances').innerText = '+' + Math.round(res.encaissementCreancesPrecedentes).toLocaleString('fr-FR') + ' €';
 
@@ -2693,6 +2739,33 @@
       }
     }
 
+    function handleTresoDebutForceChange(val) {
+      const m = appState.moisActif || 1;
+      if (!appState.moisData) appState = getDefaultState();
+      if (!appState.moisData[m]) appState.moisData[m] = getDefaultMonthData(m);
+      
+      const trimmed = String(val).trim();
+      if (trimmed === '' || isNaN(Number(trimmed))) {
+        delete appState.moisData[m].tresoDebutForce;
+      } else {
+        appState.moisData[m].tresoDebutForce = Number(trimmed);
+      }
+      saveToLocalStorage();
+      runSimulation();
+    }
+
+    function reinitialiserTresoDebutForce() {
+      const m = appState.moisActif || 1;
+      if (appState.moisData && appState.moisData[m]) {
+        delete appState.moisData[m].tresoDebutForce;
+      }
+      const inp = document.getElementById('inp-treso-debut-force');
+      if (inp) inp.value = '';
+      saveToLocalStorage();
+      runSimulation();
+      showToast(`Solde début du Mois ${m} réinitialisé sur le calcul automatique.`);
+    }
+
     function loadStateIntoUI() {
       const m = appState.moisActif || 1;
       if (!appState.moisData) appState = getDefaultState();
@@ -2700,6 +2773,11 @@
 
       const selReg = document.getElementById('sel-reglement-fournisseur');
       if (selReg) selReg.value = appState.reglementFournisseur || '30j';
+
+      const inpTresoForce = document.getElementById('inp-treso-debut-force');
+      if (inpTresoForce) {
+        inpTresoForce.value = (curData.tresoDebutForce !== undefined && curData.tresoDebutForce !== null) ? curData.tresoDebutForce : '';
+      }
 
       const broyageKg = Math.min(PARAMS.capaciteMoulinsKg, curData.liegeABroyerKg !== undefined ? curData.liegeABroyerKg : 110000);
       const moulageKg = Math.min(PARAMS.capaciteMouleusesKg, curData.grainsAMoulerKg !== undefined ? curData.grainsAMoulerKg : 45000);
