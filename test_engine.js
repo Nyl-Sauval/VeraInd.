@@ -151,15 +151,20 @@ assert.strictEqual(allInstant[1].decaissementFournisseur, 64500, "En mode Instan
 assert.strictEqual(allInstant[2].decaissementFournisseur, 64500, "En mode Instant, décaissement M2 = 64 500 €");
 assert(allInstant[1].tresorerieFinMois > 300000, "En mode Instant, trésorerie M1 > 300 000 € (très largement positive)");
 
-// B. Test Mode Différé 30 jours après livraison (selon Guide Officiel)
+// B. Test Mode Différé 30 jours après livraison (Règle officielle : 30j après 30j = M+2)
 const state30j = sim.getDefaultState();
 state30j.reglementFournisseur = '30j';
 const all30j = sim.simulateAllMonths(state30j).moisResults;
-console.log("Mode 30j : Décaissement M1 =", all30j[1].decaissementFournisseur, "€ | Décaissement M3 =", all30j[3].decaissementFournisseur, "€");
-assert.strictEqual(all30j[1].decaissementFournisseur, 0, "En mode 30j, décaissement M1 = 0 €");
+console.log("Mode 30j : Décaissement M1 =", all30j[1].decaissementFournisseur, "€ | M2 =", all30j[2].decaissementFournisseur, "€ | M3 =", all30j[3].decaissementFournisseur, "€ | M4 =", all30j[4].decaissementFournisseur, "€");
+assert.strictEqual(all30j[1].decaissementFournisseur, 0, "En mode 30j, décaissement M1 = 0 € (différé M3)");
+assert.strictEqual(all30j[2].decaissementFournisseur, 0, "En mode 30j, décaissement M2 = 0 € (différé M4)");
+assert.strictEqual(all30j[3].decaissementFournisseur, 64500, "En mode 30j, décaissement M3 = 64 500 € (Paiement commande M1 livrée en M2)");
+assert.strictEqual(all30j[4].decaissementFournisseur, 64500, "En mode 30j, décaissement M4 = 64 500 € (Paiement commande M2 livrée en M3)");
+assert(all30j[3].tresorerieFinMois > 450000, "Trésorerie en fin M3 reste > 450 000 € en mode 30j après livraison");
+
 // 9. Validation de la simulation complète sur 8 mois
 console.log("\n=== VALIDATION DE LA SIMULATION SUR 8 MOIS ===");
-const res8 = sim.simulateAllMonths(stateInstant);
+const res8 = sim.simulateAllMonths(state30j);
 assert.strictEqual(Object.keys(res8.moisResults).length, 8, "La simulation doit comporter exactement 8 mois");
 for (let m = 1; m <= 8; m++) {
   const rm = res8.moisResults[m];

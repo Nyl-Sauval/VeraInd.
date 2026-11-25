@@ -318,10 +318,14 @@
                   <span id="val-impact-treso-cmd">-64 500 € (Payé comptant / instant)</span>
                 </div>
                 <div class="border-t pt-1.5 space-y-1">
-                  <label class="block text-[10px] text-slate-500 font-bold uppercase">Règlement commande fournisseur :</label>
-                  <select id="sel-reglement-fournisseur" class="w-full text-xs font-bold border rounded-lg px-2 py-1 bg-white text-slate-800" onchange="handleReglementFournisseurChange(this.value)">
-                    <option value="instant" selected>⚡ Comptant / Instant (décaissé le mois même)</option>
-                    <option value="30j">📅 30 jours après livraison (décaissé à M+2)</option>
+                  <div class="flex justify-between items-center">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase">Règlement commande fournisseur :</label>
+                    <span class="text-[9px] bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.5 rounded border border-indigo-200">Règle officielle</span>
+                  </div>
+                  <select id="sel-reglement-fournisseur" class="w-full text-xs font-bold border rounded-lg px-2 py-1 bg-white text-slate-800 focus:ring-2 focus:ring-indigo-500" onchange="handleReglementFournisseurChange(this.value)">
+                    <option value="30j" selected>📅 30 jours après livraison (M+2 — Règle officielle : "30j après 30j")</option>
+                    <option value="livraison">🚚 À la livraison (M+1 — 30 jours après commande)</option>
+                    <option value="instant">⚡ Comptant / Instant (M — décaissé à la commande)</option>
                   </select>
                 </div>
               </div>
@@ -418,10 +422,10 @@
               </div>
             </div>
 
-            <!-- ENCART EXPLICATIF DÉLAI LIVRAISON M+1 -->
-            <div id="txt-alerte-livraison-delai" class="bg-amber-50 border border-amber-200 text-amber-900 p-2.5 rounded-xl text-xs flex items-center space-x-2">
-              <i class="fa-solid fa-clock text-amber-600 shrink-0"></i>
-              <span><strong>Règle de livraison M+1 :</strong> Toute commande passée en Mois 1 arrivera au Mois 2. En Mois 1, seul le stock initial (110 000 kg) est utilisable.</span>
+            <!-- ENCART EXPLICATIF DÉLAI LIVRAISON M+1 & PAIEMENT 30J APRÈS LIVRAISON -->
+            <div id="txt-alerte-livraison-delai" class="bg-indigo-50 border border-indigo-200 text-indigo-950 p-2.5 rounded-xl text-xs flex items-center space-x-2">
+              <i class="fa-solid fa-clock text-indigo-600 shrink-0"></i>
+              <span><strong>Règle officielle de gestion :</strong> Toute commande passée au mois M est livrée au mois M+1 (30j). Le paiement s'effectue <strong>30 jours après la livraison</strong> (au mois M+2, soit « 30j après 30j »).</span>
             </div>
           </div>
 
@@ -902,7 +906,8 @@
                     <label class="text-slate-500 text-[11px]">Règlement :</label>
                     <select id="v-d1-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
                       <option value="0" selected>⚡ Comptant</option>
-                      <option value="30">📅 30 jours</option>
+                      <option value="30">📅 30 jours (encaissé en M+1)</option>
+                      <option value="60">📅 60 jours / 30j après livr. (encaissé en M+2)</option>
                     </select>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -974,7 +979,8 @@
                     <label class="text-slate-500 text-[11px]">Règlement :</label>
                     <select id="v-d2-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
                       <option value="0" selected>⚡ Comptant</option>
-                      <option value="30">📅 30 jours</option>
+                      <option value="30">📅 30 jours (encaissé en M+1)</option>
+                      <option value="60">📅 60 jours / 30j après livr. (encaissé en M+2)</option>
                     </select>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -1046,7 +1052,8 @@
                     <label class="text-slate-500 text-[11px]">Règlement :</label>
                     <select id="v-d3-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
                       <option value="0">⚡ Comptant</option>
-                      <option value="30" selected>📅 30 jours</option>
+                      <option value="30" selected>📅 30 jours (encaissé en M+1)</option>
+                      <option value="60">📅 60 jours / 30j après livr. (encaissé en M+2)</option>
                     </select>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -1118,7 +1125,8 @@
                     <label class="text-slate-500 text-[11px]">Règlement :</label>
                     <select id="v-d4-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
                       <option value="0" selected>⚡ Comptant</option>
-                      <option value="30">📅 30 jours</option>
+                      <option value="30">📅 30 jours (encaissé en M+1)</option>
+                      <option value="60">📅 60 jours / 30j après livr. (encaissé en M+2)</option>
                     </select>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -1298,7 +1306,7 @@
                 <span id="out-decaissements-var">-42 711 €</span>
               </div>
               <div class="flex justify-between text-red-600" id="row-decaisse-fournisseur">
-                <span>- Paiement commande producteur :</span>
+                <span id="lbl-decaisse-fournisseur-row">- Paiement commande producteur :</span>
                 <span id="out-decaisse-fournisseur">0 €</span>
               </div>
             </div>
@@ -1776,42 +1784,51 @@
 
       const lblTresoCmd = document.getElementById('lbl-impact-treso-cmd');
       const valTresoCmd = document.getElementById('val-impact-treso-cmd');
-      const modeReg = appState.reglementFournisseur || 'instant';
+      const modeReg = appState.reglementFournisseur || '30j';
       if (modeReg === 'instant') {
         lblTresoCmd.innerText = 'Décaissement ce mois :';
         valTresoCmd.innerText = '-' + Math.round(totFactureFournisseur).toLocaleString('fr-FR') + ' € (Payé comptant / instant)';
         valTresoCmd.className = 'font-bold text-red-600';
-      } else {
+      } else if (modeReg === 'livraison') {
         lblTresoCmd.innerText = 'Décaissement ce mois :';
-        valTresoCmd.innerText = '0 € (Payable en M' + (m + 2) + ')';
-        valTresoCmd.className = 'font-semibold text-emerald-700';
+        if (m === 1) {
+          valTresoCmd.innerText = '0 € (Payable à la livraison au Mois 2)';
+          valTresoCmd.className = 'font-semibold text-emerald-700';
+        } else {
+          valTresoCmd.innerText = '-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' € (Commande M' + (m - 1) + ' livrée ce mois)';
+          valTresoCmd.className = 'font-bold text-red-600';
+        }
+      } else { // 30j après la livraison (M+2, donc 30j après 30j)
+        lblTresoCmd.innerText = 'Décaissement ce mois :';
+        if (m < 3) {
+          valTresoCmd.innerText = '0 € (Payable au Mois ' + (m + 2) + ', 30j après livraison)';
+          valTresoCmd.className = 'font-semibold text-emerald-700';
+        } else {
+          valTresoCmd.innerText = '-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' € (Commande M' + (m - 2) + ' livrée en M' + (m - 1) + ')';
+          valTresoCmd.className = 'font-bold text-red-600';
+        }
       }
 
-      // Badge et texte explicatif livraison M+1
+      // Badge et texte explicatif livraison M+1 & paiement
       const badgeLivraison = document.getElementById('txt-livraison-delai-badge');
       const alerteLivraison = document.getElementById('txt-alerte-livraison-delai');
-      if (m === 1) {
-        if (badgeLivraison) {
-          badgeLivraison.innerHTML = '🚚 Commandé en M1 ➔ Livré au début du Mois 2 (Non utilisable en M1)';
-          badgeLivraison.className = 'text-[11px] bg-amber-100 text-amber-900 font-bold px-2.5 py-0.5 rounded border border-amber-300';
-        }
-        if (alerteLivraison) {
-          alerteLivraison.innerHTML = `<i class="fa-solid fa-clock text-amber-600 shrink-0"></i> <span><strong>Règle de livraison M+1 :</strong> Cette commande de <strong>${Math.round(res.commandeLiegeKg).toLocaleString('fr-FR')} kg</strong> sera livrée au <strong>Mois 2</strong>. En Mois 1, seul le <strong>stock initial (110 000 kg)</strong> est disponible au broyage.</span>`;
-        }
-      } else if (m < 8) {
-        if (badgeLivraison) {
-          badgeLivraison.innerHTML = `🚚 Commandé en M${m} ➔ Livré au début du Mois ${m + 1}`;
-          badgeLivraison.className = 'text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded border border-emerald-300';
-        }
-        if (alerteLivraison) {
-          alerteLivraison.innerHTML = `<i class="fa-solid fa-truck-ramp-box text-emerald-600 shrink-0"></i> <span><strong>Livraison reçue ce mois :</strong> Vous avez reçu <strong>${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg</strong> de liège brut (commandés en M${m - 1}). Votre nouvelle commande de <strong>${Math.round(res.commandeLiegeKg).toLocaleString('fr-FR')} kg</strong> sera livrée en Mois ${m + 1}.</span>`;
-        }
-      } else {
-        if (badgeLivraison) {
-          badgeLivraison.innerHTML = `🚚 Commandé en M8 ➔ Livré post-simulation (Mois 9)`;
-          badgeLivraison.className = 'text-[11px] bg-slate-100 text-slate-800 font-bold px-2.5 py-0.5 rounded border border-slate-300';
-        }
-        if (alerteLivraison) {
+      const badgePaiementTxt = (modeReg === '30j') ? `Payé en M${m + 2} (30j après livraison)` : (modeReg === 'livraison' ? `Payé en M${m + 1} (à livraison)` : `Payé en M${m} (comptant)`);
+      if (badgeLivraison) {
+        badgeLivraison.innerHTML = `🚚 Livré en M${m < 8 ? m + 1 : '9'} • 💳 ${badgePaiementTxt}`;
+      }
+
+      if (alerteLivraison) {
+        if (m === 1) {
+          const detailM1 = (modeReg === '30j') 
+            ? 'livrée début Mois 2 (30j) et <strong>payée en Mois 3 (30 jours après la livraison, soit « 30j après 30j »)</strong>. Aucun décaissement fournisseur en M1 ni en M2 !' 
+            : (modeReg === 'livraison' ? 'livrée et payée au Mois 2 (à la livraison).' : 'payée comptant en Mois 1.');
+          alerteLivraison.innerHTML = `<i class="fa-solid fa-clock text-indigo-600 shrink-0"></i> <span><strong>Règle officielle de gestion :</strong> Commande passée en Mois 1 ${detailM1} En Mois 1, seul le stock initial (110 000 kg) est utilisable.</span>`;
+        } else if (m < 8) {
+          const detailM = (modeReg === '30j')
+            ? `livrée début Mois ${m + 1} et <strong>payée au Mois ${m + 2} (30j après livraison)</strong>. Décaissement fournisseur en Mois ${m} : <strong>${res.decaissementFournisseur > 0 ? ('-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' € (Commande M' + (m - 2) + ')') : '0 € (Différé)')}</strong>.`
+            : `livrée début Mois ${m + 1}. Décaissement fournisseur effectif en Mois ${m} : <strong>${res.decaissementFournisseur > 0 ? ('-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' €') : '0 €'}</strong>.`;
+          alerteLivraison.innerHTML = `<i class="fa-solid fa-truck-ramp-box text-indigo-600 shrink-0"></i> <span><strong>Cycle d'approvisionnement :</strong> Commande de <strong>${Math.round(totFactureFournisseur).toLocaleString('fr-FR')} €</strong> ${detailM}</span>`;
+        } else {
           alerteLivraison.innerHTML = `<i class="fa-solid fa-flag-checkered text-indigo-600 shrink-0"></i> <span><strong>Dernier tour (Mois 8) :</strong> Vous transformez la livraison reçue du Mois 7 (<strong>${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg</strong>) + stock restant pour maximiser le résultat final.</span>`;
         }
       }
@@ -2039,11 +2056,29 @@
       const rowDette = document.getElementById('row-dette-stock-init');
       const rowMach = document.getElementById('row-investissement-machines');
       const rowFourn = document.getElementById('row-decaisse-fournisseur');
+      const lblFournRow = document.getElementById('lbl-decaisse-fournisseur-row');
+      const outFournVal = document.getElementById('out-decaisse-fournisseur');
 
       rowDette.style.display = m === 1 ? 'flex' : 'none';
       rowMach.style.display = m === 1 ? 'flex' : 'none';
-      rowFourn.style.display = res.decaissementFournisseur > 0 ? 'flex' : 'none';
-      document.getElementById('out-decaisse-fournisseur').innerText = '-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' €';
+      
+      if (rowFourn) {
+        rowFourn.style.display = 'flex';
+        if (res.decaissementFournisseur > 0) {
+          const moisCmd = modeReg === '30j' ? (m - 2) : (modeReg === 'livraison' ? (m - 1) : m);
+          if (lblFournRow) lblFournRow.innerText = `- Paiement fournisseur (Commande M${moisCmd}) :`;
+          if (outFournVal) {
+            outFournVal.innerText = '-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' €';
+            outFournVal.className = 'font-bold font-mono text-red-600';
+          }
+        } else {
+          if (lblFournRow) lblFournRow.innerText = `- Paiement fournisseur (${modeReg === '30j' ? '30j après livr.' : 'différé'}) :`;
+          if (outFournVal) {
+            outFournVal.innerText = '0 € (Payable en M' + (modeReg === '30j' ? (m + 2) : (m + 1)) + ')';
+            outFournVal.className = 'font-semibold font-mono text-emerald-700 text-[11px]';
+          }
+        }
+      }
 
       const rowAchatTubeuses = document.getElementById('row-achat-tubeuses');
       if (rowAchatTubeuses) rowAchatTubeuses.style.display = (m === 2) ? 'flex' : 'none';
@@ -2649,7 +2684,13 @@
       appState.reglementFournisseur = val;
       saveToLocalStorage();
       runSimulation();
-      showToast(val === 'instant' ? '⚡ Paiement commande fournisseur comptant (instant) activé !' : '📅 Paiement commande fournisseur différé (30j après livraison) activé !');
+      if (val === '30j') {
+        showToast('📅 Paiement 30j après livraison activé (M+2 — donc 30j après 30j) !');
+      } else if (val === 'livraison') {
+        showToast('🚚 Paiement à la livraison activé (M+1) !');
+      } else {
+        showToast('⚡ Paiement comptant à la commande (M) activé !');
+      }
     }
 
     function loadStateIntoUI() {
@@ -2658,7 +2699,7 @@
       const curData = appState.moisData[m] || getDefaultMonthData(m);
 
       const selReg = document.getElementById('sel-reglement-fournisseur');
-      if (selReg) selReg.value = appState.reglementFournisseur || 'instant';
+      if (selReg) selReg.value = appState.reglementFournisseur || '30j';
 
       const broyageKg = Math.min(PARAMS.capaciteMoulinsKg, curData.liegeABroyerKg !== undefined ? curData.liegeABroyerKg : 110000);
       const moulageKg = Math.min(PARAMS.capaciteMouleusesKg, curData.grainsAMoulerKg !== undefined ? curData.grainsAMoulerKg : 45000);

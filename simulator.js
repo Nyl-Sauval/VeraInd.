@@ -226,7 +226,7 @@ function getDefaultState() {
   }
   return {
     moisActif: 1,
-    reglementFournisseur: 'instant', // 'instant' (comptant/instantané) | 'livraison' (M+1) | '30j' (30j après livraison M+2)
+    reglementFournisseur: '30j', // Règle officielle : 30j après livraison (M+2, donc 30j après 30j)
     moisData
   };
 }
@@ -272,7 +272,10 @@ function migrateState(parsed) {
   if (parsed.moisData && parsed.moisData[1]) {
     appState = parsed;
     if (!appState.moisActif) appState.moisActif = 1;
-    if (!appState.reglementFournisseur) appState.reglementFournisseur = 'instant';
+    // Règle officielle demandée : 30j après la livraison (M+2, donc 30j après 30j)
+    if (!appState.reglementFournisseur || appState.reglementFournisseur === 'instant') {
+      appState.reglementFournisseur = '30j';
+    }
     if (appState.moisData[3] && appState.moisData[3].bonusBouchonsLots === undefined) {
       appState.moisData[3].bonusBouchonsLots = 2000;
     }
@@ -501,6 +504,7 @@ function simulateAllMonths(state) {
     let caTotal = 0;
     let encaissementVentesMois = 0;
     let creances30jMois = 0;
+    let creances60jMois = 0;
     let coutTransportTotal = 0;
 
     (monthData.ventes || []).forEach(v => {
@@ -524,6 +528,8 @@ function simulateAllMonths(state) {
 
       if (Number(v.delai) === 0) {
         encaissementVentesMois += caDeal;
+      } else if (Number(v.delai) === 60) {
+        creances60jMois += caDeal;
       } else {
         creances30jMois += caDeal;
       }
@@ -584,7 +590,9 @@ function simulateAllMonths(state) {
 
     // 8. Trésorerie
     const tresoDebut = isM1 ? PARAMS.capitalDepart : prevResult.tresorerieFinMois;
-    const encaissementCreancesPrecedentes = isM1 ? 0 : prevResult.creances30jMois;
+    const encaissementCreances30jPrecedentes = isM1 ? 0 : (prevResult.creances30jMois || 0);
+    const encaissementCreances60jPrecedentes = (m >= 3 && results[m - 2]) ? (results[m - 2].creances60jMois || 0) : 0;
+    const encaissementCreancesPrecedentes = encaissementCreances30jPrecedentes + encaissementCreances60jPrecedentes;
     const totalEncaissements = encaissementVentesMois + encaissementCreancesPrecedentes;
 
     const detteStockInitDecaissee = isM1 ? 95200 : 0;
@@ -596,15 +604,26 @@ function simulateAllMonths(state) {
     const decaissementVariables = coutBroyage + coutMoulage + coutTubage + coutTransportTotal + fraisMarketing + fraisStockage;
     
     // Décaissement commande producteur (Liège brut + Planches éventuelles)
-    const modeReglement = state.reglementFournisseur || 'instant';
+    // Mode de règlement : '30j' (30 jours après livraison = M+2, Règle officielle) | 'livraison' (M+1) | 'instant' (Comptant M)
+    const modeReglement = state.reglementFournisseur || '30j';
     let decaissementFournisseur = 0;
+    let detailDecaissementFournisseur = '';
+
     if (modeReglement === 'instant') {
       decaissementFournisseur = montantCommandeFournisseurTotal;
+      detailDecaissementFournisseur = `Commande M${m} payée comptant`;
     } else if (modeReglement === 'livraison') {
       decaissementFournisseur = isM1 ? 0 : (prevResult.montantCommandeFournisseurTotal || 0);
-    } else {
+      detailDecaissementFournisseur = isM1 ? 'Aucun décaissement en M1' : `Commande M${m - 1} payée à la livraison`;
+    } else { // '30j' : 30 jours après la livraison (donc 30j après 30j = M+2)
       if (m >= 3 && results[m - 2]) {
         decaissementFournisseur = results[m - 2].montantCommandeFournisseurTotal || 0;
+        detailDecaissementFournisseur = `Commande M${m - 2} payée à 30j après livraison M${m - 1}`;
+      } else {
+        decaissementFournisseur = 0;
+        detailDecaissementFournisseur = isM1 
+          ? `Commande M1 payable en M3 (30j après livraison M2)` 
+          : `Commande M2 payable en M4 (30j après livraison M3)`;
       }
     }
 
@@ -734,9 +753,14 @@ function simulateAllMonths(state) {
       decaissementFixe,
       decaissementVariables,
       decaissementFournisseur,
+      reglementFournisseur: modeReglement,
+      detailDecaissementFournisseur,
       totalDecaissements,
       tresorerieFinMois,
       creances30jMois,
+      creances60jMois,
+      encaissementCreances30jPrecedentes,
+      encaissementCreances60jPrecedentes,
       seuilRentabiliteLots,
       pointsRN,
       pointsCA,
