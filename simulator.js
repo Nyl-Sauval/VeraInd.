@@ -55,6 +55,9 @@ const PARAMS = {
   achatTubeuseComptantM2: 15000, // Payé comptant en Février (M2)
   rachatStockPlanchesM3: 175000,  // Payé en Mars (M3)
   bonusBouchonsGagnesM3Lots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars (ajoutés en stock M3)
+  encheresM5PlanchesAKg: 15000, // 15 000 planches Maroc A remportées aux enchères en Mai (M5)
+  encheresM5PlanchesBKg: 15000, // 15 000 planches Maroc B remportées aux enchères en Mai (M5)
+  encheresM5PrixTotal: 31000, // 31 000 € payés comptant aux enchères en Mai (M5)
 
   // Paramètres de trieuse des distributeurs (pour simulation et négociation)
   trieuse: {
@@ -155,7 +158,11 @@ function getDefaultMonthData(m) {
         { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
       ],
       bonusBouchonsLots: 0,
-      tresoDebutForce: null
+      tresoDebutForce: null,
+      encheresPlanchesAKg: 0,
+      encheresPlanchesBKg: 0,
+      encheresPlanchesCKg: 0,
+      encheresPrixTotal: 0
     };
   }
   if (m === 2) {
@@ -172,6 +179,10 @@ function getDefaultMonthData(m) {
       planchesATuberCKg: 0,
       bonusBouchonsLots: 0,
       tresoDebutForce: null,
+      encheresPlanchesAKg: 0,
+      encheresPlanchesBKg: 0,
+      encheresPlanchesCKg: 0,
+      encheresPrixTotal: 0,
       ventes: [
         { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
         { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
@@ -196,6 +207,10 @@ function getDefaultMonthData(m) {
       planchesATuberCKg: 10000, // 1 000 lots C
       bonusBouchonsLots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars
       tresoDebutForce: null,
+      encheresPlanchesAKg: 0,
+      encheresPlanchesBKg: 0,
+      encheresPlanchesCKg: 0,
+      encheresPrixTotal: 0,
       ventes: [
         { client: 'Équipe Distributeur 1', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
         { client: 'Équipe Distributeur 2', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
@@ -204,13 +219,44 @@ function getDefaultMonthData(m) {
       ]
     };
   }
-  // Par défaut pour M4 à M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels (3k)
+  if (m === 5) {
+    // En Mai (Mois 5) : Enchères remportées (15 000 Maroc A + 15 000 Maroc B pour 31 000 € payés comptant)
+    return {
+      commandeLiegeKg: 150000,
+      reductionFournisseurPct: 0,
+      commandePlanchesAKg: 0,
+      commandePlanchesBKg: 0,
+      commandePlanchesCKg: 0,
+      encheresPlanchesAKg: 15000, // 15 000 planches Maroc A remportées aux enchères
+      encheresPlanchesBKg: 15000, // 15 000 planches Maroc B remportées aux enchères
+      encheresPlanchesCKg: 0,
+      encheresPrixTotal: 31000,   // Payé 31 000 € comptant aux enchères en Mai
+      liegeABroyerKg: 150000, // <= 155 000 kg max moulins
+      grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
+      planchesATuberAKg: 10000, // 1 000 lots A
+      planchesATuberBKg: 10000, // 1 000 lots B
+      planchesATuberCKg: 0,     // Planches C épuisées
+      bonusBouchonsLots: 0,
+      tresoDebutForce: null,
+      ventes: [
+        { client: 'Équipe Distributeur 1', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 2', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 3', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 4', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'train' }
+      ]
+    };
+  }
+  // Par défaut pour M4, M6, M7, M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels
   return {
     commandeLiegeKg: 150000,
     reductionFournisseurPct: 0,
     commandePlanchesAKg: 0,
     commandePlanchesBKg: 0,
     commandePlanchesCKg: 0,
+    encheresPlanchesAKg: 0,
+    encheresPlanchesBKg: 0,
+    encheresPlanchesCKg: 0,
+    encheresPrixTotal: 0,
     liegeABroyerKg: 150000, // <= 155 000 kg max moulins
     grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
     planchesATuberAKg: 10000, // 1 000 lots A
@@ -287,6 +333,20 @@ function migrateState(parsed) {
     }
     if (appState.moisData[3] && appState.moisData[3].bonusBouchonsLots === undefined) {
       appState.moisData[3].bonusBouchonsLots = 2000;
+    }
+    if (appState.moisData[5]) {
+      if (appState.moisData[5].encheresPlanchesAKg === undefined) {
+        appState.moisData[5].encheresPlanchesAKg = 15000;
+      }
+      if (appState.moisData[5].encheresPlanchesBKg === undefined) {
+        appState.moisData[5].encheresPlanchesBKg = 15000;
+      }
+      if (appState.moisData[5].encheresPlanchesCKg === undefined) {
+        appState.moisData[5].encheresPlanchesCKg = 0;
+      }
+      if (appState.moisData[5].encheresPrixTotal === undefined) {
+        appState.moisData[5].encheresPrixTotal = 31000;
+      }
     }
     // S'assurer que tous les mois existent et respectent les capacités machines
     for (let m = 1; m <= PARAMS.nbMoisTotal; m++) {
@@ -442,6 +502,48 @@ function simulateAllMonths(state) {
       stockPlanchesCEntrantKg = (prevResult.stockPlanchesCFinKg || 0) + livraisonPlanchesCKg;
       valStockPlanchesCEntrant = (prevResult.valStockPlanchesCFin || 0) + livraisonPlanchesCVal;
     }
+
+    // Intégration des planches remportées aux enchères (ex: 15 000 kg Maroc A + 15 000 kg Maroc B en Mai M5 pour 31 000 €)
+    const encheresPlanchesAKg = (monthData.encheresPlanchesAKg !== undefined)
+      ? Number(monthData.encheresPlanchesAKg)
+      : (m === 5 ? (PARAMS.encheresM5PlanchesAKg || 15000) : 0);
+    const encheresPlanchesBKg = (monthData.encheresPlanchesBKg !== undefined)
+      ? Number(monthData.encheresPlanchesBKg)
+      : (m === 5 ? (PARAMS.encheresM5PlanchesBKg || 15000) : 0);
+    const encheresPlanchesCKg = (monthData.encheresPlanchesCKg !== undefined)
+      ? Number(monthData.encheresPlanchesCKg)
+      : 0;
+    const encheresPrixTotal = (monthData.encheresPrixTotal !== undefined && monthData.encheresPrixTotal !== null && monthData.encheresPrixTotal !== '')
+      ? Number(monthData.encheresPrixTotal)
+      : (m === 5 ? (PARAMS.encheresM5PrixTotal || 31000) : 0);
+
+    // Ventilation comptable de la valeur d'achat aux enchères au prorata de la valeur de marché de référence
+    let valEncheresA = 0;
+    let valEncheresB = 0;
+    let valEncheresC = 0;
+    const totalRefEncheres = (encheresPlanchesAKg * PARAMS.prixAchatPlanchesAInit) +
+                             (encheresPlanchesBKg * PARAMS.prixAchatPlanchesBInit) +
+                             (encheresPlanchesCKg * PARAMS.prixAchatPlanchesCInit);
+
+    if (totalRefEncheres > 0 && encheresPrixTotal > 0) {
+      valEncheresA = encheresPrixTotal * ((encheresPlanchesAKg * PARAMS.prixAchatPlanchesAInit) / totalRefEncheres);
+      valEncheresB = encheresPrixTotal * ((encheresPlanchesBKg * PARAMS.prixAchatPlanchesBInit) / totalRefEncheres);
+      valEncheresC = encheresPrixTotal * ((encheresPlanchesCKg * PARAMS.prixAchatPlanchesCInit) / totalRefEncheres);
+    } else if ((encheresPlanchesAKg + encheresPlanchesBKg + encheresPlanchesCKg) > 0 && encheresPrixTotal > 0) {
+      const totKg = encheresPlanchesAKg + encheresPlanchesBKg + encheresPlanchesCKg;
+      valEncheresA = encheresPrixTotal * (encheresPlanchesAKg / totKg);
+      valEncheresB = encheresPrixTotal * (encheresPlanchesBKg / totKg);
+      valEncheresC = encheresPrixTotal * (encheresPlanchesCKg / totKg);
+    }
+
+    stockPlanchesAEntrantKg += encheresPlanchesAKg;
+    valStockPlanchesAEntrant += valEncheresA;
+
+    stockPlanchesBEntrantKg += encheresPlanchesBKg;
+    valStockPlanchesBEntrant += valEncheresB;
+
+    stockPlanchesCEntrantKg += encheresPlanchesCKg;
+    valStockPlanchesCEntrant += valEncheresC;
 
     const cmpPlancheAKg = stockPlanchesAEntrantKg > 0 ? (valStockPlanchesAEntrant / stockPlanchesAEntrantKg) : PARAMS.prixAchatPlanchesAInit;
     const cmpPlancheBKg = stockPlanchesBEntrantKg > 0 ? (valStockPlanchesBEntrant / stockPlanchesBEntrantKg) : PARAMS.prixAchatPlanchesBInit;
@@ -623,6 +725,7 @@ function simulateAllMonths(state) {
     const machinesDecaissees = isM1 ? 30000 : 0;
     const achatTubeuseDecaissee = (m === 2) ? PARAMS.achatTubeuseComptantM2 : 0; // 15 000 € en M2
     const stockPlanchesAllemandDecaisse = (m === 3) ? PARAMS.rachatStockPlanchesM3 : 0; // 175 000 € en M3
+    const achatEncheresDecaisse = encheresPrixTotal; // Payé comptant le mois de l'enchère (ex: 31 000 € en Mai M5)
 
     const decaissementFixe = salairesMois + PARAMS.fraisStructureMensuels;
     const decaissementVariables = coutBroyage + coutMoulage + coutTubage + coutTransportTotal + fraisMarketing + fraisStockage;
@@ -651,7 +754,7 @@ function simulateAllMonths(state) {
       }
     }
 
-    const totalDecaissements = detteStockInitDecaissee + machinesDecaissees + achatTubeuseDecaissee + stockPlanchesAllemandDecaisse + decaissementFixe + decaissementVariables + decaissementFournisseur;
+    const totalDecaissements = detteStockInitDecaissee + machinesDecaissees + achatTubeuseDecaissee + stockPlanchesAllemandDecaisse + achatEncheresDecaisse + decaissementFixe + decaissementVariables + decaissementFournisseur;
     const tresorerieFinMois = tresoDebut + totalEncaissements - totalDecaissements;
 
     // 9. Seuil de rentabilité (Point mort)
@@ -793,6 +896,14 @@ function simulateAllMonths(state) {
       machinesDecaissees,
       achatTubeuseDecaissee,
       stockPlanchesAllemandDecaisse,
+      achatEncheresDecaisse,
+      encheresPlanchesAKg,
+      encheresPlanchesBKg,
+      encheresPlanchesCKg,
+      encheresPrixTotal,
+      valEncheresA,
+      valEncheresB,
+      valEncheresC,
       decaissementFixe,
       decaissementVariables,
       decaissementFournisseur,

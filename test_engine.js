@@ -343,7 +343,32 @@ console.log("Validation réduction fournisseur réussie :");
 console.log("- Remise 10% sur M1 (Liège seul) -> Facture :", m1Reduc.montantCommandeFournisseurTotal, "€ (Économie : " + m1Reduc.montantEconomieRemiseFournisseur + " €)");
 console.log("- Remise 5% sur M3 (Liège + Planches) -> Brut :", m3Mix.montantCommandeFournisseurBrut, "€ | Net :", m3Mix.montantCommandeFournisseurTotal, "€ (Économie : " + m3Mix.montantEconomieRemiseFournisseur + " €)");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage, prix planches, trieuse, +2 000 bouchons bonus, surcharge tresoDebutForce et réduction fournisseur sont passés avec succès !");
+// ==========================================
+// 14. Test des Enchères de Mai (Mois 5 : 15k Maroc A + 15k Maroc B pour 31 000 €)
+// ==========================================
+console.log("\n--- Validation des Enchères de Mai (Mois 5) ---");
+const stateEncheres = sim.getDefaultState();
+const resEncheres = sim.simulateAllMonths(stateEncheres);
+const m5Ench = resEncheres.moisResults[5];
+
+assert.strictEqual(m5Ench.encheresPlanchesAKg, 15000, "15 000 kg Maroc A remportés");
+assert.strictEqual(m5Ench.encheresPlanchesBKg, 15000, "15 000 kg Maroc B remportés");
+assert.strictEqual(m5Ench.achatEncheresDecaisse, 31000, "Prix payé comptant aux enchères = 31 000 €");
+assert(Math.abs((m5Ench.valEncheresA + m5Ench.valEncheresB) - 31000) < 1e-6, "Ventilation stock totale = 31 000 €");
+assert.strictEqual(m5Ench.stockPlanchesAEntrantKg, 25000, "Stock total Planches A en M5 = 25 000 kg (10k report + 15k Maroc A)");
+assert.strictEqual(m5Ench.stockPlanchesBEntrantKg, 17000, "Stock total Planches B en M5 = 17 000 kg (2k report + 15k Maroc B)");
+assert(m5Ench.cmpPlancheAKg < 1.5, "CMP Planche A abaissé par l'enchère (attendu ~1.35 €/kg)");
+assert(m5Ench.cmpPlancheBKg < 1.5, "CMP Planche B abaissé par l'enchère (attendu ~1.31 €/kg)");
+assert(m5Ench.cmpNatALot < 15.0, "Coût direct de tubage Nat A en M5 abaissé (~13.81 €/lot au lieu de 20.30 €)");
+assert(m5Ench.cmpNatBLot < 15.0, "Coût direct de tubage Nat B en M5 abaissé (~13.37 €/lot au lieu de 25.30 €)");
+assert(m5Ench.tresorerieFinMois > 0, "Trésorerie saine malgré le décaissement de 31 000 €");
+
+console.log("Validation des Enchères de Mai réussie :");
+console.log("- Stock Planches A M5 : " + m5Ench.stockPlanchesAEntrantKg + " kg (CMP : " + m5Ench.cmpPlancheAKg.toFixed(3) + " €/kg | Coût lot Nat A : " + m5Ench.cmpNatALot.toFixed(2) + " €)");
+console.log("- Stock Planches B M5 : " + m5Ench.stockPlanchesBEntrantKg + " kg (CMP : " + m5Ench.cmpPlancheBKg.toFixed(3) + " €/kg | Coût lot Nat B : " + m5Ench.cmpNatBLot.toFixed(2) + " €)");
+console.log("- Décaissement enchères : -" + m5Ench.achatEncheresDecaisse + " € | Trésorerie fin Mai : " + Math.round(m5Ench.tresorerieFinMois).toLocaleString('fr-FR') + " €");
+
+console.log("\n Tous les tests du moteur mathématique (8 mois), tubage, enchères Mai M5, prix planches, trieuse, bonus M3, tresoDebutForce et réduction fournisseur sont passés avec succès !");
 
 
 

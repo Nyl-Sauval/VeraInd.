@@ -639,6 +639,37 @@
               </div>
             </div>
 
+            <!-- Encart Enchères Exceptionnelles (Mois 5 • Planches Maroc A & B) -->
+            <div id="row-encheres-planches" class="bg-gradient-to-r from-emerald-50 via-teal-50 to-amber-50 p-3 rounded-xl border border-emerald-300 flex flex-wrap items-center justify-between gap-3 text-xs text-emerald-950 shadow-sm hidden">
+              <div class="flex items-center gap-2.5">
+                <span class="text-xl">🏆</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-black text-emerald-950 text-sm">Vente aux Enchères (Planches Maroc) :</span>
+                    <span id="badge-statut-encheres" class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full border border-emerald-300">Lots remportés en Mai (M5)</span>
+                  </div>
+                  <span class="text-emerald-800 text-[11px] block font-semibold">Stock ajouté immédiatement • Prix d'achat décaissé de la trésorerie</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <div class="flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-lg border border-emerald-200 shadow-xs">
+                  <label for="inp-encheres-a" class="text-[11px] font-bold text-slate-700">Maroc A :</label>
+                  <input type="number" id="inp-encheres-a" value="15000" min="0" step="1000" class="w-20 text-xs font-bold border border-emerald-300 rounded px-1.5 py-0.5 bg-white text-slate-900 focus:ring-1 focus:ring-emerald-500" onchange="handleInputChange()">
+                  <span class="text-[10px] text-slate-500 font-bold">kg</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-lg border border-emerald-200 shadow-xs">
+                  <label for="inp-encheres-b" class="text-[11px] font-bold text-slate-700">Maroc B :</label>
+                  <input type="number" id="inp-encheres-b" value="15000" min="0" step="1000" class="w-20 text-xs font-bold border border-emerald-300 rounded px-1.5 py-0.5 bg-white text-slate-900 focus:ring-1 focus:ring-emerald-500" onchange="handleInputChange()">
+                  <span class="text-[10px] text-slate-500 font-bold">kg</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-lg border border-red-200 shadow-xs">
+                  <label for="inp-encheres-prix" class="text-[11px] font-bold text-red-700">Prix payé :</label>
+                  <input type="number" id="inp-encheres-prix" value="31000" min="0" step="1000" class="w-24 text-xs font-bold border border-red-300 rounded px-1.5 py-0.5 bg-white text-red-700 font-mono focus:ring-1 focus:ring-red-500" onchange="handleInputChange()">
+                  <span class="text-[10px] text-red-700 font-bold">€</span>
+                </div>
+              </div>
+            </div>
+
             <!-- Bilan des stocks disponibles -->
             <div class="bg-indigo-50/70 p-3.5 rounded-xl border border-indigo-100 text-xs text-indigo-950 space-y-2">
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-200/60 pb-2">
@@ -1425,6 +1456,10 @@
                 <span>- Rachat stock allemand 50k planches (Mars M3) :</span>
                 <span id="out-decaisse-stock-allemand">-175 000 €</span>
               </div>
+              <div class="flex justify-between text-red-600" id="row-achat-encheres" style="display: none;">
+                <span>- Achat Enchères planches Maroc A & B (Mai M5) :</span>
+                <span id="out-decaisse-encheres">-31 000 €</span>
+              </div>
               <div class="flex justify-between text-red-600">
                 <span>- Salaires + Structure :</span>
                 <span id="out-decaisse-salaires-struct">-95 000 €</span>
@@ -1824,6 +1859,14 @@
       const inpBonus = document.getElementById('inp-bonus-bouchons');
       const bonusBouchonsLots = inpBonus ? Number(inpBonus.value) : (m === 3 ? 2000 : 0);
 
+      const inpEnchA = document.getElementById('inp-encheres-a');
+      const inpEnchB = document.getElementById('inp-encheres-b');
+      const inpEnchPrix = document.getElementById('inp-encheres-prix');
+      const encheresPlanchesAKg = inpEnchA ? Number(inpEnchA.value) : (m === 5 ? 15000 : 0);
+      const encheresPlanchesBKg = inpEnchB ? Number(inpEnchB.value) : (m === 5 ? 15000 : 0);
+      const encheresPlanchesCKg = (appState.moisData[m] && appState.moisData[m].encheresPlanchesCKg !== undefined) ? appState.moisData[m].encheresPlanchesCKg : 0;
+      const encheresPrixTotal = inpEnchPrix ? Number(inpEnchPrix.value) : (m === 5 ? 31000 : 0);
+
       const tresoDebutForce = (appState.moisData[m] && appState.moisData[m].tresoDebutForce !== undefined)
         ? appState.moisData[m].tresoDebutForce
         : null;
@@ -1848,6 +1891,10 @@
         commandePlanchesAKg,
         commandePlanchesBKg,
         commandePlanchesCKg,
+        encheresPlanchesAKg,
+        encheresPlanchesBKg,
+        encheresPlanchesCKg,
+        encheresPrixTotal,
         liegeABroyerKg,
         grainsAMoulerKg,
         planchesATuberAKg,
@@ -2120,10 +2167,27 @@
         }
       }
 
+      // Affichage de l'encart Enchères
+      const elEncheresRow = document.getElementById('row-encheres-planches');
+      const encheresQtyA = res.encheresPlanchesAKg || 0;
+      const encheresQtyB = res.encheresPlanchesBKg || 0;
+      const encheresPrix = res.achatEncheresDecaisse || 0;
+      if (encheresPrix > 0 || encheresQtyA > 0 || encheresQtyB > 0 || m === 5) {
+        if (elEncheresRow) elEncheresRow.classList.remove('hidden');
+      } else {
+        if (elEncheresRow) elEncheresRow.classList.add('hidden');
+      }
+
       const elStockPA = document.getElementById('lbl-stock-planches-a');
-      if (elStockPA) elStockPA.innerText = 'Dispo : ' + Math.round(res.stockPlanchesAEntrantKg).toLocaleString('fr-FR') + ' kg';
+      if (elStockPA) {
+        const txtA = 'Dispo : ' + Math.round(res.stockPlanchesAEntrantKg).toLocaleString('fr-FR') + ' kg';
+        elStockPA.innerText = encheresQtyA > 0 ? (txtA + ` (dont ${Math.round(encheresQtyA).toLocaleString('fr-FR')} kg Maroc A)`) : txtA;
+      }
       const elStockPB = document.getElementById('lbl-stock-planches-b');
-      if (elStockPB) elStockPB.innerText = 'Dispo : ' + Math.round(res.stockPlanchesBEntrantKg).toLocaleString('fr-FR') + ' kg';
+      if (elStockPB) {
+        const txtB = 'Dispo : ' + Math.round(res.stockPlanchesBEntrantKg).toLocaleString('fr-FR') + ' kg';
+        elStockPB.innerText = encheresQtyB > 0 ? (txtB + ` (dont ${Math.round(encheresQtyB).toLocaleString('fr-FR')} kg Maroc B)`) : txtB;
+      }
       const elStockPC = document.getElementById('lbl-stock-planches-c');
       if (elStockPC) elStockPC.innerText = 'Dispo : ' + Math.round(res.stockPlanchesCEntrantKg).toLocaleString('fr-FR') + ' kg';
 
@@ -2315,6 +2379,11 @@
       if (rowStockAllemand) rowStockAllemand.style.display = (m === 3) ? 'flex' : 'none';
       const elDecStockAll = document.getElementById('out-decaisse-stock-allemand');
       if (elDecStockAll) elDecStockAll.innerText = '-' + Math.round(res.stockPlanchesAllemandDecaisse).toLocaleString('fr-FR') + ' €';
+
+      const rowAchatEncheres = document.getElementById('row-achat-encheres');
+      if (rowAchatEncheres) rowAchatEncheres.style.display = (res.achatEncheresDecaisse > 0 || m === 5) ? 'flex' : 'none';
+      const elDecEncheres = document.getElementById('out-decaisse-encheres');
+      if (elDecEncheres) elDecEncheres.innerText = '-' + Math.round(res.achatEncheresDecaisse).toLocaleString('fr-FR') + ' €';
 
       const elDecSalStruct = document.getElementById('out-decaisse-salaires-struct');
       if (elDecSalStruct) elDecSalStruct.innerText = '-' + Math.round(res.decaissementFixe).toLocaleString('fr-FR') + ' €';
@@ -2560,6 +2629,11 @@
           label: '- Rachat stock allemand 72k kg planches (Mars M3)', u: '€', 
           vals: months.map(m => -resM[m].stockPlanchesAllemandDecaisse), 
           tot: -175000 
+        },
+        { 
+          label: '- Enchères planches Maroc A & B (Mai M5)', u: '€', 
+          vals: months.map(m => -resM[m].achatEncheresDecaisse), 
+          tot: -sumField(r => r.achatEncheresDecaisse) 
         },
         { 
           label: '- Autres décaissements fixes et variables', u: '€', 
@@ -2995,6 +3069,14 @@
       if (inpBonus) {
         inpBonus.value = curData.bonusBouchonsLots !== undefined ? curData.bonusBouchonsLots : (m === 3 ? 2000 : 0);
       }
+
+      // Enchères planches (Mois 5 Maroc A & B)
+      const inpEnchA = document.getElementById('inp-encheres-a');
+      const inpEnchB = document.getElementById('inp-encheres-b');
+      const inpEnchPrix = document.getElementById('inp-encheres-prix');
+      if (inpEnchA) inpEnchA.value = curData.encheresPlanchesAKg !== undefined ? curData.encheresPlanchesAKg : (m === 5 ? 15000 : 0);
+      if (inpEnchB) inpEnchB.value = curData.encheresPlanchesBKg !== undefined ? curData.encheresPlanchesBKg : (m === 5 ? 15000 : 0);
+      if (inpEnchPrix) inpEnchPrix.value = curData.encheresPrixTotal !== undefined ? curData.encheresPrixTotal : (m === 5 ? 31000 : 0);
 
       // Ventes aux 4 Distributeurs (Agglomérés + Naturels)
       for (let i = 1; i <= 4; i++) {
