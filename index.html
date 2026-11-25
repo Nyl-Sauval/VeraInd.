@@ -1775,6 +1775,7 @@
       </div>
 
     </div>
+    </div>
 
 
     <!-- ========================================================= -->
@@ -2019,6 +2020,11 @@
       if (targetBtn) {
         targetBtn.classList.add('border-emerald-400', 'text-emerald-300');
         targetBtn.classList.remove('border-transparent', 'text-slate-300');
+      }
+
+      if (tabId === 'recap') {
+        const all = simulateAllMonths(appState);
+        renderRecap(all);
       }
     }
 
