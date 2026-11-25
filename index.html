@@ -309,9 +309,12 @@
                   <span class="text-slate-500">Prix unitaire appliqué :</span>
                   <strong id="out-prix-liege" class="text-emerald-700">0,43 € / kg (-14%)</strong>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-baseline">
                   <span class="text-slate-500">Montant facture commande :</span>
-                  <strong id="out-montant-commande">64 500 €</strong>
+                  <div class="text-right">
+                    <strong id="out-montant-commande" class="text-slate-900">64 500 €</strong>
+                    <span id="out-montant-commande-brut" class="block text-[10px] text-slate-400 line-through hidden"></span>
+                  </div>
                 </div>
                 <div class="flex justify-between border-t pt-1 font-semibold text-emerald-800">
                   <span id="lbl-impact-treso-cmd">Décaissement ce mois :</span>
@@ -327,6 +330,28 @@
                     <option value="livraison">🚚 À la livraison (M+1 — 30 jours après commande)</option>
                     <option value="instant">⚡ Comptant / Instant (M — décaissé à la commande)</option>
                   </select>
+                </div>
+                <!-- Réduction négociée commande fournisseur -->
+                <div class="border-t pt-1.5 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase">Réduction globale négociée fournisseur :</label>
+                    <span id="badge-reduc-fournisseur-statut" class="text-[9px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.5 rounded border border-slate-200">0% (Base)</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <div class="relative flex-1">
+                      <input type="number" id="inp-reduction-fournisseur" min="0" max="100" step="0.5" value="0"
+                        class="w-full text-xs font-bold border rounded-lg px-2 py-1 bg-white text-slate-900 pr-6"
+                        placeholder="0" onchange="handleInputChange()" oninput="handleInputChange()">
+                      <span class="absolute right-2 top-1 text-xs text-slate-400 font-bold">%</span>
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                      <button type="button" onclick="setReductionFournisseur(0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-600 font-semibold">0%</button>
+                      <button type="button" onclick="setReductionFournisseur(3)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-700 font-semibold">3%</button>
+                      <button type="button" onclick="setReductionFournisseur(5)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-700 font-semibold">5%</button>
+                      <button type="button" onclick="setReductionFournisseur(10)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-1 rounded text-emerald-800 font-bold border border-emerald-300">10%</button>
+                    </div>
+                  </div>
+                  <div id="txt-economie-fournisseur" class="text-[10px] text-emerald-700 font-semibold hidden"></div>
                 </div>
               </div>
             </div>
@@ -413,11 +438,17 @@
 
               <!-- Synthèse commande fournisseur globale -->
               <div class="bg-slate-100 p-2.5 rounded-lg flex flex-wrap justify-between items-center text-xs text-slate-800 gap-2">
-                <div>
-                  Total Planches : <strong id="out-total-cmd-planches">0 €</strong> • Liège brut : <strong id="out-total-cmd-liege-synth">64 500 €</strong>
+                <div class="space-y-0.5">
+                  <div>
+                    Total Planches : <strong id="out-total-cmd-planches">0 €</strong> • Liège brut : <strong id="out-total-cmd-liege-synth">64 500 €</strong>
+                  </div>
+                  <div id="out-synth-reduc-ligne" class="text-[11px] text-emerald-700 font-medium hidden">
+                    Total brut : <span id="out-total-fournisseur-brut" class="line-through text-slate-500">64 500 €</span> • Remise : <span id="out-synth-reduc-badge" class="font-bold text-emerald-800 bg-emerald-100 px-1 py-0.2 rounded border border-emerald-300">-0%</span> (<span id="out-synth-reduc-gain">0 €</span> d'économie)
+                  </div>
                 </div>
-                <div class="text-emerald-800 font-black">
-                  Total Facture Fournisseur : <span id="out-total-facture-fournisseur">64 500 €</span>
+                <div class="text-emerald-800 font-black text-right">
+                  <div class="text-[10px] text-slate-500 font-normal">Total Facture Fournisseur :</div>
+                  <span id="out-total-facture-fournisseur" class="text-sm">64 500 €</span>
                 </div>
               </div>
             </div>
@@ -1709,6 +1740,7 @@
       if (!appState.moisData[m]) appState.moisData[m] = getDefaultMonthData(m);
 
       const commandeLiegeKg = Number(document.getElementById('inp-commande-liege').value) || 0;
+      const reductionFournisseurPct = Number(document.getElementById('inp-reduction-fournisseur')?.value) || 0;
       const commandePlanchesAKg = Number(document.getElementById('inp-commande-planche-a')?.value) || 0;
       const commandePlanchesBKg = Number(document.getElementById('inp-commande-planche-b')?.value) || 0;
       const commandePlanchesCKg = Number(document.getElementById('inp-commande-planche-c')?.value) || 0;
@@ -1722,6 +1754,10 @@
 
       const inpBonus = document.getElementById('inp-bonus-bouchons');
       const bonusBouchonsLots = inpBonus ? Number(inpBonus.value) : (m === 3 ? 2000 : 0);
+
+      const tresoDebutForce = (appState.moisData[m] && appState.moisData[m].tresoDebutForce !== undefined)
+        ? appState.moisData[m].tresoDebutForce
+        : null;
 
       function getVente(i) {
         const lots = Number(document.getElementById(`v-d${i}-lots`)?.value) || 0;
@@ -1739,6 +1775,7 @@
 
       appState.moisData[m] = {
         commandeLiegeKg,
+        reductionFournisseurPct,
         commandePlanchesAKg,
         commandePlanchesBKg,
         commandePlanchesCKg,
@@ -1748,11 +1785,20 @@
         planchesATuberBKg,
         planchesATuberCKg,
         bonusBouchonsLots,
+        tresoDebutForce,
         ventes: [getVente(1), getVente(2), getVente(3), getVente(4)]
       };
 
       saveToLocalStorage();
       runSimulation();
+    }
+
+    function setReductionFournisseur(pct) {
+      const inp = document.getElementById('inp-reduction-fournisseur');
+      if (inp) {
+        inp.value = pct;
+        handleInputChange();
+      }
     }
 
     function runSimulation() {
@@ -1761,20 +1807,54 @@
       const all = res.allMonths;
 
       // MAJ Phase 1 Commande Liège
-      const remisePct = Math.round((1 - (res.prixLiegeKg / 0.50)) * 100);
-      document.getElementById('out-prix-liege').innerText = res.prixLiegeKg.toFixed(2) + ' € / kg' + (remisePct > 0 ? ` (-${remisePct}%)` : ' (Base)');
-      document.getElementById('out-montant-commande').innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €';
+      const remiseLiegeVolumePct = Math.round((1 - (res.prixLiegeKg / 0.50)) * 100);
+      document.getElementById('out-prix-liege').innerText = res.prixLiegeKg.toFixed(2) + ' € / kg' + (remiseLiegeVolumePct > 0 ? ` (-${remiseLiegeVolumePct}%)` : ' (Base)');
+
+      const reducFourn = res.reductionFournisseurPct || 0;
+      const bReducFourn = document.getElementById('badge-reduc-fournisseur-statut');
+      const txtEcoFourn = document.getElementById('txt-economie-fournisseur');
+      const outMtCmdBrut = document.getElementById('out-montant-commande-brut');
+
+      if (bReducFourn) {
+        if (reducFourn > 0) {
+          bReducFourn.className = "text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.5 rounded border border-emerald-300";
+          bReducFourn.innerText = `-${reducFourn}% négocié`;
+        } else {
+          bReducFourn.className = "text-[9px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.5 rounded border border-slate-200";
+          bReducFourn.innerText = "0% (Base)";
+        }
+      }
+
+      if (txtEcoFourn) {
+        if (res.montantEconomieRemiseFournisseur > 0) {
+          txtEcoFourn.classList.remove('hidden');
+          txtEcoFourn.innerHTML = `🎉 Économie totale : <strong>${Math.round(res.montantEconomieRemiseFournisseur).toLocaleString('fr-FR')} €</strong> (-${reducFourn}%)`;
+        } else {
+          txtEcoFourn.classList.add('hidden');
+        }
+      }
+
+      if (outMtCmdBrut) {
+        if (reducFourn > 0 && res.montantCommandeLiegeBrut > 0) {
+          outMtCmdBrut.classList.remove('hidden');
+          outMtCmdBrut.innerText = 'Brut : ' + Math.round(res.montantCommandeLiegeBrut).toLocaleString('fr-FR') + ' €';
+        } else {
+          outMtCmdBrut.classList.add('hidden');
+        }
+      }
+
+      document.getElementById('out-montant-commande').innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €' + (reducFourn > 0 ? ` (-${reducFourn}%)` : '');
 
       // MAJ Phase 1 Approvisionnement Planches
       const secCmdPlanches = document.getElementById('section-commande-planches');
-      const pPA = PARAMS.getPrixPlancheA(res.commandePlanchesAKg);
-      const pPB = PARAMS.getPrixPlancheB(res.commandePlanchesBKg);
-      const pPC = PARAMS.getPrixPlancheC(res.commandePlanchesCKg);
-      const mtPA = res.commandePlanchesAKg * pPA;
-      const mtPB = res.commandePlanchesBKg * pPB;
-      const mtPC = res.commandePlanchesCKg * pPC;
-      const totPlanchesCmd = mtPA + mtPB + mtPC;
-      const totFactureFournisseur = res.montantCommandeLiege + totPlanchesCmd;
+      const pPA = res.prixPlancheAKg;
+      const pPB = res.prixPlancheBKg;
+      const pPC = res.prixPlancheCKg;
+      const mtPA = res.montantCommandePlancheA;
+      const mtPB = res.montantCommandePlancheB;
+      const mtPC = res.montantCommandePlancheC;
+      const totPlanchesCmd = res.montantCommandePlanchesTotal;
+      const totFactureFournisseur = res.montantCommandeFournisseurTotal;
 
       if (secCmdPlanches) {
         if (m < 3) {
@@ -1791,17 +1871,26 @@
       const bPA = document.getElementById('badge-prix-planche-a');
       if (bPA) bPA.innerText = `${pPA.toFixed(2)} €/kg` + (pPA < 2.00 ? ` (-${Math.round((1 - pPA/2)*100)}%)` : '');
       const outMtPA = document.getElementById('out-montant-planche-a');
-      if (outMtPA) outMtPA.innerText = Math.round(mtPA).toLocaleString('fr-FR') + ' €' + (mtPA > 0 && mtPA < 5000 ? ' ⚠️ (min 5 000€)' : '');
+      if (outMtPA) {
+        const brutPA = res.montantCommandePlancheABrut;
+        outMtPA.innerText = Math.round(mtPA).toLocaleString('fr-FR') + ' €' + (brutPA > 0 && brutPA < 5000 ? ' ⚠️ (min 5 000€)' : '') + (reducFourn > 0 && mtPA > 0 ? ` (-${reducFourn}%)` : '');
+      }
 
       const bPB = document.getElementById('badge-prix-planche-b');
       if (bPB) bPB.innerText = `${pPB.toFixed(2)} €/kg` + (pPB < 2.50 ? ` (-${Math.round((1 - pPB/2.5)*100)}%)` : '');
       const outMtPB = document.getElementById('out-montant-planche-b');
-      if (outMtPB) outMtPB.innerText = Math.round(mtPB).toLocaleString('fr-FR') + ' €' + (mtPB > 0 && mtPB < 5000 ? ' ⚠️ (min 5 000€)' : '');
+      if (outMtPB) {
+        const brutPB = res.montantCommandePlancheBBrut;
+        outMtPB.innerText = Math.round(mtPB).toLocaleString('fr-FR') + ' €' + (brutPB > 0 && brutPB < 5000 ? ' ⚠️ (min 5 000€)' : '') + (reducFourn > 0 && mtPB > 0 ? ` (-${reducFourn}%)` : '');
+      }
 
       const bPC = document.getElementById('badge-prix-planche-c');
       if (bPC) bPC.innerText = `${pPC.toFixed(2)} €/kg` + (pPC < 3.00 ? ` (-${Math.round((1 - pPC/3)*100)}%)` : '');
       const outMtPC = document.getElementById('out-montant-planche-c');
-      if (outMtPC) outMtPC.innerText = Math.round(mtPC).toLocaleString('fr-FR') + ' €' + (mtPC > 0 && mtPC < 5000 ? ' ⚠️ (min 5 000€)' : '');
+      if (outMtPC) {
+        const brutPC = res.montantCommandePlancheCBrut;
+        outMtPC.innerText = Math.round(mtPC).toLocaleString('fr-FR') + ' €' + (brutPC > 0 && brutPC < 5000 ? ' ⚠️ (min 5 000€)' : '') + (reducFourn > 0 && mtPC > 0 ? ` (-${reducFourn}%)` : '');
+      }
 
       const outTotPlanches = document.getElementById('out-total-cmd-planches');
       if (outTotPlanches) outTotPlanches.innerText = Math.round(totPlanchesCmd).toLocaleString('fr-FR') + ' €';
@@ -1809,6 +1898,21 @@
       if (outTotLiegeSynth) outTotLiegeSynth.innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €';
       const outTotFactFourn = document.getElementById('out-total-facture-fournisseur');
       if (outTotFactFourn) outTotFactFourn.innerText = Math.round(totFactureFournisseur).toLocaleString('fr-FR') + ' €';
+
+      const outSynthLigne = document.getElementById('out-synth-reduc-ligne');
+      const outSynthBrut = document.getElementById('out-total-fournisseur-brut');
+      const outSynthBadge = document.getElementById('out-synth-reduc-badge');
+      const outSynthGain = document.getElementById('out-synth-reduc-gain');
+      if (outSynthLigne) {
+        if (reducFourn > 0 && res.montantCommandeFournisseurBrut > 0) {
+          outSynthLigne.classList.remove('hidden');
+          if (outSynthBrut) outSynthBrut.innerText = Math.round(res.montantCommandeFournisseurBrut).toLocaleString('fr-FR') + ' €';
+          if (outSynthBadge) outSynthBadge.innerText = `-${reducFourn}%`;
+          if (outSynthGain) outSynthGain.innerText = Math.round(res.montantEconomieRemiseFournisseur).toLocaleString('fr-FR') + ' €';
+        } else {
+          outSynthLigne.classList.add('hidden');
+        }
+      }
 
       const lblTresoCmd = document.getElementById('lbl-impact-treso-cmd');
       const valTresoCmd = document.getElementById('val-impact-treso-cmd');
@@ -2783,6 +2887,11 @@
       const moulageKg = Math.min(PARAMS.capaciteMouleusesKg, curData.grainsAMoulerKg !== undefined ? curData.grainsAMoulerKg : 45000);
 
       document.getElementById('inp-commande-liege').value = curData.commandeLiegeKg || 150000;
+      
+      const inpReduc = document.getElementById('inp-reduction-fournisseur');
+      if (inpReduc) {
+        inpReduc.value = (curData.reductionFournisseurPct !== undefined) ? curData.reductionFournisseurPct : 0;
+      }
       
       // Approvisionnement Planches (A, B, C)
       const inpCmdPA = document.getElementById('inp-commande-planche-a');

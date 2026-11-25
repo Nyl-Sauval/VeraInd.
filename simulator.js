@@ -139,6 +139,7 @@ function getDefaultMonthData(m) {
   if (m === 1) {
     return {
       commandeLiegeKg: 150000,
+      reductionFournisseurPct: 0,
       commandePlanchesAKg: 0,
       commandePlanchesBKg: 0,
       commandePlanchesCKg: 0,
@@ -160,6 +161,7 @@ function getDefaultMonthData(m) {
   if (m === 2) {
     return {
       commandeLiegeKg: 150000,
+      reductionFournisseurPct: 0,
       commandePlanchesAKg: 0,
       commandePlanchesBKg: 0,
       commandePlanchesCKg: 0,
@@ -183,6 +185,7 @@ function getDefaultMonthData(m) {
     // + 3 000 lots de bouchons naturels (1 000 A + 1 000 B + 1 000 C)
     return {
       commandeLiegeKg: 150000,
+      reductionFournisseurPct: 0,
       commandePlanchesAKg: 0,
       commandePlanchesBKg: 0,
       commandePlanchesCKg: 0,
@@ -204,6 +207,7 @@ function getDefaultMonthData(m) {
   // Par défaut pour M4 à M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels (3k)
   return {
     commandeLiegeKg: 150000,
+    reductionFournisseurPct: 0,
     commandePlanchesAKg: 0,
     commandePlanchesBKg: 0,
     commandePlanchesCKg: 0,
@@ -349,7 +353,7 @@ function simulateAllMonths(state) {
     // 1. Commande au producteur espagnol (Liège brut)
     const commandeLiegeKg = Number(monthData.commandeLiegeKg) || 0;
     const prixLiegeKg = PARAMS.getPrixLiege(commandeLiegeKg);
-    const montantCommandeLiege = commandeLiegeKg * prixLiegeKg;
+    const montantCommandeLiegeBrut = commandeLiegeKg * prixLiegeKg;
 
     // 1 bis. Commandes de planches Espagne A, B, C (dès M3)
     const commandePlanchesAKg = (m >= 3) ? (Number(monthData.commandePlanchesAKg) || 0) : 0;
@@ -360,11 +364,23 @@ function simulateAllMonths(state) {
     const prixPlancheBKg = PARAMS.getPrixPlancheB(commandePlanchesBKg);
     const prixPlancheCKg = PARAMS.getPrixPlancheC(commandePlanchesCKg);
 
-    const montantCommandePlancheA = commandePlanchesAKg * prixPlancheAKg;
-    const montantCommandePlancheB = commandePlanchesBKg * prixPlancheBKg;
-    const montantCommandePlancheC = commandePlanchesCKg * prixPlancheCKg;
+    const montantCommandePlancheABrut = commandePlanchesAKg * prixPlancheAKg;
+    const montantCommandePlancheBBrut = commandePlanchesBKg * prixPlancheBKg;
+    const montantCommandePlancheCBrut = commandePlanchesCKg * prixPlancheCKg;
+    const montantCommandePlanchesBrut = montantCommandePlancheABrut + montantCommandePlancheBBrut + montantCommandePlancheCBrut;
+    const montantCommandeFournisseurBrut = montantCommandeLiegeBrut + montantCommandePlanchesBrut;
+
+    // Réduction globale négociée sur le total de la commande fournisseur (%)
+    const reductionFournisseurPct = Math.max(0, Math.min(100, Number(monthData.reductionFournisseurPct) || 0));
+    const remiseFournisseurFacteur = Math.max(0, 1 - (reductionFournisseurPct / 100));
+
+    const montantCommandeLiege = montantCommandeLiegeBrut * remiseFournisseurFacteur;
+    const montantCommandePlancheA = montantCommandePlancheABrut * remiseFournisseurFacteur;
+    const montantCommandePlancheB = montantCommandePlancheBBrut * remiseFournisseurFacteur;
+    const montantCommandePlancheC = montantCommandePlancheCBrut * remiseFournisseurFacteur;
     const montantCommandePlanchesTotal = montantCommandePlancheA + montantCommandePlancheB + montantCommandePlancheC;
     const montantCommandeFournisseurTotal = montantCommandeLiege + montantCommandePlanchesTotal;
+    const montantEconomieRemiseFournisseur = montantCommandeFournisseurBrut - montantCommandeFournisseurTotal;
 
     // 2. Stocks entrants au début du mois
     // A. Liège brut
@@ -660,8 +676,18 @@ function simulateAllMonths(state) {
       mois: m,
       commandeLiegeKg,
       prixLiegeKg,
+      montantCommandeLiegeBrut,
       montantCommandeLiege,
+      reductionFournisseurPct,
+      remiseFournisseurFacteur,
+      montantCommandePlancheABrut,
+      montantCommandePlancheBBrut,
+      montantCommandePlancheCBrut,
+      montantCommandePlanchesBrut,
+      montantCommandeFournisseurBrut,
+      montantEconomieRemiseFournisseur,
       livraisonRecueKg,
+      livraisonRecueVal,
       stockLiegeEntrantKg,
       liegeABroyerKg,
       capaciteMoulinsKg: maxBroyageMachine,
@@ -702,6 +728,12 @@ function simulateAllMonths(state) {
       montantCommandePlancheC,
       montantCommandePlanchesTotal,
       montantCommandeFournisseurTotal,
+      livraisonPlanchesAKg,
+      livraisonPlanchesAVal,
+      livraisonPlanchesBKg,
+      livraisonPlanchesBVal,
+      livraisonPlanchesCKg,
+      livraisonPlanchesCVal,
       stockPlanchesAEntrantKg,
       stockPlanchesBEntrantKg,
       stockPlanchesCEntrantKg,

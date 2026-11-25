@@ -285,6 +285,65 @@ assert.strictEqual(resAvecForce.moisResults[3].tresoDebutEstimee, resSansForce.m
 assert.strictEqual(resAvecForce.moisResults[4].tresoDebutEstimee, resAvecForce.moisResults[3].tresorerieFinMois, "Le Mois 4 cascade automatiquement depuis la fin du Mois 3 ajusté");
 console.log("Solde forcé M3 :", resAvecForce.moisResults[3].tresoDebut, "€ | Solde estimé M3 :", Math.round(resAvecForce.moisResults[3].tresoDebutEstimee), "€ | Cascade M4 début :", Math.round(resAvecForce.moisResults[4].tresoDebut), "€");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage (75k cap, 30k/22k/20k stocks), prix planches, trieuse, +2 000 bouchons bonus et surcharge tresoDebutForce sont passés avec succès !");
+// 13. Validation du champ Réduction Fournisseur (reductionFournisseurPct)
+console.log("\n--- Validation du champ Réduction Fournisseur (remise en % sur le total) ---");
+const stateReduc = sim.getDefaultState();
+
+// Vérification de la valeur par défaut (0%)
+const resReducDefaut = sim.simulateAllMonths(stateReduc);
+assert.strictEqual(resReducDefaut.moisResults[1].reductionFournisseurPct, 0, "Par défaut, la réduction fournisseur est à 0%");
+assert.strictEqual(resReducDefaut.moisResults[1].montantEconomieRemiseFournisseur, 0, "Économie par défaut = 0 €");
+assert.strictEqual(resReducDefaut.moisResults[1].montantCommandeLiege, 63750, "Total brut liège sans remise (150k @ 0.425) = 63 750 €");
+assert.strictEqual(resReducDefaut.moisResults[1].montantCommandeFournisseurTotal, 63750, "Total fournisseur = 63 750 €");
+
+// Test avec 10% de réduction en Mois 1
+stateReduc.moisData[1].reductionFournisseurPct = 10;
+const resReduc10 = sim.simulateAllMonths(stateReduc);
+const m1Reduc = resReduc10.moisResults[1];
+assert.strictEqual(m1Reduc.reductionFournisseurPct, 10, "La réduction fournisseur enregistrée est bien de 10%");
+assert.strictEqual(m1Reduc.montantCommandeLiegeBrut, 63750, "Montant brut liège = 63 750 €");
+assert.strictEqual(m1Reduc.montantCommandeLiege, 57375, "Montant net liège après 10% de réduction = 57 375 €");
+assert.strictEqual(m1Reduc.montantCommandeFournisseurTotal, 57375, "Facture totale fournisseur = 57 375 €");
+assert.strictEqual(m1Reduc.montantEconomieRemiseFournisseur, 6375, "Économie réalisée = 6 375 €");
+
+// Vérification de la livraison valorisée au prix remisé en Mois 2
+const m2Reduc = resReduc10.moisResults[2];
+assert.strictEqual(m2Reduc.livraisonRecueVal, 57375, "Le stock de liège entrant en M2 est valorisé au prix remisé (57 375 €)");
+
+// Vérification du décaissement en trésorerie en Mois 3 (règle 30j après livraison)
+const m3Reduc = resReduc10.moisResults[3];
+assert.strictEqual(m3Reduc.decaissementFournisseur, 57375, "Le décaissement en M3 pour la commande M1 est de 57 375 €");
+
+// Test en Mois 3 avec commande mixte (Liège brut + Planches A) et 5% de réduction
+stateReduc.moisData[3].commandePlanchesAKg = 10000; // 10k kg @ 1.94 € = 19 400 € brut
+stateReduc.moisData[3].reductionFournisseurPct = 5;  // 5% de remise
+const resReducMois3 = sim.simulateAllMonths(stateReduc);
+const m3Mix = resReducMois3.moisResults[3];
+const brutLiege = 150000 * 0.425; // 63 750 €
+const brutPlanches = 10000 * 1.94; // 19 400 €
+const brutTotalAttendu = brutLiege + brutPlanches; // 83 150 €
+const netTotalAttendu = brutTotalAttendu * 0.95;   // 78 992.50 €
+const ecoAttendue = brutTotalAttendu * 0.05;      // 4 157.50 €
+
+assert.strictEqual(m3Mix.montantCommandeFournisseurBrut, brutTotalAttendu, "Total brut mixte attendu = 83 150 €");
+assert.strictEqual(m3Mix.montantCommandeFournisseurTotal, netTotalAttendu, "Total net remisé (-5%) = 78 992.50 €");
+assert.strictEqual(m3Mix.montantEconomieRemiseFournisseur, ecoAttendue, "Économie attendue = 4 157.50 €");
+assert.strictEqual(m3Mix.montantCommandeLiege, brutLiege * 0.95, "Liège net = 60 562.50 €");
+assert.strictEqual(m3Mix.montantCommandePlancheA, brutPlanches * 0.95, "Planche A nette = 18 430 €");
+
+// Vérification de la livraison en Mois 4
+const m4Mix = resReducMois3.moisResults[4];
+assert.strictEqual(m4Mix.livraisonRecueVal, brutLiege * 0.95, "Livraison liège en M4 valorisée à 60 562.50 €");
+assert.strictEqual(m4Mix.livraisonPlanchesAVal, brutPlanches * 0.95, "Livraison Planche A en M4 valorisée à 18 430 €");
+// Vérification décaissement en Mois 5
+const m5Mix = resReducMois3.moisResults[5];
+assert.strictEqual(m5Mix.decaissementFournisseur, netTotalAttendu, "Décaissement en M5 = 78 992.50 €");
+
+console.log("Validation réduction fournisseur réussie :");
+console.log("- Remise 10% sur M1 (Liège seul) -> Facture :", m1Reduc.montantCommandeFournisseurTotal, "€ (Économie : " + m1Reduc.montantEconomieRemiseFournisseur + " €)");
+console.log("- Remise 5% sur M3 (Liège + Planches) -> Brut :", m3Mix.montantCommandeFournisseurBrut, "€ | Net :", m3Mix.montantCommandeFournisseurTotal, "€ (Économie : " + m3Mix.montantEconomieRemiseFournisseur + " €)");
+
+console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage, prix planches, trieuse, +2 000 bouchons bonus, surcharge tresoDebutForce et réduction fournisseur sont passés avec succès !");
+
 
 
