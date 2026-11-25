@@ -178,6 +178,62 @@ console.log("\n=== VALIDATION NOUVEAUTÉS CONJONCTURE MOIS 3 ===");
 const m2 = res8.moisResults[2];
 const m3 = res8.moisResults[3];
 
+// Capacité tubeuses et stocks initiaux en M3
+assert.strictEqual(sim.PARAMS.capaciteTubeusesPlanches, 75000, "Capacité max des tubeuses = 75 000 planches / mois");
+assert.strictEqual(m3.capaciteTubeusesPlanches, 75000, "Capacité tubeuses en M3 = 75 000");
+
+assert.strictEqual(m3.stockPlanchesAEntrantKg, 30000, "Stock initial planches Espagne A = 30 000 kg");
+assert.strictEqual(m3.stockPlanchesBEntrantKg, 22000, "Stock initial planches Espagne B = 22 000 kg");
+assert.strictEqual(m3.stockPlanchesCEntrantKg, 20000, "Stock initial planches Espagne C = 20 000 kg");
+
+const totalValStockPlanchesM3 = (30000 * 2.00) + (22000 * 2.50) + (20000 * 3.00);
+console.log("Valorisation exacte stock planches initial (30k A @ 2€ + 22k B @ 2.5€ + 20k C @ 3€) :", totalValStockPlanchesM3, "€");
+assert.strictEqual(totalValStockPlanchesM3, 175000, "La valorisation du stock initial est exactement de 175 000 € (rachat allemand)");
+
+// Grilles tarifaires des planches et remises
+console.log("\n--- Validation des grilles de réduction des planches ---");
+// Planche A : base 2.00, 10k: 1.94, 13k: 1.88, 15k: 1.82, 18k: 1.76, 20k: 1.70
+assert.strictEqual(sim.PARAMS.getPrixPlancheA(5000), 2.00, "Planche A < 10k kg = 2.00 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheA(10000), 1.94, "Planche A 10k kg = 1.94 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheA(13000), 1.88, "Planche A 13k kg = 1.88 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheA(15000), 1.82, "Planche A 15k kg = 1.82 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheA(18000), 1.76, "Planche A 18k kg = 1.76 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheA(20000), 1.70, "Planche A 20k kg = 1.70 €/kg");
+
+// Planche B : base 2.50, 10k: 2.43, 13k: 2.35, 15k: 2.28, 18k: 2.20, 20k: 2.13
+assert.strictEqual(sim.PARAMS.getPrixPlancheB(5000), 2.50, "Planche B < 10k kg = 2.50 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheB(10000), 2.43, "Planche B 10k kg = 2.43 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheB(13000), 2.35, "Planche B 13k kg = 2.35 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheB(15000), 2.28, "Planche B 15k kg = 2.28 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheB(18000), 2.20, "Planche B 18k kg = 2.20 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheB(20000), 2.13, "Planche B 20k kg = 2.13 €/kg");
+
+// Planche C : base 3.00, 10k: 2.91, 13k: 2.82, 15k: 2.73, 18k: 2.64, 20k: 2.55
+assert.strictEqual(sim.PARAMS.getPrixPlancheC(5000), 3.00, "Planche C < 10k kg = 3.00 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheC(10000), 2.91, "Planche C 10k kg = 2.91 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheC(13000), 2.82, "Planche C 13k kg = 2.82 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheC(15000), 2.73, "Planche C 15k kg = 2.73 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheC(18000), 2.64, "Planche C 18k kg = 2.64 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlancheC(20000), 2.55, "Planche C 20k kg = 2.55 €/kg");
+
+// Coûts de revient et marges directes des bouchons naturels
+console.log("\n--- Validation Coûts et Marges des Bouchons Naturels en M3 ---");
+console.log("Coût unitaire Nat A :", m3.cmpNatALot.toFixed(2), "€ / lot (Planche A 2.00€ + 0.30€ tubage)");
+console.log("Coût unitaire Nat B :", m3.cmpNatBLot.toFixed(2), "€ / lot (Planche B 2.50€ + 0.30€ tubage)");
+console.log("Coût unitaire Nat C :", m3.cmpNatCLot.toFixed(2), "€ / lot (Planche C 3.00€ + 0.30€ tubage)");
+
+assert.strictEqual(m3.cmpNatALot, 20.30, "Coût direct Nat A = 20.30 € / lot");
+assert.strictEqual(m3.cmpNatBLot, 25.30, "Coût direct Nat B = 25.30 € / lot");
+assert.strictEqual(m3.cmpNatCLot, 30.30, "Coût direct Nat C = 30.30 € / lot");
+
+const margeBruteNatA = 55.0 - m3.cmpNatALot; // 34.70 €
+const margeBruteNatB = 60.0 - m3.cmpNatBLot; // 34.70 €
+const margeBruteNatC = 65.0 - m3.cmpNatCLot; // 34.70 €
+console.log("Marge brute unitaire dégagée : Nat A =", margeBruteNatA.toFixed(2), "€ | Nat B =", margeBruteNatB.toFixed(2), "€ | Nat C =", margeBruteNatC.toFixed(2), "€");
+assert.strictEqual(margeBruteNatA, 34.70, "Marge brute Nat A = 34.70 € / lot");
+assert.strictEqual(margeBruteNatB, 34.70, "Marge brute Nat B = 34.70 € / lot");
+assert.strictEqual(margeBruteNatC, 34.70, "Marge brute Nat C = 34.70 € / lot");
+
 // Amortissement et investissements
 assert.strictEqual(m2.achatTubeuseDecaissee, 15000, "Achat tubeuse comptant en M2 = 15 000 €");
 assert.strictEqual(m2.amortissementMois, 750, "Amortissement mensuel dès M2 = 750 € (500 + 250 € tubeuse)");
@@ -196,6 +252,6 @@ const margeDistB = sim.calcMargeDistributeur('B', 60.0);
 console.log("Marge brute distributeur (Espagne B racheté à 60€) :", margeDistB.margeBruteDistributeur.toFixed(2), "€ / lot (Revente moyenne client : " + margeDistB.revenuReventeLot.toFixed(2) + " €)");
 assert(margeDistB.margeBruteDistributeur > 60.0, "Le distributeur réalise plus de 60 € de marge brute par lot trié !");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage et trieuse sont passés avec succès !");
+console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage (75k cap, 30k/22k/20k stocks), prix planches et trieuse sont passés avec succès !");
 
 

@@ -27,8 +27,13 @@ const PARAMS = {
   prixAchatBouchonsInit: 12.0,
 
   // Stocks rachetés du client allemand (disponibles en M3, payés en M3)
-  stockRachetePlanchesKg: 50000, // Valeur totale 175 000 € (moyenne 3.50 € / kg)
-  prixAchatPlanchesInit: 3.50,
+  stockRachetePlanchesKg: 72000, // Total 72 000 kg = 175 000 € exacts
+  stockRachetePlanchesAKg: 30000, // 30 000 kg @ 2.00 €/kg = 60 000 €
+  stockRachetePlanchesBKg: 22000, // 22 000 kg @ 2.50 €/kg = 55 000 €
+  stockRachetePlanchesCKg: 20000, // 20 000 kg @ 3.00 €/kg = 60 000 €
+  prixAchatPlanchesAInit: 2.00,
+  prixAchatPlanchesBInit: 2.50,
+  prixAchatPlanchesCInit: 3.00,
 
   // Rendements de production classiques (Agglomérés)
   rendementBroyage: 0.35, // 100 kg liège -> 35 kg grains
@@ -44,7 +49,7 @@ const PARAMS = {
   // Capacités maximales des machines (par mois)
   capaciteMoulinsKg: 155000,   // Limite Moulins : max 155 000 kg liège brut / mois
   capaciteMouleusesKg: 45000,  // Limite Mouleuses : max 45 000 kg grains / mois (soit 9 000 lots max / mois)
-  capaciteTubeusesPlanches: 50000, // Limite Tubeuses : max 50 000 planches / mois (soit 5 000 lots naturels max / mois)
+  capaciteTubeusesPlanches: 75000, // Limite Tubeuses : max 75 000 planches / mois (soit 7 500 lots naturels max / mois)
 
   // Événements de trésorerie exceptionnels
   achatTubeuseComptantM2: 15000, // Payé comptant en Février (M2)
@@ -83,6 +88,34 @@ const PARAMS = {
     return 0.50; // Tarif de base (< 90 000 kg, min 35 000 kg)
   },
 
+  // Grilles de prix des planches (Commande min 5 000 €, réductions dès 10 000 €)
+  getPrixPlancheA: function(kg) {
+    if (kg >= 20000) return 1.70;
+    if (kg >= 18000) return 1.76;
+    if (kg >= 15000) return 1.82;
+    if (kg >= 13000) return 1.88;
+    if (kg >= 10000) return 1.94;
+    return 2.00; // Base (< 10 000 kg, min 5 000 € soit 2 500 kg)
+  },
+
+  getPrixPlancheB: function(kg) {
+    if (kg >= 20000) return 2.13;
+    if (kg >= 18000) return 2.20;
+    if (kg >= 15000) return 2.28;
+    if (kg >= 13000) return 2.35;
+    if (kg >= 10000) return 2.43;
+    return 2.50; // Base (< 10 000 kg, min 5 000 € soit 2 000 kg)
+  },
+
+  getPrixPlancheC: function(kg) {
+    if (kg >= 20000) return 2.55;
+    if (kg >= 18000) return 2.64;
+    if (kg >= 15000) return 2.73;
+    if (kg >= 13000) return 2.82;
+    if (kg >= 10000) return 2.91;
+    return 3.00; // Base (< 10 000 kg, min 5 000 € soit 1 667 kg)
+  },
+
   // Modes de transport disponibles
   transports: {
     camion: { id: 'camion', nom: 'Camion', capacite: 1980, cout: 1721, rse: 'Plutôt polluant', icone: 'fa-truck' },
@@ -104,6 +137,9 @@ function getDefaultMonthData(m) {
   if (m === 1) {
     return {
       commandeLiegeKg: 150000,
+      commandePlanchesAKg: 0,
+      commandePlanchesBKg: 0,
+      commandePlanchesCKg: 0,
       liegeABroyerKg: 110000, // Stock initial usine (<= 155 000 kg limite moulins)
       grainsAMoulerKg: 45000, // Plafonné à la capacité machine des mouleuses (45 000 kg max)
       planchesATuberAKg: 0,
@@ -120,6 +156,9 @@ function getDefaultMonthData(m) {
   if (m === 2) {
     return {
       commandeLiegeKg: 150000,
+      commandePlanchesAKg: 0,
+      commandePlanchesBKg: 0,
+      commandePlanchesCKg: 0,
       liegeABroyerKg: 150000, // <= 155 000 kg max moulins
       grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses
       planchesATuberAKg: 0,
@@ -136,6 +175,9 @@ function getDefaultMonthData(m) {
   // Par défaut pour M3 à M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels (3k)
   return {
     commandeLiegeKg: 150000,
+    commandePlanchesAKg: 0,
+    commandePlanchesBKg: 0,
+    commandePlanchesCKg: 0,
     liegeABroyerKg: 150000, // <= 155 000 kg max moulins
     grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
     planchesATuberAKg: 10000, // 1 000 lots A
@@ -272,6 +314,21 @@ function simulateAllMonths(state) {
     const prixLiegeKg = PARAMS.getPrixLiege(commandeLiegeKg);
     const montantCommandeLiege = commandeLiegeKg * prixLiegeKg;
 
+    // 1 bis. Commandes de planches Espagne A, B, C (dès M3)
+    const commandePlanchesAKg = (m >= 3) ? (Number(monthData.commandePlanchesAKg) || 0) : 0;
+    const commandePlanchesBKg = (m >= 3) ? (Number(monthData.commandePlanchesBKg) || 0) : 0;
+    const commandePlanchesCKg = (m >= 3) ? (Number(monthData.commandePlanchesCKg) || 0) : 0;
+
+    const prixPlancheAKg = PARAMS.getPrixPlancheA(commandePlanchesAKg);
+    const prixPlancheBKg = PARAMS.getPrixPlancheB(commandePlanchesBKg);
+    const prixPlancheCKg = PARAMS.getPrixPlancheC(commandePlanchesCKg);
+
+    const montantCommandePlancheA = commandePlanchesAKg * prixPlancheAKg;
+    const montantCommandePlancheB = commandePlanchesBKg * prixPlancheBKg;
+    const montantCommandePlancheC = commandePlanchesCKg * prixPlancheCKg;
+    const montantCommandePlanchesTotal = montantCommandePlancheA + montantCommandePlancheB + montantCommandePlancheC;
+    const montantCommandeFournisseurTotal = montantCommandeLiege + montantCommandePlanchesTotal;
+
     // 2. Stocks entrants au début du mois
     // A. Liège brut
     const livraisonRecueKg = isM1 ? 0 : (prevResult.commandeLiegeKg || 0);
@@ -289,20 +346,49 @@ function simulateAllMonths(state) {
     const stockBouchonsEntrantLots = isM1 ? PARAMS.stockInitBouchonsLots : prevResult.stockBouchonsFinLots;
     const valStockBouchonsEntrant = isM1 ? (PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit) : prevResult.valStockBouchonsFin;
 
-    // D. Planches (Espagne A, B, C) - Disponibles dès M3 grâce au rachat allemand (175 000 €)
+    // D. Planches (Espagne A, B, C) - Disponibles dès M3 grâce au rachat allemand (175 000 €) puis réapprovisionnements
+    let livraisonPlanchesAKg = 0;
+    let livraisonPlanchesAVal = 0;
+    let livraisonPlanchesBKg = 0;
+    let livraisonPlanchesBVal = 0;
+    let livraisonPlanchesCKg = 0;
+    let livraisonPlanchesCVal = 0;
+
     let stockPlanchesAEntrantKg = 0;
+    let valStockPlanchesAEntrant = 0;
     let stockPlanchesBEntrantKg = 0;
+    let valStockPlanchesBEntrant = 0;
     let stockPlanchesCEntrantKg = 0;
+    let valStockPlanchesCEntrant = 0;
+
     if (m === 3) {
-      stockPlanchesAEntrantKg = 15000;
-      stockPlanchesBEntrantKg = 20000;
-      stockPlanchesCEntrantKg = 15000;
+      stockPlanchesAEntrantKg = PARAMS.stockRachetePlanchesAKg; // 30 000 kg
+      valStockPlanchesAEntrant = PARAMS.stockRachetePlanchesAKg * PARAMS.prixAchatPlanchesAInit; // 60 000 €
+      stockPlanchesBEntrantKg = PARAMS.stockRachetePlanchesBKg; // 22 000 kg
+      valStockPlanchesBEntrant = PARAMS.stockRachetePlanchesBKg * PARAMS.prixAchatPlanchesBInit; // 55 000 €
+      stockPlanchesCEntrantKg = PARAMS.stockRachetePlanchesCKg; // 20 000 kg
+      valStockPlanchesCEntrant = PARAMS.stockRachetePlanchesCKg * PARAMS.prixAchatPlanchesCInit; // 60 000 €
     } else if (m > 3 && prevResult) {
-      stockPlanchesAEntrantKg = prevResult.stockPlanchesAFinKg || 0;
-      stockPlanchesBEntrantKg = prevResult.stockPlanchesBFinKg || 0;
-      stockPlanchesCEntrantKg = prevResult.stockPlanchesCFinKg || 0;
+      livraisonPlanchesAKg = prevResult.commandePlanchesAKg || 0;
+      livraisonPlanchesAVal = prevResult.montantCommandePlancheA || 0;
+      livraisonPlanchesBKg = prevResult.commandePlanchesBKg || 0;
+      livraisonPlanchesBVal = prevResult.montantCommandePlancheB || 0;
+      livraisonPlanchesCKg = prevResult.commandePlanchesCKg || 0;
+      livraisonPlanchesCVal = prevResult.montantCommandePlancheC || 0;
+
+      stockPlanchesAEntrantKg = (prevResult.stockPlanchesAFinKg || 0) + livraisonPlanchesAKg;
+      valStockPlanchesAEntrant = (prevResult.valStockPlanchesAFin || 0) + livraisonPlanchesAVal;
+
+      stockPlanchesBEntrantKg = (prevResult.stockPlanchesBFinKg || 0) + livraisonPlanchesBKg;
+      valStockPlanchesBEntrant = (prevResult.valStockPlanchesBFin || 0) + livraisonPlanchesBVal;
+
+      stockPlanchesCEntrantKg = (prevResult.stockPlanchesCFinKg || 0) + livraisonPlanchesCKg;
+      valStockPlanchesCEntrant = (prevResult.valStockPlanchesCFin || 0) + livraisonPlanchesCVal;
     }
-    const cmpPlancheKg = PARAMS.prixAchatPlanchesInit; // 3.50 € / kg
+
+    const cmpPlancheAKg = stockPlanchesAEntrantKg > 0 ? (valStockPlanchesAEntrant / stockPlanchesAEntrantKg) : PARAMS.prixAchatPlanchesAInit;
+    const cmpPlancheBKg = stockPlanchesBEntrantKg > 0 ? (valStockPlanchesBEntrant / stockPlanchesBEntrantKg) : PARAMS.prixAchatPlanchesBInit;
+    const cmpPlancheCKg = stockPlanchesCEntrantKg > 0 ? (valStockPlanchesCEntrant / stockPlanchesCEntrantKg) : PARAMS.prixAchatPlanchesCInit;
 
     // E. Bouchons naturels tubés en stock
     let stockNatAEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatAFinLots || 0) : 0;
@@ -310,7 +396,7 @@ function simulateAllMonths(state) {
     let stockNatCEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatCFinLots || 0) : 0;
 
     // 3. Procédé de Tubage (Bouchons Naturels) - Dès M3
-    const maxTubageMachine = PARAMS.capaciteTubeusesPlanches; // 50 000 planches / mois
+    const maxTubageMachine = PARAMS.capaciteTubeusesPlanches; // 75 000 planches / mois
     const planchesDemandeA = (m >= 3) ? (Number(monthData.planchesATuberAKg) || 0) : 0;
     const planchesDemandeB = (m >= 3) ? (Number(monthData.planchesATuberBKg) || 0) : 0;
     const planchesDemandeC = (m >= 3) ? (Number(monthData.planchesATuberCKg) || 0) : 0;
@@ -335,10 +421,11 @@ function simulateAllMonths(state) {
     valStockLiegeEntrant += liegeRecupereTubageKg * 0.43;
     const cmpLiegeKg = stockLiegeEntrantKg > 0 ? (valStockLiegeEntrant / stockLiegeEntrantKg) : 0.43;
 
-    // Coûts de revient unitaires des bouchons naturels (10 planches @ 3.50€ + 0.30€ tubage = 35.30 € / lot)
-    const cmpNatALot = (PARAMS.ratioPlanchesParLot * cmpPlancheKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
-    const cmpNatBLot = (PARAMS.ratioPlanchesParLot * cmpPlancheKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
-    const cmpNatCLot = (PARAMS.ratioPlanchesParLot * cmpPlancheKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    // Coûts de revient unitaires des bouchons naturels (10 planches @ cmpPlanche + 0.30€ tubage)
+    // En M3 : Nat A = 10 * 2.00 + 0.30 = 20.30 € ; Nat B = 10 * 2.50 + 0.30 = 25.30 € ; Nat C = 10 * 3.00 + 0.30 = 30.30 €
+    const cmpNatALot = (PARAMS.ratioPlanchesParLot * cmpPlancheAKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    const cmpNatBLot = (PARAMS.ratioPlanchesParLot * cmpPlancheBKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    const cmpNatCLot = (PARAMS.ratioPlanchesParLot * cmpPlancheCKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
 
     const totalNatADispoLots = stockNatAEntrantLots + bouchonsNatAProduitsLots;
     const totalNatBDispoLots = stockNatBEntrantLots + bouchonsNatBProduitsLots;
@@ -432,9 +519,12 @@ function simulateAllMonths(state) {
 
     // D. Planches (A, B, C)
     const stockPlanchesAFinKg = Math.max(0, stockPlanchesAEntrantKg - planchesATuberAKg);
+    const valStockPlanchesAFin = stockPlanchesAFinKg * cmpPlancheAKg;
     const stockPlanchesBFinKg = Math.max(0, stockPlanchesBEntrantKg - planchesATuberBKg);
+    const valStockPlanchesBFin = stockPlanchesBFinKg * cmpPlancheBKg;
     const stockPlanchesCFinKg = Math.max(0, stockPlanchesCEntrantKg - planchesATuberCKg);
-    const valStockPlanchesFin = (stockPlanchesAFinKg + stockPlanchesBFinKg + stockPlanchesCFinKg) * cmpPlancheKg;
+    const valStockPlanchesCFin = stockPlanchesCFinKg * cmpPlancheCKg;
+    const valStockPlanchesFin = valStockPlanchesAFin + valStockPlanchesBFin + valStockPlanchesCFin;
 
     // E. Bouchons naturels
     const stockNatAFinLots = Math.max(0, totalNatADispoLots - lotsVendusNatATotal);
@@ -472,16 +562,16 @@ function simulateAllMonths(state) {
     const decaissementFixe = salairesMois + PARAMS.fraisStructureMensuels;
     const decaissementVariables = coutBroyage + coutMoulage + coutTubage + coutTransportTotal + fraisMarketing + fraisStockage;
     
-    // Décaissement commande producteur
+    // Décaissement commande producteur (Liège brut + Planches éventuelles)
     const modeReglement = state.reglementFournisseur || 'instant';
     let decaissementFournisseur = 0;
     if (modeReglement === 'instant') {
-      decaissementFournisseur = montantCommandeLiege;
+      decaissementFournisseur = montantCommandeFournisseurTotal;
     } else if (modeReglement === 'livraison') {
-      decaissementFournisseur = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
+      decaissementFournisseur = isM1 ? 0 : (prevResult.montantCommandeFournisseurTotal || 0);
     } else {
       if (m >= 3 && results[m - 2]) {
-        decaissementFournisseur = results[m - 2].montantCommandeLiege || 0;
+        decaissementFournisseur = results[m - 2].montantCommandeFournisseurTotal || 0;
       }
     }
 
@@ -539,9 +629,23 @@ function simulateAllMonths(state) {
       cmpBouchonLot,
 
       // Données spécifiques Tubage & Bouchons Naturels
+      commandePlanchesAKg,
+      commandePlanchesBKg,
+      commandePlanchesCKg,
+      prixPlancheAKg,
+      prixPlancheBKg,
+      prixPlancheCKg,
+      montantCommandePlancheA,
+      montantCommandePlancheB,
+      montantCommandePlancheC,
+      montantCommandePlanchesTotal,
+      montantCommandeFournisseurTotal,
       stockPlanchesAEntrantKg,
       stockPlanchesBEntrantKg,
       stockPlanchesCEntrantKg,
+      cmpPlancheAKg,
+      cmpPlancheBKg,
+      cmpPlancheCKg,
       planchesATuberAKg,
       planchesATuberBKg,
       planchesATuberCKg,
@@ -561,6 +665,10 @@ function simulateAllMonths(state) {
       stockPlanchesAFinKg,
       stockPlanchesBFinKg,
       stockPlanchesCFinKg,
+      valStockPlanchesAFin,
+      valStockPlanchesBFin,
+      valStockPlanchesCFin,
+      valStockPlanchesFin,
 
       // Ventes
       lotsVendusAggloTotal,

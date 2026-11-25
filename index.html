@@ -327,6 +327,97 @@
               </div>
             </div>
 
+            <!-- SECTION APPROVISIONNEMENT PLANCHES (ESPAGNE A, B, C - DÈS MOIS 3) -->
+            <div id="section-commande-planches" class="border-t pt-3 space-y-3">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5 text-xs font-bold text-amber-950">
+                  <i class="fa-solid fa-layer-group text-amber-700"></i>
+                  <span>Approvisionnement Planches (Espagne A, B, C • Bouchons Naturels)</span>
+                </div>
+                <span id="badge-statut-commande-planches" class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded border border-amber-300">
+                  Commande min 5 000 € • Réductions dès 10k kg • Livré en M+1
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Planche A -->
+                <div class="bg-amber-50/50 p-2.5 rounded-xl border border-amber-200 space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-800">Espagne A</span>
+                    <span id="badge-prix-planche-a" class="text-[10px] font-black text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300">2,00 €/kg</span>
+                  </div>
+                  <div class="relative">
+                    <input type="number" id="inp-commande-planche-a" value="0" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                    <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">kg</span>
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    <button type="button" onclick="setCommandePlanche('a', 0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold">0</button>
+                    <button type="button" onclick="setCommandePlanche('a', 10000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">10k (1,94€)</button>
+                    <button type="button" onclick="setCommandePlanche('a', 15000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">15k (1,82€)</button>
+                    <button type="button" onclick="setCommandePlanche('a', 20000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-bold border border-emerald-300">★ 20k (1,70€)</button>
+                  </div>
+                  <div class="flex justify-between text-[10px] text-slate-500 border-t pt-1">
+                    <span>Montant :</span>
+                    <strong id="out-montant-planche-a" class="text-slate-900 font-mono">0 €</strong>
+                  </div>
+                </div>
+
+                <!-- Planche B -->
+                <div class="bg-amber-50/50 p-2.5 rounded-xl border border-amber-200 space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-800">Espagne B</span>
+                    <span id="badge-prix-planche-b" class="text-[10px] font-black text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300">2,50 €/kg</span>
+                  </div>
+                  <div class="relative">
+                    <input type="number" id="inp-commande-planche-b" value="0" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                    <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">kg</span>
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    <button type="button" onclick="setCommandePlanche('b', 0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold">0</button>
+                    <button type="button" onclick="setCommandePlanche('b', 10000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">10k (2,43€)</button>
+                    <button type="button" onclick="setCommandePlanche('b', 15000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">15k (2,28€)</button>
+                    <button type="button" onclick="setCommandePlanche('b', 20000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-bold border border-emerald-300">★ 20k (2,13€)</button>
+                  </div>
+                  <div class="flex justify-between text-[10px] text-slate-500 border-t pt-1">
+                    <span>Montant :</span>
+                    <strong id="out-montant-planche-b" class="text-slate-900 font-mono">0 €</strong>
+                  </div>
+                </div>
+
+                <!-- Planche C -->
+                <div class="bg-amber-50/50 p-2.5 rounded-xl border border-amber-200 space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-800">Espagne C</span>
+                    <span id="badge-prix-planche-c" class="text-[10px] font-black text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300">3,00 €/kg</span>
+                  </div>
+                  <div class="relative">
+                    <input type="number" id="inp-commande-planche-c" value="0" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                    <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">kg</span>
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    <button type="button" onclick="setCommandePlanche('c', 0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold">0</button>
+                    <button type="button" onclick="setCommandePlanche('c', 10000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">10k (2,91€)</button>
+                    <button type="button" onclick="setCommandePlanche('c', 15000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">15k (2,73€)</button>
+                    <button type="button" onclick="setCommandePlanche('c', 20000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-bold border border-emerald-300">★ 20k (2,55€)</button>
+                  </div>
+                  <div class="flex justify-between text-[10px] text-slate-500 border-t pt-1">
+                    <span>Montant :</span>
+                    <strong id="out-montant-planche-c" class="text-slate-900 font-mono">0 €</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Synthèse commande fournisseur globale -->
+              <div class="bg-slate-100 p-2.5 rounded-lg flex flex-wrap justify-between items-center text-xs text-slate-800 gap-2">
+                <div>
+                  Total Planches : <strong id="out-total-cmd-planches">0 €</strong> • Liège brut : <strong id="out-total-cmd-liege-synth">64 500 €</strong>
+                </div>
+                <div class="text-emerald-800 font-black">
+                  Total Facture Fournisseur : <span id="out-total-facture-fournisseur">64 500 €</span>
+                </div>
+              </div>
+            </div>
+
             <!-- ENCART EXPLICATIF DÉLAI LIVRAISON M+1 -->
             <div id="txt-alerte-livraison-delai" class="bg-amber-50 border border-amber-200 text-amber-900 p-2.5 rounded-xl text-xs flex items-center space-x-2">
               <i class="fa-solid fa-clock text-amber-600 shrink-0"></i>
@@ -396,7 +487,7 @@
                   <div class="flex items-center gap-1.5">
                     <i class="fa-solid fa-stamp text-amber-700 text-sm"></i>
                     <span class="font-bold text-amber-950">3. Atelier Tubage (5 Tubeuses • Bouchons Naturels)</span>
-                    <span id="badge-statut-tubeuses" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-black border border-amber-400">Capacité : 50 000 planches / mois</span>
+                    <span id="badge-statut-tubeuses" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-black border border-amber-400">Capacité : 75 000 planches / mois</span>
                   </div>
                   <span class="text-[11px] text-amber-800 font-semibold" id="lbl-cout-tubage-unitaire">Machine : 0,03 € / planche (0,30 € / lot)</span>
                 </div>
@@ -406,7 +497,7 @@
                   <div class="bg-white p-2.5 rounded-lg border border-amber-200 space-y-1">
                     <div class="flex justify-between items-center text-[11px]">
                       <span class="font-bold text-slate-800">Espagne A</span>
-                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-a">Dispo : 15 000 kg</span>
+                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-a">Dispo : 30 000 kg</span>
                     </div>
                     <div class="relative">
                       <input type="number" id="inp-tubage-a" value="10000" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
@@ -422,7 +513,7 @@
                   <div class="bg-white p-2.5 rounded-lg border border-amber-200 space-y-1">
                     <div class="flex justify-between items-center text-[11px]">
                       <span class="font-bold text-slate-800">Espagne B</span>
-                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-b">Dispo : 20 000 kg</span>
+                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-b">Dispo : 22 000 kg</span>
                     </div>
                     <div class="relative">
                       <input type="number" id="inp-tubage-b" value="10000" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
@@ -438,7 +529,7 @@
                   <div class="bg-white p-2.5 rounded-lg border border-amber-200 space-y-1">
                     <div class="flex justify-between items-center text-[11px]">
                       <span class="font-bold text-slate-800">Espagne C</span>
-                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-c">Dispo : 15 000 kg</span>
+                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-c">Dispo : 20 000 kg</span>
                     </div>
                     <div class="relative">
                       <input type="number" id="inp-tubage-c" value="10000" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
@@ -454,7 +545,7 @@
                 <!-- Résumé atelier tubage -->
                 <div class="bg-amber-100/80 p-2.5 rounded-lg border border-amber-300 flex flex-wrap items-center justify-between text-xs text-amber-950 gap-2">
                   <div>
-                    Planches tubées : <strong id="out-total-planches-tubees">30 000</strong> / 50 000
+                    Planches tubées : <strong id="out-total-planches-tubees">30 000</strong> / 75 000
                     ➔ Production : <strong id="out-total-nat-produits" class="text-amber-900 font-black">3 000 lots naturels</strong>
                   </div>
                   <div class="flex items-center gap-3">
@@ -1548,12 +1639,24 @@
       handleInputChange();
     }
 
+    function setCommandePlanche(type, kg) {
+      const inp = document.getElementById(`inp-commande-planche-${type}`);
+      if (inp) {
+        inp.value = kg;
+        handleInputChange();
+      }
+    }
+
     function handleInputChange() {
       const m = appState.moisActif || 1;
       if (!appState.moisData) appState = getDefaultState();
       if (!appState.moisData[m]) appState.moisData[m] = getDefaultMonthData(m);
 
       const commandeLiegeKg = Number(document.getElementById('inp-commande-liege').value) || 0;
+      const commandePlanchesAKg = Number(document.getElementById('inp-commande-planche-a')?.value) || 0;
+      const commandePlanchesBKg = Number(document.getElementById('inp-commande-planche-b')?.value) || 0;
+      const commandePlanchesCKg = Number(document.getElementById('inp-commande-planche-c')?.value) || 0;
+
       const liegeABroyerKg = Number(document.getElementById('rng-broyage').value) || 0;
       const grainsAMoulerKg = Number(document.getElementById('rng-moulage').value) || 0;
 
@@ -1577,6 +1680,9 @@
 
       appState.moisData[m] = {
         commandeLiegeKg,
+        commandePlanchesAKg,
+        commandePlanchesBKg,
+        commandePlanchesCKg,
         liegeABroyerKg,
         grainsAMoulerKg,
         planchesATuberAKg,
@@ -1594,17 +1700,62 @@
       const m = appState.moisActif || 1;
       const all = res.allMonths;
 
-      // MAJ Phase 1 Commande
+      // MAJ Phase 1 Commande Liège
       const remisePct = Math.round((1 - (res.prixLiegeKg / 0.50)) * 100);
       document.getElementById('out-prix-liege').innerText = res.prixLiegeKg.toFixed(2) + ' € / kg' + (remisePct > 0 ? ` (-${remisePct}%)` : ' (Base)');
       document.getElementById('out-montant-commande').innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €';
+
+      // MAJ Phase 1 Approvisionnement Planches
+      const secCmdPlanches = document.getElementById('section-commande-planches');
+      const pPA = PARAMS.getPrixPlancheA(res.commandePlanchesAKg);
+      const pPB = PARAMS.getPrixPlancheB(res.commandePlanchesBKg);
+      const pPC = PARAMS.getPrixPlancheC(res.commandePlanchesCKg);
+      const mtPA = res.commandePlanchesAKg * pPA;
+      const mtPB = res.commandePlanchesBKg * pPB;
+      const mtPC = res.commandePlanchesCKg * pPC;
+      const totPlanchesCmd = mtPA + mtPB + mtPC;
+      const totFactureFournisseur = res.montantCommandeLiege + totPlanchesCmd;
+
+      if (secCmdPlanches) {
+        if (m < 3) {
+          secCmdPlanches.classList.add('opacity-50');
+          const badge = document.getElementById('badge-statut-commande-planches');
+          if (badge) badge.innerText = 'Disponible dès Mois 3 (après rachat stock allemand)';
+        } else {
+          secCmdPlanches.classList.remove('opacity-50');
+          const badge = document.getElementById('badge-statut-commande-planches');
+          if (badge) badge.innerText = 'Commande min 5 000 € • Réductions dès 10k kg • Livré en M+1';
+        }
+      }
+
+      const bPA = document.getElementById('badge-prix-planche-a');
+      if (bPA) bPA.innerText = `${pPA.toFixed(2)} €/kg` + (pPA < 2.00 ? ` (-${Math.round((1 - pPA/2)*100)}%)` : '');
+      const outMtPA = document.getElementById('out-montant-planche-a');
+      if (outMtPA) outMtPA.innerText = Math.round(mtPA).toLocaleString('fr-FR') + ' €' + (mtPA > 0 && mtPA < 5000 ? ' ⚠️ (min 5 000€)' : '');
+
+      const bPB = document.getElementById('badge-prix-planche-b');
+      if (bPB) bPB.innerText = `${pPB.toFixed(2)} €/kg` + (pPB < 2.50 ? ` (-${Math.round((1 - pPB/2.5)*100)}%)` : '');
+      const outMtPB = document.getElementById('out-montant-planche-b');
+      if (outMtPB) outMtPB.innerText = Math.round(mtPB).toLocaleString('fr-FR') + ' €' + (mtPB > 0 && mtPB < 5000 ? ' ⚠️ (min 5 000€)' : '');
+
+      const bPC = document.getElementById('badge-prix-planche-c');
+      if (bPC) bPC.innerText = `${pPC.toFixed(2)} €/kg` + (pPC < 3.00 ? ` (-${Math.round((1 - pPC/3)*100)}%)` : '');
+      const outMtPC = document.getElementById('out-montant-planche-c');
+      if (outMtPC) outMtPC.innerText = Math.round(mtPC).toLocaleString('fr-FR') + ' €' + (mtPC > 0 && mtPC < 5000 ? ' ⚠️ (min 5 000€)' : '');
+
+      const outTotPlanches = document.getElementById('out-total-cmd-planches');
+      if (outTotPlanches) outTotPlanches.innerText = Math.round(totPlanchesCmd).toLocaleString('fr-FR') + ' €';
+      const outTotLiegeSynth = document.getElementById('out-total-cmd-liege-synth');
+      if (outTotLiegeSynth) outTotLiegeSynth.innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €';
+      const outTotFactFourn = document.getElementById('out-total-facture-fournisseur');
+      if (outTotFactFourn) outTotFactFourn.innerText = Math.round(totFactureFournisseur).toLocaleString('fr-FR') + ' €';
 
       const lblTresoCmd = document.getElementById('lbl-impact-treso-cmd');
       const valTresoCmd = document.getElementById('val-impact-treso-cmd');
       const modeReg = appState.reglementFournisseur || 'instant';
       if (modeReg === 'instant') {
         lblTresoCmd.innerText = 'Décaissement ce mois :';
-        valTresoCmd.innerText = '-' + Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' € (Payé comptant / instant)';
+        valTresoCmd.innerText = '-' + Math.round(totFactureFournisseur).toLocaleString('fr-FR') + ' € (Payé comptant / instant)';
         valTresoCmd.className = 'font-bold text-red-600';
       } else {
         lblTresoCmd.innerText = 'Décaissement ce mois :';
@@ -1707,7 +1858,7 @@
           if (badgeTubage) badgeTubage.innerText = 'Acquises en Fév (M2) • Actif dès Mois 3';
         } else {
           cardTubage.classList.remove('opacity-60');
-          if (badgeTubage) badgeTubage.innerText = 'Capacité : 50 000 planches / mois';
+          if (badgeTubage) badgeTubage.innerText = 'Capacité : 75 000 planches / mois';
         }
       }
 
@@ -1751,7 +1902,7 @@
       } else if (m === 2) {
         txtContexte.innerHTML = `<strong>Mois 2 (Février) :</strong> Arrivée de la commande 150k kg @ 0,43€. Acquisition des 5 Tubeuses pour 15 000 € (amortissement 250 €/mois).`;
       } else {
-        txtContexte.innerHTML = `<strong>Mois ${m} :</strong> Réception du stock allemand (50 000 planches payées en M3). Production de bouchons naturels + agglomérés. Salaires ajustés à 100 000 €/mois.`;
+        txtContexte.innerHTML = `<strong>Mois ${m} :</strong> Réception du stock allemand (72 000 kg : 30k A, 22k B, 20k C = 175 000 € payés en M3). Production de bouchons naturels (capacité tubeuses 75 000/mois) + agglomérés. Salaires ajustés à 100 000 €/mois.`;
       }
 
       // MAJ Ventes
@@ -2090,7 +2241,7 @@
           tot: sumField(r => r.totalEncaissements) 
         },
         { 
-          label: '- Décaissement commande liège brut', u: '€', 
+          label: '- Décaissement commandes fournisseur (liège + planches)', u: '€', 
           vals: months.map(m => -resM[m].decaissementFournisseur), 
           tot: -sumField(r => r.decaissementFournisseur) 
         },
@@ -2105,7 +2256,7 @@
           tot: -15000 
         },
         { 
-          label: '- Rachat stock allemand 50k planches (Mars M3)', u: '€', 
+          label: '- Rachat stock allemand 72k kg planches (Mars M3)', u: '€', 
           vals: months.map(m => -resM[m].stockPlanchesAllemandDecaisse), 
           tot: -175000 
         },
@@ -2473,6 +2624,15 @@
       const moulageKg = Math.min(PARAMS.capaciteMouleusesKg, curData.grainsAMoulerKg !== undefined ? curData.grainsAMoulerKg : 45000);
 
       document.getElementById('inp-commande-liege').value = curData.commandeLiegeKg || 150000;
+      
+      // Approvisionnement Planches (A, B, C)
+      const inpCmdPA = document.getElementById('inp-commande-planche-a');
+      const inpCmdPB = document.getElementById('inp-commande-planche-b');
+      const inpCmdPC = document.getElementById('inp-commande-planche-c');
+      if (inpCmdPA) inpCmdPA.value = curData.commandePlanchesAKg || 0;
+      if (inpCmdPB) inpCmdPB.value = curData.commandePlanchesBKg || 0;
+      if (inpCmdPC) inpCmdPC.value = curData.commandePlanchesCKg || 0;
+
       document.getElementById('rng-broyage').value = broyageKg;
       document.getElementById('val-broyage-kg').innerText = broyageKg.toLocaleString('fr-FR') + ' kg';
       document.getElementById('rng-moulage').value = moulageKg;
