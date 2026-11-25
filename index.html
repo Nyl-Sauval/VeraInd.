@@ -389,13 +389,97 @@
                   <strong id="out-bouchons-produits" class="text-emerald-700 font-mono">9 000 lots</strong>
                 </div>
               </div>
+
+              <!-- 3. Atelier Tubage (Bouchons Naturels - Tubeuses acquises en Fév, actives dès M3) -->
+              <div id="card-atelier-tubage" class="p-3 bg-amber-50/70 rounded-xl border border-amber-300 space-y-2 col-span-1 sm:col-span-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs gap-1 border-b border-amber-200 pb-1.5">
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-stamp text-amber-700 text-sm"></i>
+                    <span class="font-bold text-amber-950">3. Atelier Tubage (5 Tubeuses • Bouchons Naturels)</span>
+                    <span id="badge-statut-tubeuses" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-black border border-amber-400">Capacité : 50 000 planches / mois</span>
+                  </div>
+                  <span class="text-[11px] text-amber-800 font-semibold" id="lbl-cout-tubage-unitaire">Machine : 0,03 € / planche (0,30 € / lot)</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <!-- Planches Espagne A -->
+                  <div class="bg-white p-2.5 rounded-lg border border-amber-200 space-y-1">
+                    <div class="flex justify-between items-center text-[11px]">
+                      <span class="font-bold text-slate-800">Espagne A</span>
+                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-a">Dispo : 15 000 kg</span>
+                    </div>
+                    <div class="relative">
+                      <input type="number" id="inp-tubage-a" value="10000" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">planches</span>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                      <span>Lots produits :</span>
+                      <strong id="out-lots-tubage-a" class="text-amber-800 font-bold">1 000 lots</strong>
+                    </div>
+                  </div>
+
+                  <!-- Planches Espagne B -->
+                  <div class="bg-white p-2.5 rounded-lg border border-amber-200 space-y-1">
+                    <div class="flex justify-between items-center text-[11px]">
+                      <span class="font-bold text-slate-800">Espagne B</span>
+                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-b">Dispo : 20 000 kg</span>
+                    </div>
+                    <div class="relative">
+                      <input type="number" id="inp-tubage-b" value="10000" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">planches</span>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                      <span>Lots produits :</span>
+                      <strong id="out-lots-tubage-b" class="text-amber-800 font-bold">1 000 lots</strong>
+                    </div>
+                  </div>
+
+                  <!-- Planches Espagne C -->
+                  <div class="bg-white p-2.5 rounded-lg border border-amber-200 space-y-1">
+                    <div class="flex justify-between items-center text-[11px]">
+                      <span class="font-bold text-slate-800">Espagne C</span>
+                      <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-c">Dispo : 15 000 kg</span>
+                    </div>
+                    <div class="relative">
+                      <input type="number" id="inp-tubage-c" value="10000" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">planches</span>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                      <span>Lots produits :</span>
+                      <strong id="out-lots-tubage-c" class="text-amber-800 font-bold">1 000 lots</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Résumé atelier tubage -->
+                <div class="bg-amber-100/80 p-2.5 rounded-lg border border-amber-300 flex flex-wrap items-center justify-between text-xs text-amber-950 gap-2">
+                  <div>
+                    Planches tubées : <strong id="out-total-planches-tubees">30 000</strong> / 50 000
+                    ➔ Production : <strong id="out-total-nat-produits" class="text-amber-900 font-black">3 000 lots naturels</strong>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300 text-[11px]" id="badge-liege-recycle">
+                      ♻️ +15 000 kg liège recyclé pour le broyeur (50%)
+                    </span>
+                    <span class="text-[11px] font-semibold text-slate-700">Coût machine : <strong id="out-cout-tubage-total">900 €</strong></span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Bilan du stock disponible -->
-            <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 flex flex-wrap items-center justify-between text-xs text-indigo-950 gap-2">
-              <div>Stock début : <strong id="out-txt-stock-debut">3 000 lots</strong> + Production : <strong id="out-txt-prod">9 000 lots</strong> <span class="text-slate-500 text-[10px]">(Grains restants reportés : <strong id="out-stock-grains-report" class="text-indigo-800">1 000 kg</strong>)</span></div>
-              <div class="bg-white px-3 py-1 rounded-lg border border-indigo-200 font-black text-indigo-700 text-sm">
-                Total Bouchons Disponibles : <span id="out-total-dispo">12 000</span> lots
+            <!-- Bilan des stocks disponibles -->
+            <div class="bg-indigo-50/70 p-3.5 rounded-xl border border-indigo-100 text-xs text-indigo-950 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-200/60 pb-2">
+                <div><strong>Bouchons Agglomérés :</strong> Stock début : <span id="out-txt-stock-debut">3 000 lots</span> + Production : <span id="out-txt-prod">9 000 lots</span> <span class="text-slate-500 text-[10px]">(Grains restants : <span id="out-stock-grains-report" class="text-indigo-800 font-bold">1 000 kg</span>)</span></div>
+                <div class="bg-white px-2.5 py-1 rounded-lg border border-indigo-200 font-black text-indigo-700 text-sm">
+                  Dispo Agglomérés : <span id="out-total-dispo">12 000</span> lots
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5" id="row-stock-nat-dispo">
+                <div><strong>Bouchons Naturels :</strong> A : <strong id="out-dispo-nat-a">1 000 lots</strong> • B : <strong id="out-dispo-nat-b">1 000 lots</strong> • C : <strong id="out-dispo-nat-c">1 000 lots</strong></div>
+                <div class="bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-300 font-black text-amber-900 text-sm">
+                  Total Dispo Naturels : <span id="out-total-nat-dispo">3 000</span> lots
+                </div>
               </div>
             </div>
           </div>
@@ -557,6 +641,82 @@
 
             </div>
 
+            <!-- SIMULATEUR DE MARGE DISTRIBUTEUR & MACHINE DE TRI (TRIEUSE) -->
+            <div class="bg-gradient-to-r from-slate-800 via-indigo-900/60 to-slate-800 border border-amber-400/50 rounded-xl p-4 space-y-3">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/10 pb-2 gap-2">
+                <div class="flex items-center space-x-2 font-bold text-white text-xs">
+                  <span class="bg-amber-400 text-slate-950 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black">🤝</span>
+                  <span>Simulateur de Marge Distributeur (Machine de Tri / Trieuse)</span>
+                </div>
+                <span class="text-[10px] text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded border border-amber-400/30 font-semibold">« C'est le distributeur qui trie » • Coût de tri : 2,00 € / lot</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <!-- Type de bouchon naturel -->
+                <div>
+                  <label class="block text-[11px] text-slate-300 font-semibold mb-1">Qualité de planche vendue :</label>
+                  <select id="sel-dist-sim-type" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1.5 text-white font-bold" onchange="updateSimuDistributeur()">
+                    <option value="A">Espagne A (Marché ~55 €)</option>
+                    <option value="B" selected>Espagne B (Marché ~60 € • Équilibré)</option>
+                    <option value="C">Espagne C (Marché ~65 € • Haut de gamme)</option>
+                  </select>
+                </div>
+
+                <!-- Prix proposé au distributeur -->
+                <div>
+                  <label class="block text-[11px] text-slate-300 font-semibold mb-1">Votre Prix de Vente au Distributeur :</label>
+                  <div class="relative">
+                    <input type="number" id="inp-dist-sim-prix" value="60.0" step="1.0" min="40" max="100" class="w-full bg-slate-900 border border-slate-600 rounded-lg pl-3 pr-10 py-1.5 text-white font-black text-sm" oninput="updateSimuDistributeur()">
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">€ / lot</span>
+                  </div>
+                </div>
+
+                <!-- Volume du deal -->
+                <div>
+                  <label class="block text-[11px] text-slate-300 font-semibold mb-1">Volume du Contrat :</label>
+                  <div class="relative">
+                    <input type="number" id="inp-dist-sim-volume" value="1000" step="100" min="100" max="10000" class="w-full bg-slate-900 border border-slate-600 rounded-lg pl-3 pr-10 py-1.5 text-white font-black text-sm" oninput="updateSimuDistributeur()">
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">lots</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RÉSULTAT DU CALCUL POUR LE DISTRIBUTEUR -->
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-center text-xs">
+                <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700">
+                  <div class="text-slate-400 text-[10px]">Coût d'Achat + Tri (2€)</div>
+                  <div class="font-black text-slate-200 text-sm mt-0.5" id="out-dist-sim-cout">62,00 € / lot</div>
+                  <div class="text-[9px] text-slate-400" id="out-dist-sim-cout-detail">Achat 60€ + Tri 2€</div>
+                </div>
+                <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700">
+                  <div class="text-slate-400 text-[10px]">Revente Moyenne Clients</div>
+                  <div class="font-black text-amber-300 text-sm mt-0.5" id="out-dist-sim-revente">132,50 € / lot</div>
+                  <div class="text-[9px] text-slate-400" id="out-dist-sim-revente-detail">Vignerons, Caves, Grands Comptes</div>
+                </div>
+                <div class="bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-500/50">
+                  <div class="text-emerald-300 text-[10px] font-bold">Marge Brute Distributeur</div>
+                  <div class="font-black text-emerald-400 text-base mt-0.5" id="out-dist-sim-marge">+70,50 € / lot</div>
+                  <div class="text-[9px] text-emerald-300" id="out-dist-sim-taux">+114 % de marge brute</div>
+                </div>
+                <div class="bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-500/50">
+                  <div class="text-emerald-300 text-[10px] font-bold">Bénéfice Global Distributeur</div>
+                  <div class="font-black text-emerald-300 text-base mt-0.5" id="out-dist-sim-benef-global">+70 500 €</div>
+                  <div class="text-[9px] text-slate-300">sur ce contrat</div>
+                </div>
+              </div>
+
+              <!-- TABLEAU DÉTAIL TRIEUSE ET BOUTON ARGUMENTAIRE -->
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1 border-t border-white/10 text-xs">
+                <div class="text-[11px] text-slate-300" id="txt-dist-sim-repartition">
+                  Répartition Trieuse (<span id="lbl-dist-sim-type-rep">Espagne B</span>) : <strong>20% Q1</strong> (170€) • <strong>30% Q2</strong> (145€) • <strong>30% Q3</strong> (120€) • <strong>20% Q4</strong> (95€).
+                </div>
+                <button type="button" onclick="copierArgumentaireDistributeur()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 shadow transition shrink-0">
+                  <i class="fa-solid fa-copy"></i>
+                  <span>Copier l'Argumentaire Commercial</span>
+                </button>
+              </div>
+            </div>
+
           </div>
 
           <!-- ÉTAPE 3 : VENTES AUX 4 DISTRIBUTEURS -->
@@ -566,123 +726,299 @@
                 <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span>
                 <span>Phase 2 : Négociation & Ventes aux 4 Équipes Distributeurs</span>
               </div>
-              <span id="badge-total-vendu" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">10 000 lots vendus</span>
+              <span id="badge-total-vendu" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">12 000 lots vendus</span>
             </div>
 
-            <p class="text-xs text-slate-500">Choisissez pour chaque équipe distributeur : la quantité de lots, le prix convenu, le délai de paiement et le mode de transport.</p>
+            <p class="text-xs text-slate-500">Choisissez pour chaque distributeur : les volumes (Agglomérés et Naturels A, B, C), les prix convenus, le délai et le transport.</p>
 
-            <!-- TABLE SIMPLE DES VENTES -->
-            <div class="space-y-2 text-xs pt-1">
+            <!-- TABLE DES 4 DISTRIBUTEURS -->
+            <div class="space-y-3 text-xs pt-1">
               
               <!-- D1 -->
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>Équipe Distributeur 1</span>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-1.5">
+                  <div class="font-bold text-slate-800 flex items-center space-x-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span class="text-sm">Équipe Distributeur 1</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[11px] font-bold text-slate-600" id="badge-d1-deal-lots">3 000 lots</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded border border-emerald-300" id="badge-d1-deal-ca">93 375 €</span>
+                  </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d1-lots" value="3000" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
-                  </label>
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d1-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
-                  </label>
-                  <select id="v-d1-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="0" selected>Comptant</option>
-                    <option value="30">30 jours</option>
-                  </select>
-                  <select id="v-d1-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="camion" selected>🚚 Camion (1 980 / 1 721€)</option>
-                    <option value="train">🚆 Train (2 640 / 2 768€)</option>
-                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
-                    <option value="avion">✈️ Avion (60 / 79€)</option>
-                  </select>
+
+                <!-- Ligne Agglomérés -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="font-semibold text-slate-700 w-36">Bouchons Agglomérés :</span>
+                  <div class="flex items-center space-x-2">
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Lots :</span>
+                      <input type="number" id="v-d1-lots" value="2250" step="50" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
+                    </label>
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Prix :</span>
+                      <input type="number" id="v-d1-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
+                      <span class="text-slate-400 text-[10px]">€</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Ligne Naturels A, B, C -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-amber-50/70 p-2 rounded-lg border border-amber-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. A:</span>
+                    <input type="number" id="v-d1-lots-a" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d1-prix-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. B:</span>
+                    <input type="number" id="v-d1-lots-b" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d1-prix-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. C:</span>
+                    <input type="number" id="v-d1-lots-c" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d1-prix-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
+                <!-- Ligne Règlement & Transport -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-slate-200">
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Règlement :</label>
+                    <select id="v-d1-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="0" selected>⚡ Comptant</option>
+                      <option value="30">📅 30 jours</option>
+                    </select>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Transport :</label>
+                    <select id="v-d1-transport" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="train" selected>🚆 Train (2 640 lots • 2 768€ • RSE)</option>
+                      <option value="camion">🚚 Camion (1 980 lots • 1 721€)</option>
+                      <option value="bateau">🚢 Bateau (5 760 lots • 4 668€)</option>
+                      <option value="avion">✈️ Avion (60 lots • 79€)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
               <!-- D2 -->
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>Équipe Distributeur 2</span>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-1.5">
+                  <div class="font-bold text-slate-800 flex items-center space-x-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span class="text-sm">Équipe Distributeur 2</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[11px] font-bold text-slate-600" id="badge-d2-deal-lots">3 000 lots</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded border border-emerald-300" id="badge-d2-deal-ca">93 375 €</span>
+                  </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d2-lots" value="3000" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
-                  </label>
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d2-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
-                  </label>
-                  <select id="v-d2-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="0" selected>Comptant</option>
-                    <option value="30">30 jours</option>
-                  </select>
-                  <select id="v-d2-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="camion" selected>🚚 Camion (1 980 / 1 721€)</option>
-                    <option value="train">🚆 Train (2 640 / 2 768€)</option>
-                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
-                    <option value="avion">✈️ Avion (60 / 79€)</option>
-                  </select>
+
+                <!-- Ligne Agglomérés -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="font-semibold text-slate-700 w-36">Bouchons Agglomérés :</span>
+                  <div class="flex items-center space-x-2">
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Lots :</span>
+                      <input type="number" id="v-d2-lots" value="2250" step="50" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
+                    </label>
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Prix :</span>
+                      <input type="number" id="v-d2-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
+                      <span class="text-slate-400 text-[10px]">€</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Ligne Naturels A, B, C -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-amber-50/70 p-2 rounded-lg border border-amber-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. A:</span>
+                    <input type="number" id="v-d2-lots-a" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d2-prix-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. B:</span>
+                    <input type="number" id="v-d2-lots-b" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d2-prix-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. C:</span>
+                    <input type="number" id="v-d2-lots-c" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d2-prix-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
+                <!-- Ligne Règlement & Transport -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-slate-200">
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Règlement :</label>
+                    <select id="v-d2-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="0" selected>⚡ Comptant</option>
+                      <option value="30">📅 30 jours</option>
+                    </select>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Transport :</label>
+                    <select id="v-d2-transport" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="train" selected>🚆 Train (2 640 lots • 2 768€ • RSE)</option>
+                      <option value="camion">🚚 Camion (1 980 lots • 1 721€)</option>
+                      <option value="bateau">🚢 Bateau (5 760 lots • 4 668€)</option>
+                      <option value="avion">✈️ Avion (60 lots • 79€)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
               <!-- D3 -->
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>Équipe Distributeur 3</span>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-1.5">
+                  <div class="font-bold text-slate-800 flex items-center space-x-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span class="text-sm">Équipe Distributeur 3</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[11px] font-bold text-slate-600" id="badge-d3-deal-lots">3 000 lots</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded border border-emerald-300" id="badge-d3-deal-ca">93 375 €</span>
+                  </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d3-lots" value="2500" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
-                  </label>
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d3-prix" value="21.0" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
-                  </label>
-                  <select id="v-d3-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="0">Comptant</option>
-                    <option value="30" selected>30 jours</option>
-                  </select>
-                  <select id="v-d3-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="train" selected>🚆 Train (2 640 / 2 768€)</option>
-                    <option value="camion">🚚 Camion (1 980 / 1 721€)</option>
-                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
-                    <option value="avion">✈️ Avion (60 / 79€)</option>
-                  </select>
+
+                <!-- Ligne Agglomérés -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="font-semibold text-slate-700 w-36">Bouchons Agglomérés :</span>
+                  <div class="flex items-center space-x-2">
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Lots :</span>
+                      <input type="number" id="v-d3-lots" value="2250" step="50" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
+                    </label>
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Prix :</span>
+                      <input type="number" id="v-d3-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
+                      <span class="text-slate-400 text-[10px]">€</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Ligne Naturels A, B, C -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-amber-50/70 p-2 rounded-lg border border-amber-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. A:</span>
+                    <input type="number" id="v-d3-lots-a" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d3-prix-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. B:</span>
+                    <input type="number" id="v-d3-lots-b" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d3-prix-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. C:</span>
+                    <input type="number" id="v-d3-lots-c" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d3-prix-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
+                <!-- Ligne Règlement & Transport -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-slate-200">
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Règlement :</label>
+                    <select id="v-d3-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="0">⚡ Comptant</option>
+                      <option value="30" selected>📅 30 jours</option>
+                    </select>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Transport :</label>
+                    <select id="v-d3-transport" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="train" selected>🚆 Train (2 640 lots • 2 768€ • RSE)</option>
+                      <option value="camion">🚚 Camion (1 980 lots • 1 721€)</option>
+                      <option value="bateau">🚢 Bateau (5 760 lots • 4 668€)</option>
+                      <option value="avion">✈️ Avion (60 lots • 79€)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
               <!-- D4 -->
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                <div class="w-44 font-bold text-slate-800 flex items-center space-x-1.5">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>Équipe Distributeur 4</span>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-1.5">
+                  <div class="font-bold text-slate-800 flex items-center space-x-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span class="text-sm">Équipe Distributeur 4</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[11px] font-bold text-slate-600" id="badge-d4-deal-lots">3 000 lots</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded border border-emerald-300" id="badge-d4-deal-ca">93 375 €</span>
+                  </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Lots:</span>
-                    <input type="number" id="v-d4-lots" value="1500" step="100" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
-                  </label>
-                  <label class="flex items-center space-x-1">
-                    <span class="text-slate-500">Prix:</span>
-                    <input type="number" id="v-d4-prix" value="21.0" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
-                  </label>
-                  <select id="v-d4-delai" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="0" selected>Comptant</option>
-                    <option value="30">30 jours</option>
-                  </select>
-                  <select id="v-d4-transport" class="border rounded-lg px-2 py-1 text-slate-700" onchange="handleInputChange()">
-                    <option value="camion" selected>🚚 Camion (1 980 / 1 721€)</option>
-                    <option value="train">🚆 Train (2 640 / 2 768€)</option>
-                    <option value="bateau">🚢 Bateau (5 760 / 4 668€)</option>
-                    <option value="avion">✈️ Avion (60 / 79€)</option>
-                  </select>
+
+                <!-- Ligne Agglomérés -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="font-semibold text-slate-700 w-36">Bouchons Agglomérés :</span>
+                  <div class="flex items-center space-x-2">
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Lots :</span>
+                      <input type="number" id="v-d4-lots" value="2250" step="50" min="0" class="w-20 px-2 py-1 border rounded-lg font-bold text-right" onchange="handleInputChange()">
+                    </label>
+                    <label class="flex items-center space-x-1">
+                      <span class="text-slate-500 text-[11px]">Prix :</span>
+                      <input type="number" id="v-d4-prix" value="21.5" step="0.1" min="10" class="w-16 px-2 py-1 border rounded-lg font-bold text-right text-emerald-700" onchange="handleInputChange()">
+                      <span class="text-slate-400 text-[10px]">€</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Ligne Naturels A, B, C -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-amber-50/70 p-2 rounded-lg border border-amber-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. A:</span>
+                    <input type="number" id="v-d4-lots-a" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d4-prix-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. B:</span>
+                    <input type="number" id="v-d4-lots-b" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d4-prix-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-amber-900 text-[11px]">Nat. C:</span>
+                    <input type="number" id="v-d4-lots-c" value="250" step="50" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d4-prix-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-amber-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
+                <!-- Ligne Règlement & Transport -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-slate-200">
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Règlement :</label>
+                    <select id="v-d4-delai" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="0" selected>⚡ Comptant</option>
+                      <option value="30">📅 30 jours</option>
+                    </select>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <label class="text-slate-500 text-[11px]">Transport :</label>
+                    <select id="v-d4-transport" class="border rounded-lg px-2 py-1 text-slate-700 text-xs font-semibold" onchange="handleInputChange()">
+                      <option value="train" selected>🚆 Train (2 640 lots • 2 768€ • RSE)</option>
+                      <option value="camion">🚚 Camion (1 980 lots • 1 721€)</option>
+                      <option value="bateau">🚢 Bateau (5 760 lots • 4 668€)</option>
+                      <option value="avion">✈️ Avion (60 lots • 79€)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -775,7 +1111,7 @@
               <div class="pl-2 space-y-1 text-slate-600 border-l-2 border-slate-200">
                 <div class="flex justify-between">
                   <span>- Salaires mensuels :</span>
-                  <span>-60 000 €</span>
+                  <span id="out-pnl-salaires">-60 000 €</span>
                 </div>
                 <div class="flex justify-between">
                   <span>- Frais de structure :</span>
@@ -783,7 +1119,7 @@
                 </div>
                 <div class="flex justify-between">
                   <span>- Amortissement machines :</span>
-                  <span>-500 €</span>
+                  <span id="out-pnl-amortissement">-500 €</span>
                 </div>
                 <div class="flex justify-between">
                   <span>- Frais stockage final (0,42%) :</span>
@@ -831,12 +1167,20 @@
                 <span id="out-decaisse-dette-init">-95 200 €</span>
               </div>
               <div class="flex justify-between text-red-600" id="row-investissement-machines">
-                <span>- Investissement machines :</span>
+                <span>- Investissement machines départ (M1) :</span>
                 <span id="out-decaisse-machines">-30 000 €</span>
+              </div>
+              <div class="flex justify-between text-red-600" id="row-achat-tubeuses">
+                <span>- Achat 5 Tubeuses (comptant Fév M2) :</span>
+                <span id="out-decaisse-tubeuses">-15 000 €</span>
+              </div>
+              <div class="flex justify-between text-red-600" id="row-stock-allemand">
+                <span>- Rachat stock allemand 50k planches (Mars M3) :</span>
+                <span id="out-decaisse-stock-allemand">-175 000 €</span>
               </div>
               <div class="flex justify-between text-red-600">
                 <span>- Salaires + Structure :</span>
-                <span>-95 000 €</span>
+                <span id="out-decaisse-salaires-struct">-95 000 €</span>
               </div>
               <div class="flex justify-between text-red-600">
                 <span>- Frais variables décaissés :</span>
@@ -1213,36 +1557,32 @@
       const liegeABroyerKg = Number(document.getElementById('rng-broyage').value) || 0;
       const grainsAMoulerKg = Number(document.getElementById('rng-moulage').value) || 0;
 
-      const v1Lots = Number(document.getElementById('v-d1-lots').value) || 0;
-      const v1Prix = Number(document.getElementById('v-d1-prix').value) || 0;
-      const v1Delai = Number(document.getElementById('v-d1-delai').value) || 0;
-      const v1Transport = document.getElementById('v-d1-transport').value;
+      const planchesATuberAKg = Number(document.getElementById('inp-tubage-a')?.value) || 0;
+      const planchesATuberBKg = Number(document.getElementById('inp-tubage-b')?.value) || 0;
+      const planchesATuberCKg = Number(document.getElementById('inp-tubage-c')?.value) || 0;
 
-      const v2Lots = Number(document.getElementById('v-d2-lots').value) || 0;
-      const v2Prix = Number(document.getElementById('v-d2-prix').value) || 0;
-      const v2Delai = Number(document.getElementById('v-d2-delai').value) || 0;
-      const v2Transport = document.getElementById('v-d2-transport').value;
-
-      const v3Lots = Number(document.getElementById('v-d3-lots').value) || 0;
-      const v3Prix = Number(document.getElementById('v-d3-prix').value) || 0;
-      const v3Delai = Number(document.getElementById('v-d3-delai').value) || 0;
-      const v3Transport = document.getElementById('v-d3-transport').value;
-
-      const v4Lots = Number(document.getElementById('v-d4-lots').value) || 0;
-      const v4Prix = Number(document.getElementById('v-d4-prix').value) || 0;
-      const v4Delai = Number(document.getElementById('v-d4-delai').value) || 0;
-      const v4Transport = document.getElementById('v-d4-transport').value;
+      function getVente(i) {
+        const lots = Number(document.getElementById(`v-d${i}-lots`)?.value) || 0;
+        const prix = Number(document.getElementById(`v-d${i}-prix`)?.value) || 0;
+        const lotsNatA = Number(document.getElementById(`v-d${i}-lots-a`)?.value) || 0;
+        const prixNatA = Number(document.getElementById(`v-d${i}-prix-a`)?.value) || 55.0;
+        const lotsNatB = Number(document.getElementById(`v-d${i}-lots-b`)?.value) || 0;
+        const prixNatB = Number(document.getElementById(`v-d${i}-prix-b`)?.value) || 60.0;
+        const lotsNatC = Number(document.getElementById(`v-d${i}-lots-c`)?.value) || 0;
+        const prixNatC = Number(document.getElementById(`v-d${i}-prix-c`)?.value) || 65.0;
+        const delai = Number(document.getElementById(`v-d${i}-delai`)?.value) || 0;
+        const transport = document.getElementById(`v-d${i}-transport`)?.value || 'camion';
+        return { client: `D${i}`, lots, prix, lotsNatA, prixNatA, lotsNatB, prixNatB, lotsNatC, prixNatC, delai, transport };
+      }
 
       appState.moisData[m] = {
         commandeLiegeKg,
         liegeABroyerKg,
         grainsAMoulerKg,
-        ventes: [
-          { client: 'D1', lots: v1Lots, prix: v1Prix, delai: v1Delai, transport: v1Transport },
-          { client: 'D2', lots: v2Lots, prix: v2Prix, delai: v2Delai, transport: v2Transport },
-          { client: 'D3', lots: v3Lots, prix: v3Prix, delai: v3Delai, transport: v3Transport },
-          { client: 'D4', lots: v4Lots, prix: v4Prix, delai: v4Delai, transport: v4Transport }
-        ]
+        planchesATuberAKg,
+        planchesATuberBKg,
+        planchesATuberCKg,
+        ventes: [getVente(1), getVente(2), getVente(3), getVente(4)]
       };
 
       saveToLocalStorage();
@@ -1358,30 +1698,100 @@
       document.getElementById('out-total-dispo').innerText = Math.round(res.totalBouchonsDispoLots).toLocaleString('fr-FR');
       document.getElementById('badge-stock-dispo-mois').innerText = Math.round(res.totalBouchonsDispoLots).toLocaleString('fr-FR') + ' lots dispos';
 
+      // MAJ Atelier Tubage & Bouchons Naturels
+      const cardTubage = document.getElementById('card-atelier-tubage');
+      const badgeTubage = document.getElementById('badge-statut-tubeuses');
+      if (cardTubage) {
+        if (m < 3) {
+          cardTubage.classList.add('opacity-60');
+          if (badgeTubage) badgeTubage.innerText = 'Acquises en Fév (M2) • Actif dès Mois 3';
+        } else {
+          cardTubage.classList.remove('opacity-60');
+          if (badgeTubage) badgeTubage.innerText = 'Capacité : 50 000 planches / mois';
+        }
+      }
+
+      const elStockPA = document.getElementById('lbl-stock-planches-a');
+      if (elStockPA) elStockPA.innerText = 'Dispo : ' + Math.round(res.stockPlanchesAEntrantKg).toLocaleString('fr-FR') + ' kg';
+      const elStockPB = document.getElementById('lbl-stock-planches-b');
+      if (elStockPB) elStockPB.innerText = 'Dispo : ' + Math.round(res.stockPlanchesBEntrantKg).toLocaleString('fr-FR') + ' kg';
+      const elStockPC = document.getElementById('lbl-stock-planches-c');
+      if (elStockPC) elStockPC.innerText = 'Dispo : ' + Math.round(res.stockPlanchesCEntrantKg).toLocaleString('fr-FR') + ' kg';
+
+      const elLotsTubA = document.getElementById('out-lots-tubage-a');
+      if (elLotsTubA) elLotsTubA.innerText = Math.round(res.bouchonsNatAProduitsLots).toLocaleString('fr-FR') + ' lots';
+      const elLotsTubB = document.getElementById('out-lots-tubage-b');
+      if (elLotsTubB) elLotsTubB.innerText = Math.round(res.bouchonsNatBProduitsLots).toLocaleString('fr-FR') + ' lots';
+      const elLotsTubC = document.getElementById('out-lots-tubage-c');
+      if (elLotsTubC) elLotsTubC.innerText = Math.round(res.bouchonsNatCProduitsLots).toLocaleString('fr-FR') + ' lots';
+
+      const elTotTub = document.getElementById('out-total-planches-tubees');
+      if (elTotTub) elTotTub.innerText = Math.round(res.totalPlanchesTubees).toLocaleString('fr-FR');
+      const elTotNatProd = document.getElementById('out-total-nat-produits');
+      if (elTotNatProd) elTotNatProd.innerText = Math.round(res.totalBouchonsNatProduitsLots).toLocaleString('fr-FR') + ' lots naturels';
+      const badgeRecycle = document.getElementById('badge-liege-recycle');
+      if (badgeRecycle) badgeRecycle.innerText = `♻️ +${Math.round(res.liegeRecupereTubageKg).toLocaleString('fr-FR')} kg liège recyclé pour le broyeur (50%)`;
+      const elCoutTubTot = document.getElementById('out-cout-tubage-total');
+      if (elCoutTubTot) elCoutTubTot.innerText = Math.round(res.coutTubage).toLocaleString('fr-FR') + ' €';
+
+      const elDispoNatA = document.getElementById('out-dispo-nat-a');
+      if (elDispoNatA) elDispoNatA.innerText = Math.round(res.stockNatAFinLots + res.lotsVendusNatATotal).toLocaleString('fr-FR') + ' lots';
+      const elDispoNatB = document.getElementById('out-dispo-nat-b');
+      if (elDispoNatB) elDispoNatB.innerText = Math.round(res.stockNatBFinLots + res.lotsVendusNatBTotal).toLocaleString('fr-FR') + ' lots';
+      const elDispoNatC = document.getElementById('out-dispo-nat-c');
+      if (elDispoNatC) elDispoNatC.innerText = Math.round(res.stockNatCFinLots + res.lotsVendusNatCTotal).toLocaleString('fr-FR') + ' lots';
+      const elTotNatDispo = document.getElementById('out-total-nat-dispo');
+      const totalNatDispo = (res.stockNatAFinLots + res.lotsVendusNatATotal) + (res.stockNatBFinLots + res.lotsVendusNatBTotal) + (res.stockNatCFinLots + res.lotsVendusNatCTotal);
+      if (elTotNatDispo) elTotNatDispo.innerText = Math.round(totalNatDispo).toLocaleString('fr-FR');
+
       // Bannière contexte du mois
       const txtContexte = document.getElementById('txt-mois-contexte');
       if (m === 1) {
         txtContexte.innerHTML = `<strong>Mois 1 (Janvier) :</strong> Consommation du stock initial (110k kg liège @ 0,50€, 7,5k grains @ 0,56€, 3k bouchons @ 12€). Coût Moyen Pondéré réel : <strong>${res.cmpBouchonLot.toFixed(2)} € / lot</strong>.`;
+      } else if (m === 2) {
+        txtContexte.innerHTML = `<strong>Mois 2 (Février) :</strong> Arrivée de la commande 150k kg @ 0,43€. Acquisition des 5 Tubeuses pour 15 000 € (amortissement 250 €/mois).`;
       } else {
-        txtContexte.innerHTML = `<strong>Mois ${m} :</strong> Réception de la commande du mois précédent (<strong>${(res.livraisonRecueKg || 0).toLocaleString('fr-FR')} kg</strong>) + stock restant reporté. CMP unitaire : <strong>${res.cmpBouchonLot.toFixed(2)} € / lot</strong>.`;
+        txtContexte.innerHTML = `<strong>Mois ${m} :</strong> Réception du stock allemand (50 000 planches payées en M3). Production de bouchons naturels + agglomérés. Salaires ajustés à 100 000 €/mois.`;
       }
 
       // MAJ Ventes
       const badgeVendu = document.getElementById('badge-total-vendu');
       badgeVendu.innerText = res.lotsVendusTotal.toLocaleString('fr-FR') + ' lots vendus';
-      if (res.lotsVendusTotal > res.totalBouchonsDispoLots) {
+      if (res.lotsVendusTotal > (res.totalBouchonsDispoLots + totalNatDispo)) {
         badgeVendu.className = 'text-xs bg-red-600 text-white font-bold px-2.5 py-0.5 rounded-full animate-pulse';
-        badgeVendu.innerText = 'ATTENTION : Ventes (' + res.lotsVendusTotal + ') > Disponibles (' + res.totalBouchonsDispoLots + ') !';
+        badgeVendu.innerText = 'ATTENTION : Ventes (' + res.lotsVendusTotal + ') > Disponibles (' + (res.totalBouchonsDispoLots + totalNatDispo) + ') !';
       } else {
         badgeVendu.className = 'text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full';
       }
+
+      // Badges deal par distributeur (lots & CA)
+      const curData = (appState.moisData && appState.moisData[m]) ? appState.moisData[m] : {};
+      (curData.ventes || []).forEach((v, idx) => {
+        const i = idx + 1;
+        const qAgglo = Number(v.lots) || 0;
+        const pAgglo = Number(v.prix) || 0;
+        const qA = Number(v.lotsNatA) || 0;
+        const pA = Number(v.prixNatA) || 0;
+        const qB = Number(v.lotsNatB) || 0;
+        const pB = Number(v.prixNatB) || 0;
+        const qC = Number(v.lotsNatC) || 0;
+        const pC = Number(v.prixNatC) || 0;
+
+        const totLotsDeal = qAgglo + qA + qB + qC;
+        const totCaDeal = (qAgglo * pAgglo) + (qA * pA) + (qB * pB) + (qC * pC);
+
+        const bLots = document.getElementById(`badge-d${i}-deal-lots`);
+        if (bLots) bLots.innerText = totLotsDeal.toLocaleString('fr-FR') + ' lots';
+        const bCa = document.getElementById(`badge-d${i}-deal-ca`);
+        if (bCa) bCa.innerText = Math.round(totCaDeal).toLocaleString('fr-FR') + ' €';
+      });
 
       // Recap commercial : Prix moyen, volume, transport, bénéfice
       const prixMoyen = res.lotsVendusTotal > 0 ? (res.caTotal / res.lotsVendusTotal) : 0;
       const elRecapLots = document.getElementById('out-recap-lots');
       if (elRecapLots) elRecapLots.innerText = res.lotsVendusTotal.toLocaleString('fr-FR') + ' lots';
       const elRecapDispo = document.getElementById('out-recap-dispo');
-      if (elRecapDispo) elRecapDispo.innerText = res.totalBouchonsDispoLots.toLocaleString('fr-FR');
+      if (elRecapDispo) elRecapDispo.innerText = (res.totalBouchonsDispoLots + totalNatDispo).toLocaleString('fr-FR');
       const elRecapPm = document.getElementById('out-recap-prix-moyen');
       if (elRecapPm) elRecapPm.innerText = prixMoyen.toFixed(2) + ' € / lot';
       const elPnlPm = document.getElementById('out-pnl-prix-moyen');
@@ -1414,6 +1824,12 @@
       document.getElementById('out-cout-transport').innerText = '-' + Math.round(res.coutTransportTotal).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-cout-mkt').innerText = '-' + Math.round(res.fraisMarketing).toLocaleString('fr-FR') + ' €';
       document.getElementById('out-mscv').innerText = Math.round(res.margeBrute).toLocaleString('fr-FR') + ' €';
+      
+      const elPnlSal = document.getElementById('out-pnl-salaires');
+      if (elPnlSal) elPnlSal.innerText = '-' + Math.round(res.salairesMois).toLocaleString('fr-FR') + ' €';
+      const elPnlAmort = document.getElementById('out-pnl-amortissement');
+      if (elPnlAmort) elPnlAmort.innerText = '-' + Math.round(res.amortissementMois).toLocaleString('fr-FR') + ' €';
+
       document.getElementById('out-frais-stockage').innerText = '-' + Math.round(res.fraisStockage).toLocaleString('fr-FR') + ' €';
 
       const elRn = document.getElementById('out-rn');
@@ -1437,6 +1853,19 @@
       rowMach.style.display = m === 1 ? 'flex' : 'none';
       rowFourn.style.display = res.decaissementFournisseur > 0 ? 'flex' : 'none';
       document.getElementById('out-decaisse-fournisseur').innerText = '-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' €';
+
+      const rowAchatTubeuses = document.getElementById('row-achat-tubeuses');
+      if (rowAchatTubeuses) rowAchatTubeuses.style.display = (m === 2) ? 'flex' : 'none';
+      const elDecTubeuses = document.getElementById('out-decaisse-tubeuses');
+      if (elDecTubeuses) elDecTubeuses.innerText = '-' + Math.round(res.achatTubeuseDecaissee).toLocaleString('fr-FR') + ' €';
+
+      const rowStockAllemand = document.getElementById('row-stock-allemand');
+      if (rowStockAllemand) rowStockAllemand.style.display = (m === 3) ? 'flex' : 'none';
+      const elDecStockAll = document.getElementById('out-decaisse-stock-allemand');
+      if (elDecStockAll) elDecStockAll.innerText = '-' + Math.round(res.stockPlanchesAllemandDecaisse).toLocaleString('fr-FR') + ' €';
+
+      const elDecSalStruct = document.getElementById('out-decaisse-salaires-struct');
+      if (elDecSalStruct) elDecSalStruct.innerText = '-' + Math.round(res.decaissementFixe).toLocaleString('fr-FR') + ' €';
 
       document.getElementById('out-decaissements-var').innerText = '-' + Math.round(res.decaissementVariables).toLocaleString('fr-FR') + ' €';
 
@@ -1467,10 +1896,11 @@
       document.getElementById('top-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-score').innerText = all.totaux.scoreCumule + ' / 1 080 pts';
 
-      // MAJ Grand Récapitulatif & Boussole
+      // MAJ Grand Récapitulatif, Boussole et Simulateur Distributeur
       renderRecap(all);
       renderBoussoleTable();
       updateTesteurOffre();
+      updateSimuDistributeur();
     }
 
     function renderRecap(all) {
@@ -1514,39 +1944,69 @@
 
         { section: '🏭 PRODUCTION & GESTION DES STOCKS' },
         { 
-          label: 'Liège brut broyé', u: 'kg', 
+          label: 'Liège brut broyé (Moulins)', u: 'kg', 
           vals: months.map(m => resM[m].liegeABroyerKg), 
           tot: sumField(r => r.liegeABroyerKg) 
         },
         { 
-          label: 'Grains moulés', u: 'kg', 
+          label: 'Grains moulés (Mouleuses)', u: 'kg', 
           vals: months.map(m => resM[m].grainsAMoulerKg), 
           tot: sumField(r => r.grainsAMoulerKg) 
         },
         { 
-          label: 'Bouchons produits', u: 'lots', 
+          label: 'Bouchons agglomérés produits', u: 'lots', 
           vals: months.map(m => resM[m].bouchonsProduitsLots), 
           tot: sumField(r => r.bouchonsProduitsLots) 
         },
         { 
-          label: 'Coût unitaire moyen (CMP)', u: '€/lot', 
+          label: 'Planches tubées (Tubeuses)', u: 'planches', 
+          vals: months.map(m => resM[m].totalPlanchesTubees), 
+          tot: sumField(r => r.totalPlanchesTubees) 
+        },
+        { 
+          label: 'Bouchons naturels produits', u: 'lots', 
+          vals: months.map(m => resM[m].totalBouchonsNatProduitsLots), 
+          tot: sumField(r => r.totalBouchonsNatProduitsLots) 
+        },
+        { 
+          label: 'Liège de tubage recyclé (50%)', u: 'kg', 
+          vals: months.map(m => resM[m].liegeRecupereTubageKg), 
+          tot: sumField(r => r.liegeRecupereTubageKg) 
+        },
+        { 
+          label: 'Coût unitaire moyen CMP (Agglomérés)', u: '€/lot', 
           vals: months.map(m => resM[m].cmpBouchonLot.toFixed(2)), 
           tot: '-' 
         },
         { 
-          label: 'Stock final de bouchons', u: 'lots', 
+          label: 'Stock final bouchons agglomérés', u: 'lots', 
           vals: months.map(m => resM[m].stockBouchonsFinLots), 
           tot: resM[8] ? resM[8].stockBouchonsFinLots : 0 
+        },
+        { 
+          label: 'Stock final bouchons naturels', u: 'lots', 
+          vals: months.map(m => (resM[m].stockNatAFinLots + resM[m].stockNatBFinLots + resM[m].stockNatCFinLots)), 
+          tot: resM[8] ? (resM[8].stockNatAFinLots + resM[8].stockNatBFinLots + resM[8].stockNatCFinLots) : 0 
         },
 
         { section: '🤝 COMMERCIALISATION & VENTES' },
         { 
-          label: 'Lots vendus aux distributeurs', u: 'lots', 
+          label: 'Lots vendus aux distributeurs (Total)', u: 'lots', 
           vals: months.map(m => resM[m].lotsVendusTotal), 
           tot: all.totaux.lotsCumule 
         },
         { 
-          label: 'PRIX MOYEN PAR LOT', u: '€/lot', highlightGold: true, 
+          label: '  • dont Bouchons Agglomérés', u: 'lots', 
+          vals: months.map(m => resM[m].lotsVendusAggloTotal), 
+          tot: sumField(r => r.lotsVendusAggloTotal) 
+        },
+        { 
+          label: '  • dont Bouchons Naturels (A+B+C)', u: 'lots', 
+          vals: months.map(m => (resM[m].lotsVendusNatATotal + resM[m].lotsVendusNatBTotal + resM[m].lotsVendusNatCTotal)), 
+          tot: sumField(r => (r.lotsVendusNatATotal + r.lotsVendusNatBTotal + r.lotsVendusNatCTotal)) 
+        },
+        { 
+          label: 'PRIX MOYEN PONDÉRÉ PAR LOT', u: '€/lot', highlightGold: true, 
           vals: months.map(m => resM[m].prixMoyenLot.toFixed(2)), 
           tot: (all.totaux.lotsCumule > 0 ? (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) : '0.00') 
         },
@@ -1563,7 +2023,7 @@
 
         { section: '📊 COMPTE DE RÉSULTAT (P&L)' },
         { 
-          label: 'CHIFFRE D\'AFFAIRES', u: '€', highlight: true, 
+          label: 'CHIFFRE D\'AFFAIRES TOTAL', u: '€', highlight: true, 
           vals: months.map(m => resM[m].caTotal), 
           tot: all.totaux.caCumule 
         },
@@ -1588,9 +2048,19 @@
           tot: sumField(r => r.margeBrute) 
         },
         { 
-          label: '- Charges fixes (Salaires + Structure)', u: '€', 
-          vals: months.map(m => -resM[m].chargesFixes), 
-          tot: -sumField(r => r.chargesFixes) 
+          label: '- Salaires mensuels (100k€ dès M3)', u: '€', 
+          vals: months.map(m => -resM[m].salairesMois), 
+          tot: -sumField(r => r.salairesMois) 
+        },
+        { 
+          label: '- Frais de structure (35k€)', u: '€', 
+          vals: months.map(m => -PARAMS.fraisStructureMensuels), 
+          tot: -(PARAMS.fraisStructureMensuels * 8) 
+        },
+        { 
+          label: '- Amortissement machines (750€ dès M2)', u: '€', 
+          vals: months.map(m => -resM[m].amortissementMois), 
+          tot: -sumField(r => r.amortissementMois) 
         },
         { 
           label: '- Frais de stockage (0,42%)', u: '€', 
@@ -1625,9 +2095,24 @@
           tot: -sumField(r => r.decaissementFournisseur) 
         },
         { 
-          label: '- Autres décaissements (salaires, usine, machines, stocks)', u: '€', 
-          vals: months.map(m => -(resM[m].totalDecaissements - resM[m].decaissementFournisseur)), 
-          tot: -sumField(r => (r.totalDecaissements - r.decaissementFournisseur)) 
+          label: '- Investissement machines départ (M1)', u: '€', 
+          vals: months.map(m => -resM[m].machinesDecaissees), 
+          tot: -30000 
+        },
+        { 
+          label: '- Achat 5 Tubeuses comptant (Fév M2)', u: '€', 
+          vals: months.map(m => -resM[m].achatTubeuseDecaissee), 
+          tot: -15000 
+        },
+        { 
+          label: '- Rachat stock allemand 50k planches (Mars M3)', u: '€', 
+          vals: months.map(m => -resM[m].stockPlanchesAllemandDecaisse), 
+          tot: -175000 
+        },
+        { 
+          label: '- Autres décaissements fixes et variables', u: '€', 
+          vals: months.map(m => -(resM[m].decaissementFixe + resM[m].decaissementVariables + resM[m].detteStockInitDecaissee)), 
+          tot: -sumField(r => (r.decaissementFixe + r.decaissementVariables + r.detteStockInitDecaissee)) 
         },
         { 
           label: 'TRÉSORERIE FIN DE MOIS', u: '€', highlightBlue: true, 
@@ -1993,27 +2478,117 @@
       document.getElementById('rng-moulage').value = moulageKg;
       document.getElementById('val-moulage-kg').innerText = moulageKg.toLocaleString('fr-FR') + ' kg';
 
-      if (curData.ventes && curData.ventes.length >= 4) {
-        document.getElementById('v-d1-lots').value = curData.ventes[0].lots;
-        document.getElementById('v-d1-prix').value = curData.ventes[0].prix;
-        document.getElementById('v-d1-delai').value = curData.ventes[0].delai;
-        document.getElementById('v-d1-transport').value = curData.ventes[0].transport;
+      // Atelier Tubage (Planches A, B, C)
+      const inpTubA = document.getElementById('inp-tubage-a');
+      const inpTubB = document.getElementById('inp-tubage-b');
+      const inpTubC = document.getElementById('inp-tubage-c');
+      if (inpTubA) inpTubA.value = curData.planchesATuberAKg !== undefined ? curData.planchesATuberAKg : (m >= 3 ? 10000 : 0);
+      if (inpTubB) inpTubB.value = curData.planchesATuberBKg !== undefined ? curData.planchesATuberBKg : (m >= 3 ? 10000 : 0);
+      if (inpTubC) inpTubC.value = curData.planchesATuberCKg !== undefined ? curData.planchesATuberCKg : (m >= 3 ? 10000 : 0);
 
-        document.getElementById('v-d2-lots').value = curData.ventes[1].lots;
-        document.getElementById('v-d2-prix').value = curData.ventes[1].prix;
-        document.getElementById('v-d2-delai').value = curData.ventes[1].delai;
-        document.getElementById('v-d2-transport').value = curData.ventes[1].transport;
+      // Ventes aux 4 Distributeurs (Agglomérés + Naturels)
+      for (let i = 1; i <= 4; i++) {
+        const v = (curData.ventes && curData.ventes[i - 1]) ? curData.ventes[i - 1] : {};
+        const inpLots = document.getElementById(`v-d${i}-lots`);
+        const inpPrix = document.getElementById(`v-d${i}-prix`);
+        const inpLotsA = document.getElementById(`v-d${i}-lots-a`);
+        const inpPrixA = document.getElementById(`v-d${i}-prix-a`);
+        const inpLotsB = document.getElementById(`v-d${i}-lots-b`);
+        const inpPrixB = document.getElementById(`v-d${i}-prix-b`);
+        const inpLotsC = document.getElementById(`v-d${i}-lots-c`);
+        const inpPrixC = document.getElementById(`v-d${i}-prix-c`);
+        const selDelai = document.getElementById(`v-d${i}-delai`);
+        const selTrans = document.getElementById(`v-d${i}-transport`);
 
-        document.getElementById('v-d3-lots').value = curData.ventes[2].lots;
-        document.getElementById('v-d3-prix').value = curData.ventes[2].prix;
-        document.getElementById('v-d3-delai').value = curData.ventes[2].delai;
-        document.getElementById('v-d3-transport').value = curData.ventes[2].transport;
-
-        document.getElementById('v-d4-lots').value = curData.ventes[3].lots;
-        document.getElementById('v-d4-prix').value = curData.ventes[3].prix;
-        document.getElementById('v-d4-delai').value = curData.ventes[3].delai;
-        document.getElementById('v-d4-transport').value = curData.ventes[3].transport;
+        if (inpLots) inpLots.value = v.lots !== undefined ? v.lots : (m >= 3 ? 2250 : 2500);
+        if (inpPrix) inpPrix.value = v.prix !== undefined ? v.prix : 21.5;
+        if (inpLotsA) inpLotsA.value = v.lotsNatA !== undefined ? v.lotsNatA : (m >= 3 ? 250 : 0);
+        if (inpPrixA) inpPrixA.value = v.prixNatA !== undefined ? v.prixNatA : 55.0;
+        if (inpLotsB) inpLotsB.value = v.lotsNatB !== undefined ? v.lotsNatB : (m >= 3 ? 250 : 0);
+        if (inpPrixB) inpPrixB.value = v.prixNatB !== undefined ? v.prixNatB : 60.0;
+        if (inpLotsC) inpLotsC.value = v.lotsNatC !== undefined ? v.lotsNatC : (m >= 3 ? 250 : 0);
+        if (inpPrixC) inpPrixC.value = v.prixNatC !== undefined ? v.prixNatC : 65.0;
+        if (selDelai) selDelai.value = v.delai !== undefined ? v.delai : (i === 3 ? 30 : 0);
+        if (selTrans) selTrans.value = v.transport || (m >= 3 ? 'train' : 'camion');
       }
+    }
+
+    function updateSimuDistributeur() {
+      const type = document.getElementById('sel-dist-sim-type')?.value || 'B';
+      const prix = Number(document.getElementById('inp-dist-sim-prix')?.value) || 60.0;
+      const vol = Number(document.getElementById('inp-dist-sim-volume')?.value) || 1000;
+
+      const info = calcMargeDistributeur(type, prix);
+
+      const elCout = document.getElementById('out-dist-sim-cout');
+      if (elCout) elCout.innerText = info.coutTotalDistributeur.toFixed(2) + ' € / lot';
+      const elCoutDet = document.getElementById('out-dist-sim-cout-detail');
+      if (elCoutDet) elCoutDet.innerText = `Achat ${prix.toFixed(2)}€ + Tri ${info.coutTri.toFixed(2)}€`;
+
+      const elRev = document.getElementById('out-dist-sim-revente');
+      if (elRev) elRev.innerText = info.revenuReventeLot.toFixed(2) + ' € / lot';
+
+      const elMarge = document.getElementById('out-dist-sim-marge');
+      if (elMarge) {
+        elMarge.innerText = (info.margeBruteDistributeur >= 0 ? '+' : '') + info.margeBruteDistributeur.toFixed(2) + ' € / lot';
+        elMarge.className = info.margeBruteDistributeur >= 0 ? 'font-black text-emerald-400 text-base mt-0.5' : 'font-black text-red-400 text-base mt-0.5';
+      }
+
+      const elTaux = document.getElementById('out-dist-sim-taux');
+      if (elTaux) elTaux.innerText = (info.tauxMargeDistributeur >= 0 ? '+' : '') + info.tauxMargeDistributeur.toFixed(1) + ' % de marge brute';
+
+      const elBenefGlobal = document.getElementById('out-dist-sim-benef-global');
+      if (elBenefGlobal) {
+        const totalGain = info.margeBruteDistributeur * vol;
+        elBenefGlobal.innerText = (totalGain >= 0 ? '+' : '') + Math.round(totalGain).toLocaleString('fr-FR') + ' €';
+        elBenefGlobal.className = totalGain >= 0 ? 'font-black text-emerald-300 text-base mt-0.5' : 'font-black text-red-400 text-base mt-0.5';
+      }
+
+      const elRep = document.getElementById('txt-dist-sim-repartition');
+      const rep = info.repartition;
+      if (elRep) {
+        elRep.innerHTML = `Répartition Trieuse (<strong>Espagne ${type}</strong>) : <strong>${Math.round(rep.Q1 * 100)}% Q1</strong> (170€) • <strong>${Math.round(rep.Q2 * 100)}% Q2</strong> (145€) • <strong>${Math.round(rep.Q3 * 100)}% Q3</strong> (120€) • <strong>${Math.round(rep.Q4 * 100)}% Q4</strong> (95€).`;
+      }
+    }
+
+    function copierArgumentaireDistributeur() {
+      const type = document.getElementById('sel-dist-sim-type')?.value || 'B';
+      const prix = Number(document.getElementById('inp-dist-sim-prix')?.value) || 60.0;
+      const vol = Number(document.getElementById('inp-dist-sim-volume')?.value) || 1000;
+      const info = calcMargeDistributeur(type, prix);
+      const rep = info.repartition;
+      const gainTotal = Math.round(info.margeBruteDistributeur * vol);
+
+      const pitch = 
+`Bonjour à l'équipe ! 🍷
+
+SuberTech Industries vous propose une opportunité exceptionnelle sur les Bouchons Naturels Haut de Gamme (Planches Espagne ${type}) :
+
+📦 Offre SuberTech :
+- Volume proposé : ${vol.toLocaleString('fr-FR')} lots
+- Prix d'achat convenu : ${prix.toFixed(2)} € / lot
+- Coût de tri sur votre trieuse : 2,00 € / lot
+➔ Coût de revient complet pour vous : ${info.coutTotalDistributeur.toFixed(2)} € / lot
+
+📊 Répartition moyenne de vos ventes après trieuse :
+- ${Math.round(rep.Q1 * 100)}% en Qualité Q1 (Revente vignerons/caves : 160 € à 200 € / lot)
+- ${Math.round(rep.Q2 * 100)}% en Qualité Q2 (Revente : 125 € à 180 € / lot)
+- ${Math.round(rep.Q3 * 100)}% en Qualité Q3 (Revente : 105 € à 160 € / lot)
+- ${Math.round(rep.Q4 * 100)}% en Qualité Q4 (Revente : 85 € à 140 € / lot)
+➔ Prix moyen constaté de revente : ${info.revenuReventeLot.toFixed(2)} € / lot
+
+💰 Votre rentabilité nette sur ce contrat :
+- Marge brute pour vous : +${info.margeBruteDistributeur.toFixed(2)} € par lot (+${info.tauxMargeDistributeur.toFixed(0)} % de marge brute !)
+- Bénéfice net total pour votre équipe : +${gainTotal.toLocaleString('fr-FR')} € !
+
+Nous livrons en Train décarboné (RSE maximale pour votre image).
+Est-ce qu'on valide ce contrat ensemble ? 🤝`;
+
+      navigator.clipboard.writeText(pitch).then(() => {
+        showToast('📋 Argumentaire commercial pour les distributeurs copié !');
+      }).catch(() => {
+        prompt("Copiez l'argumentaire ci-dessous :", pitch);
+      });
     }
 
     function copierDossier() {

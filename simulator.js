@@ -2,9 +2,19 @@
 
 const PARAMS = {
   capitalDepart: 500000,
-  salairesMensuels: 60000,
+  salairesMensuels: 60000, // En M1 et M2
+  salairesMensuelsM3: 100000, // Dès le Mois 3 (Note de conjoncture)
   fraisStructureMensuels: 35000,
   amortissementMensuel: 500, // 30 000 € sur 5 ans = 500 € / mois
+  amortissementTubeuseMensuel: 250, // 15 000 € sur 5 ans = 250 € / mois dès Février (M2)
+
+  getSalairesMensuels: function(m) {
+    return m >= 3 ? this.salairesMensuelsM3 : this.salairesMensuels;
+  },
+  getAmortissementMensuel: function(m) {
+    return m >= 2 ? (this.amortissementMensuel + this.amortissementTubeuseMensuel) : this.amortissementMensuel;
+  },
+
   tauxMarketing: 0.05, // 5% du CA
   tauxStockage: 0.0042, // 0.42% de la valeur du stock final
 
@@ -16,17 +26,55 @@ const PARAMS = {
   stockInitBouchonsLots: 3000,
   prixAchatBouchonsInit: 12.0,
 
-  // Rendements de production
+  // Stocks rachetés du client allemand (disponibles en M3, payés en M3)
+  stockRachetePlanchesKg: 50000, // Valeur totale 175 000 € (moyenne 3.50 € / kg)
+  prixAchatPlanchesInit: 3.50,
+
+  // Rendements de production classiques (Agglomérés)
   rendementBroyage: 0.35, // 100 kg liège -> 35 kg grains
   coutBroyageKg: 0.02,    // 0,02 € / kg liège entré
   rendementMoulage: 0.20, // 100 kg grains -> 20 lots de bouchons (soit 5 kg / lot)
   coutMoulageKg: 0.40,    // 0,40 € / kg grain entré (soit 2 € / lot)
 
+  // Paramètres du procédé de tubage (Bouchons Naturels - Nouvelles Activités M3)
+  coutTubagePlanche: 0.03, // 0,03 € / planche tubée (soit 0,30 € / lot)
+  ratioPlanchesParLot: 10, // 10 planches (10 kg) -> 1 lot de bouchons naturels
+  rendementLiegeABroyerTubage: 0.50, // 50% de perte = 5 kg de liège à broyer récupéré par lot
+
   // Capacités maximales des machines (par mois)
   capaciteMoulinsKg: 155000,   // Limite Moulins : max 155 000 kg liège brut / mois
   capaciteMouleusesKg: 45000,  // Limite Mouleuses : max 45 000 kg grains / mois (soit 9 000 lots max / mois)
+  capaciteTubeusesPlanches: 50000, // Limite Tubeuses : max 50 000 planches / mois (soit 5 000 lots naturels max / mois)
 
-  // Grille de remise producteur espagnol
+  // Événements de trésorerie exceptionnels
+  achatTubeuseComptantM2: 15000, // Payé comptant en Février (M2)
+  rachatStockPlanchesM3: 175000,  // Payé en Mars (M3)
+
+  // Paramètres de trieuse des distributeurs (pour simulation et négociation)
+  trieuse: {
+    coutTriLot: 2.00, // 2 € / lot en entrée
+    repartition: {
+      A: { Q1: 0.15, Q2: 0.30, Q3: 0.30, Q4: 0.25 },
+      B: { Q1: 0.20, Q2: 0.30, Q3: 0.30, Q4: 0.20 },
+      C: { Q1: 0.25, Q2: 0.30, Q3: 0.25, Q4: 0.20 }
+    },
+    // Prix moyens observés auprès des clients finaux (Vignerons, Caves, Grands Comptes)
+    prixClientsMoyens: {
+      Q1: 170, // 160 à 200 €
+      Q2: 145, // 125 à 180 €
+      Q3: 120, // 105 à 160 €
+      Q4: 95   // 85 à 140 €
+    }
+  },
+
+  // Prix moyens du marché distributeurs constatés (Note de Conjoncture M3)
+  prixMarcheNaturels: {
+    A: 55.0, // Espagne A
+    B: 60.0, // Espagne B
+    C: 65.0  // Espagne C
+  },
+
+  // Grille de remise producteur espagnol (Liège brut)
   getPrixLiege: function(kg) {
     if (kg >= 150000) return 0.43;
     if (kg >= 130000) return 0.44;
@@ -58,24 +106,46 @@ function getDefaultMonthData(m) {
       commandeLiegeKg: 150000,
       liegeABroyerKg: 110000, // Stock initial usine (<= 155 000 kg limite moulins)
       grainsAMoulerKg: 45000, // Plafonné à la capacité machine des mouleuses (45 000 kg max)
+      planchesATuberAKg: 0,
+      planchesATuberBKg: 0,
+      planchesATuberCKg: 0,
       ventes: [
-        { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
-        { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
-        { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, delai: 30, transport: 'train' },
-        { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, delai: 0, transport: 'camion' }
+        { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
+        { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
+        { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 30, transport: 'train' },
+        { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
       ]
     };
   }
-  // Par défaut pour M2 à M8
+  if (m === 2) {
+    return {
+      commandeLiegeKg: 150000,
+      liegeABroyerKg: 150000, // <= 155 000 kg max moulins
+      grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses
+      planchesATuberAKg: 0,
+      planchesATuberBKg: 0,
+      planchesATuberCKg: 0,
+      ventes: [
+        { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
+        { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
+        { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 4', lots: 2000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
+      ]
+    };
+  }
+  // Par défaut pour M3 à M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels (3k)
   return {
     commandeLiegeKg: 150000,
     liegeABroyerKg: 150000, // <= 155 000 kg max moulins
-    grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses
+    grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
+    planchesATuberAKg: 10000, // 1 000 lots A
+    planchesATuberBKg: 10000, // 1 000 lots B
+    planchesATuberCKg: 10000, // 1 000 lots C
     ventes: [
-      { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
-      { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, delai: 0, transport: 'camion' },
-      { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.5, delai: 0, transport: 'train' },
-      { client: 'Équipe Distributeur 4', lots: 2000, prix: 21.5, delai: 0, transport: 'camion' }
+      { client: 'Équipe Distributeur 1', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
+      { client: 'Équipe Distributeur 2', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
+      { client: 'Équipe Distributeur 3', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
+      { client: 'Équipe Distributeur 4', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' }
     ]
   };
 }
@@ -197,28 +267,84 @@ function simulateAllMonths(state) {
     const isM1 = (m === 1);
     const monthData = (state.moisData && state.moisData[m]) ? state.moisData[m] : getDefaultMonthData(m);
     
-    // 1. Commande au producteur espagnol
+    // 1. Commande au producteur espagnol (Liège brut)
     const commandeLiegeKg = Number(monthData.commandeLiegeKg) || 0;
     const prixLiegeKg = PARAMS.getPrixLiege(commandeLiegeKg);
     const montantCommandeLiege = commandeLiegeKg * prixLiegeKg;
 
     // 2. Stocks entrants au début du mois
-    // En M1 : stock initial. En M2..M4 : stock restant du mois précédent + commande du mois précédent livrée !
+    // A. Liège brut
     const livraisonRecueKg = isM1 ? 0 : (prevResult.commandeLiegeKg || 0);
     const livraisonRecueVal = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
 
-    const stockLiegeEntrantKg = isM1 ? PARAMS.stockInitLiegeKg : (prevResult.stockLiegeFinKg + livraisonRecueKg);
-    const valStockLiegeEntrant = isM1 ? (PARAMS.stockInitLiegeKg * PARAMS.prixAchatLiegeInit) : (prevResult.valStockLiegeFin + livraisonRecueVal);
-    const cmpLiegeKg = stockLiegeEntrantKg > 0 ? (valStockLiegeEntrant / stockLiegeEntrantKg) : 0.43;
+    let stockLiegeEntrantKg = isM1 ? PARAMS.stockInitLiegeKg : (prevResult.stockLiegeFinKg + livraisonRecueKg);
+    let valStockLiegeEntrant = isM1 ? (PARAMS.stockInitLiegeKg * PARAMS.prixAchatLiegeInit) : (prevResult.valStockLiegeFin + livraisonRecueVal);
 
+    // B. Grains
     const stockGrainsEntrantKg = isM1 ? PARAMS.stockInitGrainsKg : prevResult.stockGrainsFinKg;
     const valStockGrainsEntrant = isM1 ? (PARAMS.stockInitGrainsKg * PARAMS.prixAchatGrainsInit) : prevResult.valStockGrainsFin;
     const cmpGrainsKg = stockGrainsEntrantKg > 0 ? (valStockGrainsEntrant / stockGrainsEntrantKg) : 1.335;
 
+    // C. Bouchons agglomérés
     const stockBouchonsEntrantLots = isM1 ? PARAMS.stockInitBouchonsLots : prevResult.stockBouchonsFinLots;
     const valStockBouchonsEntrant = isM1 ? (PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit) : prevResult.valStockBouchonsFin;
 
-    // 3. Transformation & Production avec contraintes de capacités machines
+    // D. Planches (Espagne A, B, C) - Disponibles dès M3 grâce au rachat allemand (175 000 €)
+    let stockPlanchesAEntrantKg = 0;
+    let stockPlanchesBEntrantKg = 0;
+    let stockPlanchesCEntrantKg = 0;
+    if (m === 3) {
+      stockPlanchesAEntrantKg = 15000;
+      stockPlanchesBEntrantKg = 20000;
+      stockPlanchesCEntrantKg = 15000;
+    } else if (m > 3 && prevResult) {
+      stockPlanchesAEntrantKg = prevResult.stockPlanchesAFinKg || 0;
+      stockPlanchesBEntrantKg = prevResult.stockPlanchesBFinKg || 0;
+      stockPlanchesCEntrantKg = prevResult.stockPlanchesCFinKg || 0;
+    }
+    const cmpPlancheKg = PARAMS.prixAchatPlanchesInit; // 3.50 € / kg
+
+    // E. Bouchons naturels tubés en stock
+    let stockNatAEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatAFinLots || 0) : 0;
+    let stockNatBEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatBFinLots || 0) : 0;
+    let stockNatCEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatCFinLots || 0) : 0;
+
+    // 3. Procédé de Tubage (Bouchons Naturels) - Dès M3
+    const maxTubageMachine = PARAMS.capaciteTubeusesPlanches; // 50 000 planches / mois
+    const planchesDemandeA = (m >= 3) ? (Number(monthData.planchesATuberAKg) || 0) : 0;
+    const planchesDemandeB = (m >= 3) ? (Number(monthData.planchesATuberBKg) || 0) : 0;
+    const planchesDemandeC = (m >= 3) ? (Number(monthData.planchesATuberCKg) || 0) : 0;
+
+    const planchesATuberAKg = Math.min(stockPlanchesAEntrantKg, Math.max(0, planchesDemandeA));
+    const planchesATuberBKg = Math.min(stockPlanchesBEntrantKg, Math.max(0, planchesDemandeB));
+    const planchesATuberCKg = Math.min(stockPlanchesCEntrantKg, Math.max(0, planchesDemandeC));
+    const totalPlanchesTubees = planchesATuberAKg + planchesATuberBKg + planchesATuberCKg;
+
+    const alerteDepassementTubeuse = totalPlanchesTubees > maxTubageMachine;
+    const coutTubage = totalPlanchesTubees * PARAMS.coutTubagePlanche; // 0,03 € / planche
+
+    // Rendement tubage : 10 planches (10 kg) -> 1 lot naturel (5 kg) + 5 kg de liège à broyer (50%)
+    const bouchonsNatAProduitsLots = Math.floor(planchesATuberAKg / PARAMS.ratioPlanchesParLot);
+    const bouchonsNatBProduitsLots = Math.floor(planchesATuberBKg / PARAMS.ratioPlanchesParLot);
+    const bouchonsNatCProduitsLots = Math.floor(planchesATuberCKg / PARAMS.ratioPlanchesParLot);
+    const totalBouchonsNatProduitsLots = bouchonsNatAProduitsLots + bouchonsNatBProduitsLots + bouchonsNatCProduitsLots;
+
+    // Liège à broyer généré par le tubage (rebuts réinjectés pour le moulin)
+    const liegeRecupereTubageKg = totalPlanchesTubees * PARAMS.rendementLiegeABroyerTubage; // 5 kg / lot
+    stockLiegeEntrantKg += liegeRecupereTubageKg;
+    valStockLiegeEntrant += liegeRecupereTubageKg * 0.43;
+    const cmpLiegeKg = stockLiegeEntrantKg > 0 ? (valStockLiegeEntrant / stockLiegeEntrantKg) : 0.43;
+
+    // Coûts de revient unitaires des bouchons naturels (10 planches @ 3.50€ + 0.30€ tubage = 35.30 € / lot)
+    const cmpNatALot = (PARAMS.ratioPlanchesParLot * cmpPlancheKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    const cmpNatBLot = (PARAMS.ratioPlanchesParLot * cmpPlancheKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    const cmpNatCLot = (PARAMS.ratioPlanchesParLot * cmpPlancheKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+
+    const totalNatADispoLots = stockNatAEntrantLots + bouchonsNatAProduitsLots;
+    const totalNatBDispoLots = stockNatBEntrantLots + bouchonsNatBProduitsLots;
+    const totalNatCDispoLots = stockNatCEntrantLots + bouchonsNatCProduitsLots;
+
+    // 4. Transformation & Production classique (Broyage & Moulage Agglomérés)
     const maxBroyageMachine = PARAMS.capaciteMoulinsKg; // 155 000 kg / mois
     const liegeDemande = Number(monthData.liegeABroyerKg) || 0;
     const maxBroyagePossible = Math.min(maxBroyageMachine, stockLiegeEntrantKg);
@@ -247,67 +373,106 @@ function simulateAllMonths(state) {
     const totalValBouchonsDispo = valStockBouchonsEntrant + valBouchonsProduits;
     const cmpBouchonLot = totalBouchonsDispoLots > 0 ? (totalValBouchonsDispo / totalBouchonsDispoLots) : 9.0;
 
-    // 4. Ventes aux distributeurs
-    let lotsVendusTotal = 0;
+    // 5. Ventes aux distributeurs (Agglomérés + Naturels A, B, C)
+    let lotsVendusAggloTotal = 0;
+    let lotsVendusNatATotal = 0;
+    let lotsVendusNatBTotal = 0;
+    let lotsVendusNatCTotal = 0;
     let caTotal = 0;
     let encaissementVentesMois = 0;
     let creances30jMois = 0;
     let coutTransportTotal = 0;
 
     (monthData.ventes || []).forEach(v => {
-      const qte = Number(v.lots) || 0;
-      const prix = Number(v.prix) || 0;
-      const ca = qte * prix;
-      lotsVendusTotal += qte;
-      caTotal += ca;
+      const qteAgglo = Number(v.lots) || 0;
+      const prixAgglo = Number(v.prix) || 0;
+      const qteNatA = Number(v.lotsNatA) || 0;
+      const prixNatA = Number(v.prixNatA) || 0;
+      const qteNatB = Number(v.lotsNatB) || 0;
+      const prixNatB = Number(v.prixNatB) || 0;
+      const qteNatC = Number(v.lotsNatC) || 0;
+      const prixNatC = Number(v.prixNatC) || 0;
+
+      const caDeal = (qteAgglo * prixAgglo) + (qteNatA * prixNatA) + (qteNatB * prixNatB) + (qteNatC * prixNatC);
+      const totalLotsDistributeur = qteAgglo + qteNatA + qteNatB + qteNatC;
+
+      lotsVendusAggloTotal += qteAgglo;
+      lotsVendusNatATotal += qteNatA;
+      lotsVendusNatBTotal += qteNatB;
+      lotsVendusNatCTotal += qteNatC;
+      caTotal += caDeal;
 
       if (Number(v.delai) === 0) {
-        encaissementVentesMois += ca;
+        encaissementVentesMois += caDeal;
       } else {
-        creances30jMois += ca;
+        creances30jMois += caDeal;
       }
 
-      if (qte > 0) {
+      if (totalLotsDistributeur > 0) {
         const mode = PARAMS.transports[v.transport] || PARAMS.transports.camion;
-        const nbVehicules = Math.ceil(qte / mode.capacite);
+        const nbVehicules = Math.ceil(totalLotsDistributeur / mode.capacite);
         coutTransportTotal += nbVehicules * mode.cout;
       }
     });
 
-    // 5. Stocks de fin de mois
+    const lotsVendusTotal = lotsVendusAggloTotal + lotsVendusNatATotal + lotsVendusNatBTotal + lotsVendusNatCTotal;
+
+    // 6. Stocks de fin de mois
+    // A. Liège brut
     const stockLiegeFinKg = Math.max(0, stockLiegeEntrantKg - liegeABroyerKg);
     const valStockLiegeFin = stockLiegeFinKg * cmpLiegeKg;
 
+    // B. Grains
     const stockGrainsFinKg = Math.max(0, totalGrainsDispoKg - grainsAMoulerKg);
     const valStockGrainsFin = stockGrainsFinKg * cmpGrainsDispoKg;
 
-    const stockBouchonsFinLots = Math.max(0, totalBouchonsDispoLots - lotsVendusTotal);
+    // C. Bouchons agglomérés
+    const stockBouchonsFinLots = Math.max(0, totalBouchonsDispoLots - lotsVendusAggloTotal);
     const valStockBouchonsFin = stockBouchonsFinLots * cmpBouchonLot;
 
-    const valeurStockTotalFin = valStockLiegeFin + valStockGrainsFin + valStockBouchonsFin;
+    // D. Planches (A, B, C)
+    const stockPlanchesAFinKg = Math.max(0, stockPlanchesAEntrantKg - planchesATuberAKg);
+    const stockPlanchesBFinKg = Math.max(0, stockPlanchesBEntrantKg - planchesATuberBKg);
+    const stockPlanchesCFinKg = Math.max(0, stockPlanchesCEntrantKg - planchesATuberCKg);
+    const valStockPlanchesFin = (stockPlanchesAFinKg + stockPlanchesBFinKg + stockPlanchesCFinKg) * cmpPlancheKg;
+
+    // E. Bouchons naturels
+    const stockNatAFinLots = Math.max(0, totalNatADispoLots - lotsVendusNatATotal);
+    const stockNatBFinLots = Math.max(0, totalNatBDispoLots - lotsVendusNatBTotal);
+    const stockNatCFinLots = Math.max(0, totalNatCDispoLots - lotsVendusNatCTotal);
+    const valStockNatFin = (stockNatAFinLots * cmpNatALot) + (stockNatBFinLots * cmpNatBLot) + (stockNatCFinLots * cmpNatCLot);
+
+    const valeurStockTotalFin = valStockLiegeFin + valStockGrainsFin + valStockBouchonsFin + valStockPlanchesFin + valStockNatFin;
     const fraisStockage = valeurStockTotalFin * PARAMS.tauxStockage; // 0,42%
 
-    // 6. P&L (Compte de résultat)
-    const coutDirectVendus = lotsVendusTotal * cmpBouchonLot;
+    // 7. P&L (Compte de résultat)
+    const coutDirectVendus = (lotsVendusAggloTotal * cmpBouchonLot) +
+                             (lotsVendusNatATotal * cmpNatALot) +
+                             (lotsVendusNatBTotal * cmpNatBLot) +
+                             (lotsVendusNatCTotal * cmpNatCLot);
+
     const fraisMarketing = caTotal * PARAMS.tauxMarketing; // 5%
-    const chargesFixes = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels + PARAMS.amortissementMensuel; // 95 500 €
+    const salairesMois = PARAMS.getSalairesMensuels(m); // 60k en M1-M2, 100k dès M3
+    const amortissementMois = PARAMS.getAmortissementMensuel(m); // 500 en M1, 750 dès M2
+    const chargesFixes = salairesMois + PARAMS.fraisStructureMensuels + amortissementMois;
+
     const margeBrute = caTotal - coutDirectVendus - coutTransportTotal - fraisMarketing;
     const resultatNet = margeBrute - chargesFixes - fraisStockage;
 
-    // 7. Trésorerie
+    // 8. Trésorerie
     const tresoDebut = isM1 ? PARAMS.capitalDepart : prevResult.tresorerieFinMois;
     const encaissementCreancesPrecedentes = isM1 ? 0 : prevResult.creances30jMois;
     const totalEncaissements = encaissementVentesMois + encaissementCreancesPrecedentes;
 
     const detteStockInitDecaissee = isM1 ? 95200 : 0;
     const machinesDecaissees = isM1 ? 30000 : 0;
-    const decaissementFixe = PARAMS.salairesMensuels + PARAMS.fraisStructureMensuels; // 95 000 €
-    const decaissementVariables = coutBroyage + coutMoulage + coutTransportTotal + fraisMarketing + fraisStockage;
+    const achatTubeuseDecaissee = (m === 2) ? PARAMS.achatTubeuseComptantM2 : 0; // 15 000 € en M2
+    const stockPlanchesAllemandDecaisse = (m === 3) ? PARAMS.rachatStockPlanchesM3 : 0; // 175 000 € en M3
+
+    const decaissementFixe = salairesMois + PARAMS.fraisStructureMensuels;
+    const decaissementVariables = coutBroyage + coutMoulage + coutTubage + coutTransportTotal + fraisMarketing + fraisStockage;
     
-    // Décaissement commande producteur :
-    // 'instant' : payé comptant le mois même de la commande (ex: M1 payé M1)
-    // 'livraison' : payé à la livraison (ex: M1 payé M2)
-    // '30j' : payé 30 jours après livraison (ex: M1 livré M2 et payé M3)
+    // Décaissement commande producteur
     const modeReglement = state.reglementFournisseur || 'instant';
     let decaissementFournisseur = 0;
     if (modeReglement === 'instant') {
@@ -315,22 +480,21 @@ function simulateAllMonths(state) {
     } else if (modeReglement === 'livraison') {
       decaissementFournisseur = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
     } else {
-      // '30j' : payé 30 jours après livraison (ex: commande M1 livrée M2 payée M3)
       if (m >= 3 && results[m - 2]) {
         decaissementFournisseur = results[m - 2].montantCommandeLiege || 0;
       }
     }
 
-    const totalDecaissements = detteStockInitDecaissee + machinesDecaissees + decaissementFixe + decaissementVariables + decaissementFournisseur;
+    const totalDecaissements = detteStockInitDecaissee + machinesDecaissees + achatTubeuseDecaissee + stockPlanchesAllemandDecaisse + decaissementFixe + decaissementVariables + decaissementFournisseur;
     const tresorerieFinMois = tresoDebut + totalEncaissements - totalDecaissements;
 
-    // 8. Seuil de rentabilité (Point mort)
+    // 9. Seuil de rentabilité (Point mort)
     const prixMoyenLot = lotsVendusTotal > 0 ? (caTotal / lotsVendusTotal) : 21.0;
     const coutVariableUnitaire = lotsVendusTotal > 0 ? ((coutDirectVendus + coutTransportTotal + fraisMarketing) / lotsVendusTotal) : cmpBouchonLot + 1.8;
     const mscvUnitaire = prixMoyenLot - coutVariableUnitaire;
     const seuilRentabiliteLots = mscvUnitaire > 0 ? Math.ceil((chargesFixes + fraisStockage) / mscvUnitaire) : 10000;
 
-    // 9. Points au barème officiel (avec coefficient du mois : M1 x1, M2 x2, M3 x3, M4 x4)
+    // 10. Points au barème officiel (avec coefficient du mois : M1 x1 à M8 x8)
     const coefMois = m;
     const pointsRN = (resultatNet > 0 ? 10 : 4) * 2;
     const pointsCA = (caTotal >= 200000 ? 10 : 8) * 1;
@@ -352,10 +516,12 @@ function simulateAllMonths(state) {
       liegeABroyerKg,
       capaciteMoulinsKg: maxBroyageMachine,
       capaciteMouleusesKg: maxMoulageMachine,
+      capaciteTubeusesPlanches: maxTubageMachine,
       maxBroyagePossible,
       maxMoulagePossible,
       alerteDepassementMoulins,
       alerteDepassementMouleuses,
+      alerteDepassementTubeuse,
       coutBroyage,
       grainsProduitsKg,
       stockGrainsEntrantKg,
@@ -371,6 +537,36 @@ function simulateAllMonths(state) {
       stockBouchonsFinLots,
       valStockBouchonsFin,
       cmpBouchonLot,
+
+      // Données spécifiques Tubage & Bouchons Naturels
+      stockPlanchesAEntrantKg,
+      stockPlanchesBEntrantKg,
+      stockPlanchesCEntrantKg,
+      planchesATuberAKg,
+      planchesATuberBKg,
+      planchesATuberCKg,
+      totalPlanchesTubees,
+      coutTubage,
+      liegeRecupereTubageKg,
+      bouchonsNatAProduitsLots,
+      bouchonsNatBProduitsLots,
+      bouchonsNatCProduitsLots,
+      totalBouchonsNatProduitsLots,
+      cmpNatALot,
+      cmpNatBLot,
+      cmpNatCLot,
+      stockNatAFinLots,
+      stockNatBFinLots,
+      stockNatCFinLots,
+      stockPlanchesAFinKg,
+      stockPlanchesBFinKg,
+      stockPlanchesCFinKg,
+
+      // Ventes
+      lotsVendusAggloTotal,
+      lotsVendusNatATotal,
+      lotsVendusNatBTotal,
+      lotsVendusNatCTotal,
       lotsVendusTotal,
       prixMoyenLot,
       caTotal,
@@ -378,6 +574,8 @@ function simulateAllMonths(state) {
       coutTransportTotal,
       fraisMarketing,
       margeBrute,
+      salairesMois,
+      amortissementMois,
       chargesFixes,
       fraisStockage,
       resultatNet,
@@ -388,6 +586,8 @@ function simulateAllMonths(state) {
       totalEncaissements,
       detteStockInitDecaissee,
       machinesDecaissees,
+      achatTubeuseDecaissee,
+      stockPlanchesAllemandDecaisse,
       decaissementFixe,
       decaissementVariables,
       decaissementFournisseur,
@@ -550,6 +750,30 @@ function analyzeOffreDistributeur(prixOffert, volume = 3000, mois = 1, volumeTot
   };
 }
 
+// Calcule la rentabilité d'un distributeur lorsqu'il achète un lot de bouchons naturels
+function calcMargeDistributeur(type = 'B', prixAchat = 60.0) {
+  const rep = PARAMS.trieuse.repartition[type] || PARAMS.trieuse.repartition.B;
+  const p = PARAMS.trieuse.prixClientsMoyens;
+  const coutTri = PARAMS.trieuse.coutTriLot; // 2.00 €
+  
+  // Revenu moyen client = Somme(part * prixMoyenClient)
+  const revenuReventeLot = (rep.Q1 * p.Q1) + (rep.Q2 * p.Q2) + (rep.Q3 * p.Q3) + (rep.Q4 * p.Q4);
+  const coutTotalDistributeur = prixAchat + coutTri;
+  const margeBruteDistributeur = revenuReventeLot - coutTotalDistributeur;
+  const tauxMargeDistributeur = (margeBruteDistributeur / coutTotalDistributeur) * 100;
+
+  return {
+    type,
+    prixAchat,
+    coutTri,
+    revenuReventeLot,
+    coutTotalDistributeur,
+    margeBruteDistributeur,
+    tauxMargeDistributeur,
+    repartition: rep
+  };
+}
+
 // Export pour node si test
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -561,6 +785,7 @@ if (typeof module !== 'undefined' && module.exports) {
     calcProfitFromPrice,
     calcDirectCost,
     calcPrixNeutre,
-    analyzeOffreDistributeur
+    analyzeOffreDistributeur,
+    calcMargeDistributeur
   };
 }

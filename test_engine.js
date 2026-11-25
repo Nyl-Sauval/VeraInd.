@@ -173,6 +173,29 @@ console.log("Score cumulé sur 8 mois :", res8.totaux.scoreCumule, "/ 1 080 pts"
 console.log("Résultat net cumulé sur 8 mois :", Math.round(res8.totaux.rnCumule).toLocaleString('fr-FR'), "€");
 console.log("Trésorerie finale en Mois 8 :", Math.round(res8.moisResults[8].tresorerieFinMois).toLocaleString('fr-FR'), "€");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), négociation et règlements fournisseur sont passés avec succès !");
+// 10. Validation des Nouveautés Conjoncture Mois 3 (Tubeuses, Bouchons Naturels & Trieuses)
+console.log("\n=== VALIDATION NOUVEAUTÉS CONJONCTURE MOIS 3 ===");
+const m2 = res8.moisResults[2];
+const m3 = res8.moisResults[3];
+
+// Amortissement et investissements
+assert.strictEqual(m2.achatTubeuseDecaissee, 15000, "Achat tubeuse comptant en M2 = 15 000 €");
+assert.strictEqual(m2.amortissementMois, 750, "Amortissement mensuel dès M2 = 750 € (500 + 250 € tubeuse)");
+assert.strictEqual(m3.salairesMois, 100000, "Salaires mensuels dès M3 = 100 000 €");
+assert.strictEqual(m3.stockPlanchesAllemandDecaisse, 175000, "Rachat stock planches allemand décaissé en M3 = 175 000 €");
+assert(m3.tresorerieFinMois > 300000, "Trésorerie en fin de Mois 3 reste > 300 000 € malgré le décaissement de 175 000 €");
+
+// Procédé de tubage et recyclage liège
+assert.strictEqual(m3.totalPlanchesTubees, 30000, "30 000 planches tubées en M3");
+assert.strictEqual(m3.totalBouchonsNatProduitsLots, 3000, "3 000 lots de bouchons naturels produits (ratio 10 planches / lot)");
+assert.strictEqual(m3.liegeRecupereTubageKg, 15000, "15 000 kg de liège à broyer récupéré (50% rendement)");
+assert.strictEqual(m3.coutTubage, 30000 * 0.03, "Coût tubage = 900 € (0.03 € / planche)");
+
+// Marge du distributeur après trieuse
+const margeDistB = sim.calcMargeDistributeur('B', 60.0);
+console.log("Marge brute distributeur (Espagne B racheté à 60€) :", margeDistB.margeBruteDistributeur.toFixed(2), "€ / lot (Revente moyenne client : " + margeDistB.revenuReventeLot.toFixed(2) + " €)");
+assert(margeDistB.margeBruteDistributeur > 60.0, "Le distributeur réalise plus de 60 € de marge brute par lot trié !");
+
+console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage et trieuse sont passés avec succès !");
 
 
