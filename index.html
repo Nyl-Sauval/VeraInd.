@@ -673,10 +673,10 @@
                       <div class="border-t border-emerald-100 pt-1 space-y-0.5">
                         <div class="flex justify-between items-center text-[10px]">
                           <span class="text-slate-500">Prix de revient direct :</span>
-                          <strong id="out-cmp-nat-maroc-b" class="text-emerald-700 font-black">11,78 € / lot</strong>
+                          <strong id="out-cmp-nat-maroc-b" class="text-emerald-700 font-black">9,39 € / lot</strong>
                         </div>
                         <div class="flex justify-between items-center text-[9px]">
-                          <span class="text-slate-600">🎯 Gagne dès : <strong class="text-emerald-700" id="lbl-seuil-nat-maroc-b">&gt; 11,78 €</strong></span>
+                          <span class="text-slate-600">🎯 Gagne dès : <strong class="text-emerald-700" id="lbl-seuil-nat-maroc-b">&gt; 9,39 €</strong></span>
                           <span class="text-indigo-600 font-bold">Marché : ~60 €</span>
                         </div>
                       </div>
@@ -744,34 +744,87 @@
               </div>
             </div>
 
-            <!-- Encart Enchères Exceptionnelles (Mois 5 • Planches Maroc A & B) -->
-            <div id="row-encheres-planches" class="bg-gradient-to-r from-emerald-50 via-teal-50 to-amber-50 p-3 rounded-xl border border-emerald-300 flex flex-wrap items-center justify-between gap-3 text-xs text-emerald-950 shadow-sm hidden">
-              <div class="flex items-center gap-2.5">
-                <span class="text-xl">🏆</span>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="font-black text-emerald-950 text-sm">Vente aux Enchères (Planches Maroc) :</span>
-                    <span id="badge-statut-encheres" class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full border border-emerald-300">Lots remportés en Mai (M5)</span>
+            <!-- Encart Enchères Exceptionnelles (Mois 5 • 2 Lots Remportés) -->
+            <div id="row-encheres-planches" class="bg-gradient-to-r from-emerald-50 via-teal-50 to-amber-50 p-3.5 rounded-xl border border-emerald-300 space-y-2.5 text-xs text-emerald-950 shadow-sm hidden">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200/60 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">🏆</span>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-black text-emerald-950 text-sm">Ventes aux Enchères Exceptionnelles (Mai • Mois 5) :</span>
+                      <span id="badge-statut-encheres" class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full border border-emerald-300">2 Lots Remportés</span>
+                    </div>
+                    <span class="text-emerald-800 text-[11px] block font-semibold">Stock ajouté immédiatement • Prix total décaissé au comptant</span>
                   </div>
-                  <span class="text-emerald-800 text-[11px] block font-semibold">Stock ajouté immédiatement • Prix d'achat décaissé de la trésorerie</span>
+                </div>
+                <div class="bg-white/95 px-2.5 py-1 rounded-lg border border-emerald-300 font-bold text-[11px] flex items-center gap-2 shadow-xs">
+                  <span class="text-slate-600">Total décaissé Enchères M5 :</span>
+                  <strong id="badge-total-decaisse-encheres" class="text-red-700 font-mono text-xs">-61 000 €</strong>
                 </div>
               </div>
-              <div class="flex flex-wrap items-center gap-2.5">
-                <div class="flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-lg border border-emerald-200 shadow-xs">
-                  <label for="inp-encheres-a" class="text-[11px] font-bold text-slate-700">Maroc A :</label>
-                  <input type="number" id="inp-encheres-a" value="15000" min="0" step="1000" class="w-20 text-xs font-bold border border-emerald-300 rounded px-1.5 py-0.5 bg-white text-slate-900 focus:ring-1 focus:ring-emerald-500" onchange="handleInputChange()">
-                  <span class="text-[10px] text-slate-500 font-bold">kg</span>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Lot 1 : 15k Maroc A + 15k Maroc B (31 000 €) -->
+                <div class="bg-white/90 p-2.5 rounded-lg border border-emerald-200 space-y-1.5 shadow-2xs">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-emerald-950 text-[11px] flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>Lot 1 : Maroc A & B</span>
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-semibold">1,033 € / kg moy.</span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-1">
+                      <label for="inp-encheres-1-a" class="text-[11px] font-bold text-slate-600">🇲🇦 A :</label>
+                      <input type="number" id="inp-encheres-1-a" value="15000" min="0" step="1000" class="w-16 text-xs font-bold border border-emerald-300 rounded px-1.5 py-0.5 bg-white text-slate-900 text-right focus:ring-1 focus:ring-emerald-500" onchange="handleInputChange()">
+                      <span class="text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <label for="inp-encheres-1-b" class="text-[11px] font-bold text-slate-600">🇲🇦 B :</label>
+                      <input type="number" id="inp-encheres-1-b" value="15000" min="0" step="1000" class="w-16 text-xs font-bold border border-emerald-300 rounded px-1.5 py-0.5 bg-white text-slate-900 text-right focus:ring-1 focus:ring-emerald-500" onchange="handleInputChange()">
+                      <span class="text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex items-center gap-1 ml-auto">
+                      <label for="inp-encheres-1-prix" class="text-[11px] font-bold text-red-700">Prix :</label>
+                      <input type="number" id="inp-encheres-1-prix" value="31000" min="0" step="1000" class="w-20 text-xs font-bold border border-red-300 rounded px-1.5 py-0.5 bg-white text-red-700 font-mono text-right focus:ring-1 focus:ring-red-500" onchange="handleInputChange()">
+                      <span class="text-[10px] text-red-700 font-bold">€</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-lg border border-emerald-200 shadow-xs">
-                  <label for="inp-encheres-b" class="text-[11px] font-bold text-slate-700">Maroc B :</label>
-                  <input type="number" id="inp-encheres-b" value="15000" min="0" step="1000" class="w-20 text-xs font-bold border border-emerald-300 rounded px-1.5 py-0.5 bg-white text-slate-900 focus:ring-1 focus:ring-emerald-500" onchange="handleInputChange()">
-                  <span class="text-[10px] text-slate-500 font-bold">kg</span>
+
+                <!-- Lot 2 : 30k Maroc B + 10k Espagne A (30 000 €) -->
+                <div class="bg-white/90 p-2.5 rounded-lg border border-teal-200 space-y-1.5 shadow-2xs">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-teal-950 text-[11px] flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                      <span>Lot 2 : Maroc B & Espagne A</span>
+                    </span>
+                    <span class="text-[10px] text-emerald-700 font-bold">0,750 € / kg moy. 🔥</span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-1">
+                      <label for="inp-encheres-2-esp-a" class="text-[11px] font-bold text-slate-600">🇪🇸 A :</label>
+                      <input type="number" id="inp-encheres-2-esp-a" value="10000" min="0" step="1000" class="w-16 text-xs font-bold border border-teal-300 rounded px-1.5 py-0.5 bg-white text-slate-900 text-right focus:ring-1 focus:ring-teal-500" onchange="handleInputChange()">
+                      <span class="text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <label for="inp-encheres-2-b" class="text-[11px] font-bold text-slate-600">🇲🇦 B :</label>
+                      <input type="number" id="inp-encheres-2-b" value="30000" min="0" step="1000" class="w-16 text-xs font-bold border border-teal-300 rounded px-1.5 py-0.5 bg-white text-slate-900 text-right focus:ring-1 focus:ring-teal-500" onchange="handleInputChange()">
+                      <span class="text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex items-center gap-1 ml-auto">
+                      <label for="inp-encheres-2-prix" class="text-[11px] font-bold text-red-700">Prix :</label>
+                      <input type="number" id="inp-encheres-2-prix" value="30000" min="0" step="1000" class="w-20 text-xs font-bold border border-red-300 rounded px-1.5 py-0.5 bg-white text-red-700 font-mono text-right focus:ring-1 focus:ring-red-500" onchange="handleInputChange()">
+                      <span class="text-[10px] text-red-700 font-bold">€</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-lg border border-red-200 shadow-xs">
-                  <label for="inp-encheres-prix" class="text-[11px] font-bold text-red-700">Prix payé :</label>
-                  <input type="number" id="inp-encheres-prix" value="31000" min="0" step="1000" class="w-24 text-xs font-bold border border-red-300 rounded px-1.5 py-0.5 bg-white text-red-700 font-mono focus:ring-1 focus:ring-red-500" onchange="handleInputChange()">
-                  <span class="text-[10px] text-red-700 font-bold">€</span>
-                </div>
+              </div>
+
+              <!-- Ligne synthèse ajouts de stock -->
+              <div class="flex flex-wrap items-center justify-between text-[11px] pt-1 text-slate-600 border-t border-emerald-200/60">
+                <span>Total planches acquises aux enchères en Mai : <strong class="text-emerald-900">70 000 kg</strong> (15k Maroc A • 45k Maroc B • 10k Espagne A)</span>
+                <span class="font-semibold text-emerald-800">🎯 Prix moyen global : 0,871 € / kg (vs 2,00€ / 2,50€ fournisseur !)</span>
               </div>
             </div>
 
@@ -973,11 +1026,11 @@
                 <div>
                   <label class="block text-[11px] text-slate-300 font-semibold mb-1">Qualité de planche vendue :</label>
                   <select id="sel-dist-sim-type" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1.5 text-white font-bold" onchange="updateSimuDistributeur()">
-                    <option value="A">Espagne A (Marché ~55 € • Coût 20,30 €)</option>
+                    <option value="A">Espagne A (Marché ~55 € • Coût Cat. 20,30 € / M5 13,46 €)</option>
                     <option value="B" selected>Espagne B (Marché ~60 € • Coût 25,30 €)</option>
                     <option value="C">Espagne C (Marché ~65 € • Coût 30,30 €)</option>
                     <option value="Maroc A">🇲🇦 Maroc A (Enchères • Coût 9,49 €)</option>
-                    <option value="Maroc B">🇲🇦 Maroc B (Enchères • Coût 11,78 €)</option>
+                    <option value="Maroc B">🇲🇦 Maroc B (Enchères • Coût 9,39 €)</option>
                     <option value="Maroc C">🇲🇦 Maroc C (Enchères • Coût 14,08 €)</option>
                   </select>
                 </div>
@@ -2063,13 +2116,27 @@
       const inpBonus = document.getElementById('inp-bonus-bouchons');
       const bonusBouchonsLots = inpBonus ? Number(inpBonus.value) : (m === 3 ? 2000 : 0);
 
-      const inpEnchA = document.getElementById('inp-encheres-a');
-      const inpEnchB = document.getElementById('inp-encheres-b');
-      const inpEnchPrix = document.getElementById('inp-encheres-prix');
-      const encheresPlanchesAKg = inpEnchA ? Number(inpEnchA.value) : (m === 5 ? 15000 : 0);
-      const encheresPlanchesBKg = inpEnchB ? Number(inpEnchB.value) : (m === 5 ? 15000 : 0);
+      // Enchères Lot 1 (15k Maroc A + 15k Maroc B @ 31k€)
+      const inpEnch1A = document.getElementById('inp-encheres-1-a');
+      const inpEnch1B = document.getElementById('inp-encheres-1-b');
+      const inpEnch1Prix = document.getElementById('inp-encheres-1-prix');
+      const encheresLot1PlanchesAKg = inpEnch1A ? Number(inpEnch1A.value) : (m === 5 ? 15000 : 0);
+      const encheresLot1PlanchesBKg = inpEnch1B ? Number(inpEnch1B.value) : (m === 5 ? 15000 : 0);
+      const encheresLot1Prix = inpEnch1Prix ? Number(inpEnch1Prix.value) : (m === 5 ? 31000 : 0);
+
+      // Enchères Lot 2 (30k Maroc B + 10k Espagne A @ 30k€)
+      const inpEnch2B = document.getElementById('inp-encheres-2-b');
+      const inpEnch2EspA = document.getElementById('inp-encheres-2-esp-a');
+      const inpEnch2Prix = document.getElementById('inp-encheres-2-prix');
+      const encheresLot2PlanchesBKg = inpEnch2B ? Number(inpEnch2B.value) : (m === 5 ? 30000 : 0);
+      const encheresLot2PlanchesEspagneAKg = inpEnch2EspA ? Number(inpEnch2EspA.value) : (m === 5 ? 10000 : 0);
+      const encheresLot2Prix = inpEnch2Prix ? Number(inpEnch2Prix.value) : (m === 5 ? 30000 : 0);
+
+      const encheresPlanchesAKg = encheresLot1PlanchesAKg;
+      const encheresPlanchesBKg = encheresLot1PlanchesBKg + encheresLot2PlanchesBKg;
+      const encheresPlanchesEspagneAKg = encheresLot2PlanchesEspagneAKg;
       const encheresPlanchesCKg = (appState.moisData[m] && appState.moisData[m].encheresPlanchesCKg !== undefined) ? appState.moisData[m].encheresPlanchesCKg : 0;
-      const encheresPrixTotal = inpEnchPrix ? Number(inpEnchPrix.value) : (m === 5 ? 31000 : 0);
+      const encheresPrixTotal = encheresLot1Prix + encheresLot2Prix;
 
       const tresoDebutForce = (appState.moisData[m] && appState.moisData[m].tresoDebutForce !== undefined)
         ? appState.moisData[m].tresoDebutForce
@@ -2108,8 +2175,15 @@
         commandePlanchesAKg,
         commandePlanchesBKg,
         commandePlanchesCKg,
+        encheresLot1PlanchesAKg,
+        encheresLot1PlanchesBKg,
+        encheresLot1Prix,
+        encheresLot2PlanchesBKg,
+        encheresLot2PlanchesEspagneAKg,
+        encheresLot2Prix,
         encheresPlanchesAKg,
         encheresPlanchesBKg,
+        encheresPlanchesEspagneAKg,
         encheresPlanchesCKg,
         encheresPrixTotal,
         liegeABroyerKg,
@@ -2398,8 +2472,16 @@
         if (elEncheresRow) elEncheresRow.classList.add('hidden');
       }
 
+      const elBadgeDecaisse = document.getElementById('badge-total-decaisse-encheres');
+      if (elBadgeDecaisse) {
+        elBadgeDecaisse.innerText = '-' + Math.round(res.achatEncheresDecaisse).toLocaleString('fr-FR') + ' €';
+      }
+
       const elStockPA = document.getElementById('lbl-stock-planches-a');
-      if (elStockPA) elStockPA.innerText = 'Dispo : ' + Math.round(res.stockPlanchesAEntrantKg).toLocaleString('fr-FR') + ' kg';
+      if (elStockPA) {
+        const extraNoteA = (m === 5 && (res.encheresLot2PlanchesEspagneAKg || res.encheresPlanchesEspagneAKg)) ? ` (dont +${Math.round(res.encheresLot2PlanchesEspagneAKg || res.encheresPlanchesEspagneAKg).toLocaleString('fr-FR')} kg Enchères)` : '';
+        elStockPA.innerText = 'Dispo : ' + Math.round(res.stockPlanchesAEntrantKg).toLocaleString('fr-FR') + ' kg' + extraNoteA;
+      }
       const elStockPB = document.getElementById('lbl-stock-planches-b');
       if (elStockPB) elStockPB.innerText = 'Dispo : ' + Math.round(res.stockPlanchesBEntrantKg).toLocaleString('fr-FR') + ' kg';
       const elStockPC = document.getElementById('lbl-stock-planches-c');
@@ -3349,13 +3431,21 @@
         inpBonus.value = curData.bonusBouchonsLots !== undefined ? curData.bonusBouchonsLots : (m === 3 ? 2000 : 0);
       }
 
-      // Enchères planches (Mois 5 Maroc A & B)
-      const inpEnchA = document.getElementById('inp-encheres-a');
-      const inpEnchB = document.getElementById('inp-encheres-b');
-      const inpEnchPrix = document.getElementById('inp-encheres-prix');
-      if (inpEnchA) inpEnchA.value = curData.encheresPlanchesAKg !== undefined ? curData.encheresPlanchesAKg : (m === 5 ? 15000 : 0);
-      if (inpEnchB) inpEnchB.value = curData.encheresPlanchesBKg !== undefined ? curData.encheresPlanchesBKg : (m === 5 ? 15000 : 0);
-      if (inpEnchPrix) inpEnchPrix.value = curData.encheresPrixTotal !== undefined ? curData.encheresPrixTotal : (m === 5 ? 31000 : 0);
+      // Enchères planches (Mois 5 : Lot 1 Maroc A & B + Lot 2 Maroc B & Espagne A)
+      const inpEnch1A = document.getElementById('inp-encheres-1-a');
+      const inpEnch1B = document.getElementById('inp-encheres-1-b');
+      const inpEnch1Prix = document.getElementById('inp-encheres-1-prix');
+      const inpEnch2EspA = document.getElementById('inp-encheres-2-esp-a');
+      const inpEnch2B = document.getElementById('inp-encheres-2-b');
+      const inpEnch2Prix = document.getElementById('inp-encheres-2-prix');
+
+      if (inpEnch1A) inpEnch1A.value = curData.encheresLot1PlanchesAKg !== undefined ? curData.encheresLot1PlanchesAKg : (m === 5 ? 15000 : 0);
+      if (inpEnch1B) inpEnch1B.value = curData.encheresLot1PlanchesBKg !== undefined ? curData.encheresLot1PlanchesBKg : (m === 5 ? 15000 : 0);
+      if (inpEnch1Prix) inpEnch1Prix.value = curData.encheresLot1Prix !== undefined ? curData.encheresLot1Prix : (m === 5 ? 31000 : 0);
+
+      if (inpEnch2EspA) inpEnch2EspA.value = curData.encheresLot2PlanchesEspagneAKg !== undefined ? curData.encheresLot2PlanchesEspagneAKg : (m === 5 ? 10000 : 0);
+      if (inpEnch2B) inpEnch2B.value = curData.encheresLot2PlanchesBKg !== undefined ? curData.encheresLot2PlanchesBKg : (m === 5 ? 30000 : 0);
+      if (inpEnch2Prix) inpEnch2Prix.value = curData.encheresLot2Prix !== undefined ? curData.encheresLot2Prix : (m === 5 ? 30000 : 0);
 
       // Ventes aux 4 Distributeurs (Agglomérés + Naturels Espagne & Maroc)
       for (let i = 1; i <= 4; i++) {

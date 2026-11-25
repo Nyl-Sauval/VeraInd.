@@ -55,9 +55,22 @@ const PARAMS = {
   achatTubeuseComptantM2: 15000, // Payé comptant en Février (M2)
   rachatStockPlanchesM3: 175000,  // Payé en Mars (M3)
   bonusBouchonsGagnesM3Lots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars (ajoutés en stock M3)
-  encheresM5PlanchesAKg: 15000, // 15 000 planches Maroc A remportées aux enchères en Mai (M5)
-  encheresM5PlanchesBKg: 15000, // 15 000 planches Maroc B remportées aux enchères en Mai (M5)
-  encheresM5PrixTotal: 31000, // 31 000 € payés comptant aux enchères en Mai (M5)
+  
+  // Enchères Mai (M5) - Lot 1 (15k Maroc A + 15k Maroc B)
+  encheresM5Lot1PlanchesAKg: 15000,
+  encheresM5Lot1PlanchesBKg: 15000,
+  encheresM5Lot1Prix: 31000,
+
+  // Enchères Mai (M5) - Lot 2 (30k Maroc B + 10k Espagne A)
+  encheresM5Lot2PlanchesBKg: 30000,
+  encheresM5Lot2PlanchesEspagneAKg: 10000,
+  encheresM5Lot2Prix: 30000,
+
+  // Totaux Enchères M5
+  encheresM5PlanchesAKg: 15000,
+  encheresM5PlanchesBKg: 45000, // 15k + 30k
+  encheresM5PlanchesEspagneAKg: 10000,
+  encheresM5PrixTotal: 61000, // 31k + 30k
 
   // Paramètres de trieuse des distributeurs (pour simulation et négociation)
   trieuse: {
@@ -229,17 +242,27 @@ function getDefaultMonthData(m) {
     };
   }
   if (m === 5) {
-    // En Mai (Mois 5) : Enchères remportées (15 000 Maroc A + 15 000 Maroc B pour 31 000 € payés comptant)
+    // En Mai (Mois 5) : 2 Enchères remportées
+    // Lot 1 : 15 000 Maroc A + 15 000 Maroc B pour 31 000 €
+    // Lot 2 : 30 000 Maroc B + 10 000 Espagne A pour 30 000 €
+    // Total payé comptant : 61 000 €
     return {
       commandeLiegeKg: 150000,
       reductionFournisseurPct: 0,
       commandePlanchesAKg: 0,
       commandePlanchesBKg: 0,
       commandePlanchesCKg: 0,
-      encheresPlanchesAKg: 15000, // 15 000 planches Maroc A remportées aux enchères
-      encheresPlanchesBKg: 15000, // 15 000 planches Maroc B remportées aux enchères
+      encheresLot1PlanchesAKg: 15000,
+      encheresLot1PlanchesBKg: 15000,
+      encheresLot1Prix: 31000,
+      encheresLot2PlanchesBKg: 30000,
+      encheresLot2PlanchesEspagneAKg: 10000,
+      encheresLot2Prix: 30000,
+      encheresPlanchesAKg: 15000,
+      encheresPlanchesBKg: 45000,
       encheresPlanchesCKg: 0,
-      encheresPrixTotal: 31000,   // Payé 31 000 € comptant aux enchères en Mai
+      encheresPlanchesEspagneAKg: 10000,
+      encheresPrixTotal: 61000,
       liegeABroyerKg: 150000, // <= 155 000 kg max moulins
       grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
       planchesATuberAKg: 10000, // 1 000 lots Espagne A
@@ -350,17 +373,38 @@ function migrateState(parsed) {
       appState.moisData[3].bonusBouchonsLots = 2000;
     }
     if (appState.moisData[5]) {
+      if (appState.moisData[5].encheresLot1PlanchesAKg === undefined) {
+        appState.moisData[5].encheresLot1PlanchesAKg = 15000;
+      }
+      if (appState.moisData[5].encheresLot1PlanchesBKg === undefined) {
+        appState.moisData[5].encheresLot1PlanchesBKg = 15000;
+      }
+      if (appState.moisData[5].encheresLot1Prix === undefined) {
+        appState.moisData[5].encheresLot1Prix = 31000;
+      }
+      if (appState.moisData[5].encheresLot2PlanchesBKg === undefined) {
+        appState.moisData[5].encheresLot2PlanchesBKg = 30000;
+      }
+      if (appState.moisData[5].encheresLot2PlanchesEspagneAKg === undefined) {
+        appState.moisData[5].encheresLot2PlanchesEspagneAKg = 10000;
+      }
+      if (appState.moisData[5].encheresLot2Prix === undefined) {
+        appState.moisData[5].encheresLot2Prix = 30000;
+      }
       if (appState.moisData[5].encheresPlanchesAKg === undefined) {
         appState.moisData[5].encheresPlanchesAKg = 15000;
       }
-      if (appState.moisData[5].encheresPlanchesBKg === undefined) {
-        appState.moisData[5].encheresPlanchesBKg = 15000;
+      if (appState.moisData[5].encheresPlanchesBKg === undefined || appState.moisData[5].encheresPlanchesBKg === 15000) {
+        appState.moisData[5].encheresPlanchesBKg = 45000;
+      }
+      if (appState.moisData[5].encheresPlanchesEspagneAKg === undefined) {
+        appState.moisData[5].encheresPlanchesEspagneAKg = 10000;
       }
       if (appState.moisData[5].encheresPlanchesCKg === undefined) {
         appState.moisData[5].encheresPlanchesCKg = 0;
       }
-      if (appState.moisData[5].encheresPrixTotal === undefined) {
-        appState.moisData[5].encheresPrixTotal = 31000;
+      if (appState.moisData[5].encheresPrixTotal === undefined || appState.moisData[5].encheresPrixTotal === 31000) {
+        appState.moisData[5].encheresPrixTotal = 61000;
       }
     }
     // S'assurer que tous les mois existent et respectent les capacités machines
@@ -492,6 +536,73 @@ function simulateAllMonths(state) {
     const valStockBouchonsEntrant = isM1 ? (PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit) : prevResult.valStockBouchonsFin;
 
     // D. Planches (Espagne A, B, C) - Disponibles dès M3 grâce au rachat allemand (175 000 €) puis réapprovisionnements
+    // D2. Enchères Exceptionnelles Mai (Mois 5) : 2 Lots Remportés
+    // Lot 1 : 15 000 Maroc A + 15 000 Maroc B pour 31 000 €
+    // Lot 2 : 30 000 Maroc B + 10 000 Espagne A pour 30 000 €
+    const encheresLot1MarocAKg = (monthData.encheresLot1PlanchesAKg !== undefined)
+      ? Number(monthData.encheresLot1PlanchesAKg)
+      : (m === 5 ? (PARAMS.encheresM5Lot1PlanchesAKg || 15000) : 0);
+
+    const encheresLot1MarocBKg = (monthData.encheresLot1PlanchesBKg !== undefined)
+      ? Number(monthData.encheresLot1PlanchesBKg)
+      : (m === 5 ? (PARAMS.encheresM5Lot1PlanchesBKg || 15000) : 0);
+
+    const encheresLot1Prix = (monthData.encheresLot1Prix !== undefined && monthData.encheresLot1Prix !== null && monthData.encheresLot1Prix !== '')
+      ? Number(monthData.encheresLot1Prix)
+      : (m === 5 ? (PARAMS.encheresM5Lot1Prix || 31000) : 0);
+
+    const encheresLot2MarocBKg = (monthData.encheresLot2PlanchesBKg !== undefined)
+      ? Number(monthData.encheresLot2PlanchesBKg)
+      : (m === 5 ? (PARAMS.encheresM5Lot2PlanchesBKg || 30000) : 0);
+
+    const encheresLot2EspagneAKg = (monthData.encheresLot2PlanchesEspagneAKg !== undefined)
+      ? Number(monthData.encheresLot2PlanchesEspagneAKg)
+      : (monthData.encheresPlanchesEspagneAKg !== undefined ? Number(monthData.encheresPlanchesEspagneAKg) : (m === 5 ? (PARAMS.encheresM5Lot2PlanchesEspagneAKg || 10000) : 0));
+
+    const encheresLot2Prix = (monthData.encheresLot2Prix !== undefined && monthData.encheresLot2Prix !== null && monthData.encheresLot2Prix !== '')
+      ? Number(monthData.encheresLot2Prix)
+      : (m === 5 ? (PARAMS.encheresM5Lot2Prix || 30000) : 0);
+
+    const encheresPlanchesCKg = (monthData.encheresPlanchesCKg !== undefined)
+      ? Number(monthData.encheresPlanchesCKg)
+      : 0;
+
+    // Totaux cumulés
+    const encheresPlanchesAKg = encheresLot1MarocAKg;
+    const encheresPlanchesBKg = encheresLot1MarocBKg + encheresLot2MarocBKg;
+    const encheresPlanchesEspagneAKg = encheresLot2EspagneAKg;
+    const encheresPrixTotal = encheresLot1Prix + encheresLot2Prix;
+
+    // Ventilation comptable Lot 1 (Maroc A & Maroc B)
+    let valLot1A = 0;
+    let valLot1B = 0;
+    const ref1 = (encheresLot1MarocAKg * PARAMS.prixAchatPlanchesAInit) + (encheresLot1MarocBKg * PARAMS.prixAchatPlanchesBInit);
+    if (ref1 > 0 && encheresLot1Prix > 0) {
+      valLot1A = encheresLot1Prix * ((encheresLot1MarocAKg * PARAMS.prixAchatPlanchesAInit) / ref1);
+      valLot1B = encheresLot1Prix * ((encheresLot1MarocBKg * PARAMS.prixAchatPlanchesBInit) / ref1);
+    } else if ((encheresLot1MarocAKg + encheresLot1MarocBKg) > 0 && encheresLot1Prix > 0) {
+      const tot1 = encheresLot1MarocAKg + encheresLot1MarocBKg;
+      valLot1A = encheresLot1Prix * (encheresLot1MarocAKg / tot1);
+      valLot1B = encheresLot1Prix * (encheresLot1MarocBKg / tot1);
+    }
+
+    // Ventilation comptable Lot 2 (Espagne A & Maroc B)
+    let valLot2EspA = 0;
+    let valLot2MarocB = 0;
+    const ref2 = (encheresLot2EspagneAKg * PARAMS.prixAchatPlanchesAInit) + (encheresLot2MarocBKg * PARAMS.prixAchatPlanchesBInit);
+    if (ref2 > 0 && encheresLot2Prix > 0) {
+      valLot2EspA = encheresLot2Prix * ((encheresLot2EspagneAKg * PARAMS.prixAchatPlanchesAInit) / ref2);
+      valLot2MarocB = encheresLot2Prix * ((encheresLot2MarocBKg * PARAMS.prixAchatPlanchesBInit) / ref2);
+    } else if ((encheresLot2EspagneAKg + encheresLot2MarocBKg) > 0 && encheresLot2Prix > 0) {
+      const tot2 = encheresLot2EspagneAKg + encheresLot2MarocBKg;
+      valLot2EspA = encheresLot2Prix * (encheresLot2EspagneAKg / tot2);
+      valLot2MarocB = encheresLot2Prix * (encheresLot2MarocBKg / tot2);
+    }
+
+    const valEncheresA = valLot1A;
+    const valEncheresB = valLot1B + valLot2MarocB;
+    const valEncheresC = 0;
+
     let livraisonPlanchesAKg = 0;
     let livraisonPlanchesAVal = 0;
     let livraisonPlanchesBKg = 0;
@@ -521,8 +632,8 @@ function simulateAllMonths(state) {
       livraisonPlanchesCKg = prevResult.commandePlanchesCKg || 0;
       livraisonPlanchesCVal = prevResult.montantCommandePlancheC || 0;
 
-      stockPlanchesAEntrantKg = (prevResult.stockPlanchesAFinKg || 0) + livraisonPlanchesAKg;
-      valStockPlanchesAEntrant = (prevResult.valStockPlanchesAFin || 0) + livraisonPlanchesAVal;
+      stockPlanchesAEntrantKg = (prevResult.stockPlanchesAFinKg || 0) + livraisonPlanchesAKg + encheresLot2EspagneAKg;
+      valStockPlanchesAEntrant = (prevResult.valStockPlanchesAFin || 0) + livraisonPlanchesAVal + valLot2EspA;
 
       stockPlanchesBEntrantKg = (prevResult.stockPlanchesBFinKg || 0) + livraisonPlanchesBKg;
       valStockPlanchesBEntrant = (prevResult.valStockPlanchesBFin || 0) + livraisonPlanchesBVal;
@@ -536,51 +647,18 @@ function simulateAllMonths(state) {
     const cmpPlancheBKg = stockPlanchesBEntrantKg > 0 ? (valStockPlanchesBEntrant / stockPlanchesBEntrantKg) : PARAMS.prixAchatPlanchesBInit;
     const cmpPlancheCKg = stockPlanchesCEntrantKg > 0 ? (valStockPlanchesCEntrant / stockPlanchesCEntrantKg) : PARAMS.prixAchatPlanchesCInit;
 
-    // D2. Planches Maroc (A, B, C) - Acquises aux enchères (ex: 15 000 kg Maroc A + 15 000 kg Maroc B en Mai M5 pour 31 000 €)
-    const encheresPlanchesAKg = (monthData.encheresPlanchesAKg !== undefined)
-      ? Number(monthData.encheresPlanchesAKg)
-      : (m === 5 ? (PARAMS.encheresM5PlanchesAKg || 15000) : 0);
-    const encheresPlanchesBKg = (monthData.encheresPlanchesBKg !== undefined)
-      ? Number(monthData.encheresPlanchesBKg)
-      : (m === 5 ? (PARAMS.encheresM5PlanchesBKg || 15000) : 0);
-    const encheresPlanchesCKg = (monthData.encheresPlanchesCKg !== undefined)
-      ? Number(monthData.encheresPlanchesCKg)
-      : 0;
-    const encheresPrixTotal = (monthData.encheresPrixTotal !== undefined && monthData.encheresPrixTotal !== null && monthData.encheresPrixTotal !== '')
-      ? Number(monthData.encheresPrixTotal)
-      : (m === 5 ? (PARAMS.encheresM5PrixTotal || 31000) : 0);
-
-    // Ventilation comptable de la valeur d'achat aux enchères au prorata de la valeur de marché de référence
-    let valEncheresA = 0;
-    let valEncheresB = 0;
-    let valEncheresC = 0;
-    const totalRefEncheres = (encheresPlanchesAKg * PARAMS.prixAchatPlanchesAInit) +
-                             (encheresPlanchesBKg * PARAMS.prixAchatPlanchesBInit) +
-                             (encheresPlanchesCKg * PARAMS.prixAchatPlanchesCInit);
-
-    if (totalRefEncheres > 0 && encheresPrixTotal > 0) {
-      valEncheresA = encheresPrixTotal * ((encheresPlanchesAKg * PARAMS.prixAchatPlanchesAInit) / totalRefEncheres);
-      valEncheresB = encheresPrixTotal * ((encheresPlanchesBKg * PARAMS.prixAchatPlanchesBInit) / totalRefEncheres);
-      valEncheresC = encheresPrixTotal * ((encheresPlanchesCKg * PARAMS.prixAchatPlanchesCInit) / totalRefEncheres);
-    } else if ((encheresPlanchesAKg + encheresPlanchesBKg + encheresPlanchesCKg) > 0 && encheresPrixTotal > 0) {
-      const totKg = encheresPlanchesAKg + encheresPlanchesBKg + encheresPlanchesCKg;
-      valEncheresA = encheresPrixTotal * (encheresPlanchesAKg / totKg);
-      valEncheresB = encheresPrixTotal * (encheresPlanchesBKg / totKg);
-      valEncheresC = encheresPrixTotal * (encheresPlanchesCKg / totKg);
-    }
-
     // Stocks entrants Maroc (Report mois précédent + Nouvelles enchères du mois)
-    const stockPlanchesMarocAEntrantKg = (prevResult ? (prevResult.stockPlanchesMarocAFinKg || 0) : 0) + encheresPlanchesAKg;
-    const valStockPlanchesMarocAEntrant = (prevResult ? (prevResult.valStockPlanchesMarocAFin || 0) : 0) + valEncheresA;
+    const stockPlanchesMarocAEntrantKg = (prevResult ? (prevResult.stockPlanchesMarocAFinKg || 0) : 0) + encheresLot1MarocAKg;
+    const valStockPlanchesMarocAEntrant = (prevResult ? (prevResult.valStockPlanchesMarocAFin || 0) : 0) + valLot1A;
 
-    const stockPlanchesMarocBEntrantKg = (prevResult ? (prevResult.stockPlanchesMarocBFinKg || 0) : 0) + encheresPlanchesBKg;
-    const valStockPlanchesMarocBEntrant = (prevResult ? (prevResult.valStockPlanchesMarocBFin || 0) : 0) + valEncheresB;
+    const stockPlanchesMarocBEntrantKg = (prevResult ? (prevResult.stockPlanchesMarocBFinKg || 0) : 0) + encheresLot1MarocBKg + encheresLot2MarocBKg;
+    const valStockPlanchesMarocBEntrant = (prevResult ? (prevResult.valStockPlanchesMarocBFin || 0) : 0) + valLot1B + valLot2MarocB;
 
     const stockPlanchesMarocCEntrantKg = (prevResult ? (prevResult.stockPlanchesMarocCFinKg || 0) : 0) + encheresPlanchesCKg;
     const valStockPlanchesMarocCEntrant = (prevResult ? (prevResult.valStockPlanchesMarocCFin || 0) : 0) + valEncheresC;
 
     const cmpPlancheMarocAKg = stockPlanchesMarocAEntrantKg > 0 ? (valStockPlanchesMarocAEntrant / stockPlanchesMarocAEntrantKg) : (valEncheresA > 0 ? valEncheresA / (encheresPlanchesAKg || 1) : 0.9185);
-    const cmpPlancheMarocBKg = stockPlanchesMarocBEntrantKg > 0 ? (valStockPlanchesMarocBEntrant / stockPlanchesMarocBEntrantKg) : (valEncheresB > 0 ? valEncheresB / (encheresPlanchesBKg || 1) : 1.1481);
+    const cmpPlancheMarocBKg = stockPlanchesMarocBEntrantKg > 0 ? (valStockPlanchesMarocBEntrant / stockPlanchesMarocBEntrantKg) : (valEncheresB > 0 ? valEncheresB / (encheresPlanchesBKg || 1) : 0.9090);
     const cmpPlancheMarocCKg = stockPlanchesMarocCEntrantKg > 0 ? (valStockPlanchesMarocCEntrant / stockPlanchesMarocCEntrantKg) : (valEncheresC > 0 ? valEncheresC / (encheresPlanchesCKg || 1) : 1.3778);
 
     // E. Bouchons naturels tubés en stock (Espagne & Maroc)
@@ -1025,10 +1103,21 @@ function simulateAllMonths(state) {
       achatTubeuseDecaissee,
       stockPlanchesAllemandDecaisse,
       achatEncheresDecaisse,
+      encheresLot1PlanchesAKg: encheresLot1MarocAKg,
+      encheresLot1PlanchesBKg: encheresLot1MarocBKg,
+      encheresLot1Prix,
+      encheresLot2PlanchesBKg: encheresLot2MarocBKg,
+      encheresLot2PlanchesEspagneAKg: encheresLot2EspagneAKg,
+      encheresLot2Prix,
       encheresPlanchesAKg,
       encheresPlanchesBKg,
+      encheresPlanchesEspagneAKg,
       encheresPlanchesCKg,
       encheresPrixTotal,
+      valEncheresLot1A: valLot1A,
+      valEncheresLot1B: valLot1B,
+      valEncheresLot2EspA: valLot2EspA,
+      valEncheresLot2B: valLot2MarocB,
       valEncheresA,
       valEncheresB,
       valEncheresC,
@@ -1220,7 +1309,7 @@ function calcMargeDistributeur(type = 'B', prixAchat = 60.0) {
     } else {
       qualiteLetter = 'B';
       repKey = 'B';
-      coutPlancheInit = 31000 * (37500 / 67500) / 15000; // ~1.1481 €/kg
+      coutPlancheInit = (17222.2222 + 23684.2105) / 45000; // ~0.9090 €/kg (Lot 1: 15k + Lot 2: 30k)
     }
   } else {
     if (tStr === 'A' || tStr.includes('A')) {

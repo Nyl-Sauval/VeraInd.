@@ -351,47 +351,55 @@ const stateEncheres = sim.getDefaultState();
 const resEncheres = sim.simulateAllMonths(stateEncheres);
 const m5Ench = resEncheres.moisResults[5];
 
-assert.strictEqual(m5Ench.encheresPlanchesAKg, 15000, "15 000 kg Maroc A remportés");
-assert.strictEqual(m5Ench.encheresPlanchesBKg, 15000, "15 000 kg Maroc B remportés");
-assert.strictEqual(m5Ench.achatEncheresDecaisse, 31000, "Prix payé comptant aux enchères = 31 000 €");
-assert(Math.abs((m5Ench.valEncheresA + m5Ench.valEncheresB) - 31000) < 1e-6, "Ventilation stock totale = 31 000 €");
+assert.strictEqual(m5Ench.encheresPlanchesAKg, 15000, "15 000 kg Maroc A remportés (Lot 1)");
+assert.strictEqual(m5Ench.encheresPlanchesBKg, 45000, "45 000 kg Maroc B remportés (15k Lot 1 + 30k Lot 2)");
+assert.strictEqual(m5Ench.encheresPlanchesEspagneAKg, 10000, "10 000 kg Espagne A remportés (Lot 2)");
+assert.strictEqual(m5Ench.achatEncheresDecaisse, 61000, "Prix payé comptant aux enchères = 61 000 € (31k + 30k)");
 
-// Vérification de la stricte séparation des stocks Espagne et Maroc
-assert.strictEqual(m5Ench.stockPlanchesAEntrantKg, 10000, "Stock entrant Planches Espagne A = 10 000 kg (distinct de Maroc)");
-assert.strictEqual(m5Ench.stockPlanchesBEntrantKg, 2000, "Stock entrant Planches Espagne B = 2 000 kg (distinct de Maroc)");
-assert.strictEqual(m5Ench.stockPlanchesMarocAEntrantKg, 15000, "Stock entrant Planches Maroc A = 15 000 kg");
-assert.strictEqual(m5Ench.stockPlanchesMarocBEntrantKg, 15000, "Stock entrant Planches Maroc B = 15 000 kg");
+// Vérification de la ventilation comptable des 2 lots
+const totalValLot1 = m5Ench.valEncheresLot1A + m5Ench.valEncheresLot1B;
+const totalValLot2 = m5Ench.valEncheresLot2EspA + m5Ench.valEncheresLot2B;
+assert(Math.abs(totalValLot1 - 31000) < 1e-4, "Ventilation Lot 1 = 31 000 €");
+assert(Math.abs(totalValLot2 - 30000) < 1e-4, "Ventilation Lot 2 = 30 000 €");
 
-// Vérification des coûts de revient directs distincts
-assert.strictEqual(m5Ench.cmpPlancheAKg, 2.00, "CMP Planche Espagne A = 2.00 €/kg");
+// Vérification des stocks entrants en M5
+// Espagne A : 10 000 kg reportés + 10 000 kg Enchères Lot 2 = 20 000 kg
+assert.strictEqual(m5Ench.stockPlanchesAEntrantKg, 20000, "Stock entrant Planches Espagne A = 20 000 kg (10k report + 10k Lot 2)");
+assert.strictEqual(m5Ench.stockPlanchesBEntrantKg, 2000, "Stock entrant Planches Espagne B = 2 000 kg (report M4)");
+assert.strictEqual(m5Ench.stockPlanchesMarocAEntrantKg, 15000, "Stock entrant Planches Maroc A = 15 000 kg (Lot 1)");
+assert.strictEqual(m5Ench.stockPlanchesMarocBEntrantKg, 45000, "Stock entrant Planches Maroc B = 45 000 kg (Lot 1 + Lot 2)");
+
+// Vérification des CMP des planches
+assert(Math.abs(m5Ench.cmpPlancheAKg - 1.3158) < 0.001, "CMP Planche Espagne A dilué à ~1.316 €/kg grâce au Lot 2");
 assert.strictEqual(m5Ench.cmpPlancheBKg, 2.50, "CMP Planche Espagne B = 2.50 €/kg");
 assert(Math.abs(m5Ench.cmpPlancheMarocAKg - (13777.777777777777 / 15000)) < 1e-4, "CMP Planche Maroc A = ~0.9185 €/kg");
-assert(Math.abs(m5Ench.cmpPlancheMarocBKg - (17222.222222222223 / 15000)) < 1e-4, "CMP Planche Maroc B = ~1.1481 €/kg");
+assert(Math.abs(m5Ench.cmpPlancheMarocBKg - (40906.43274853801 / 45000)) < 1e-4, "CMP Planche Maroc B = ~0.9090 €/kg (blended Lot 1 & 2)");
 
-assert.strictEqual(m5Ench.cmpNatALot, 20.30, "Coût direct lot Nat Espagne A = 20.30 €");
+// Vérification des coûts de revient directs des lots de bouchons naturels
+assert(Math.abs(m5Ench.cmpNatALot - 13.458) < 0.01, "Coût direct lot Nat Espagne A = ~13.46 € (en forte baisse grâce au Lot 2)");
 assert.strictEqual(m5Ench.cmpNatBLot, 25.30, "Coût direct lot Nat Espagne B = 25.30 €");
 assert(Math.abs(m5Ench.cmpNatMarocALot - 9.485) < 0.01, "Coût direct lot Nat Maroc A = ~9.49 €");
-assert(Math.abs(m5Ench.cmpNatMarocBLot - 11.781) < 0.01, "Coût direct lot Nat Maroc B = ~11.78 €");
+assert(Math.abs(m5Ench.cmpNatMarocBLot - 9.390) < 0.01, "Coût direct lot Nat Maroc B = ~9.39 € (en baisse grâce aux 30k Lot 2)");
 
 // Vérification des options Boussole pour Maroc A et Maroc B
 const boussoleMarocA = sim.calcMargeDistributeur('Maroc A', 55.0);
 const boussoleMarocB = sim.calcMargeDistributeur('Maroc B', 60.0);
 assert(Math.abs(boussoleMarocA.coutDirectFabricant - 9.485) < 0.01, "Boussole Maroc A coût direct ~9.49 €");
-assert(Math.abs(boussoleMarocB.coutDirectFabricant - 11.781) < 0.01, "Boussole Maroc B coût direct ~11.78 €");
+assert(Math.abs(boussoleMarocB.coutDirectFabricant - 9.390) < 0.01, "Boussole Maroc B coût direct ~9.39 €");
 assert(boussoleMarocA.margeBruteFabricant > 45, "Marge brute exceptionnelle SuberTech sur Maroc A (> 45 €)");
-assert(boussoleMarocB.margeBruteFabricant > 48, "Marge brute exceptionnelle SuberTech sur Maroc B (> 48 €)");
+assert(boussoleMarocB.margeBruteFabricant > 50, "Marge brute exceptionnelle SuberTech sur Maroc B (> 50 €)");
 
 // Vérification de la rentabilité et de la trésorerie
-assert(m5Ench.resultatNet > 0, "Résultat net en M5 très profitable grâce aux bouchons Maroc");
-assert(m5Ench.tresorerieFinMois > 0, "Trésorerie saine malgré le décaissement de 31 000 €");
+assert(m5Ench.resultatNet > 0, "Résultat net en M5 très profitable grâce aux bouchons Maroc et Espagne A");
+assert(m5Ench.tresorerieFinMois > 600000, "Trésorerie excellente (> 600k€) malgré le double décaissement de 61 000 €");
 
-console.log("Validation des Enchères de Mai réussie (Séparation stricte Espagne vs Maroc) :");
-console.log("- Stock Espagne M5 : A = " + m5Ench.stockPlanchesAEntrantKg + " kg (CMP: 2.00€) | B = " + m5Ench.stockPlanchesBEntrantKg + " kg (CMP: 2.50€)");
+console.log("Validation des 2 Lots d'Enchères de Mai réussie (Séparation stricte Espagne vs Maroc) :");
+console.log("- Stock Espagne M5 : A = " + m5Ench.stockPlanchesAEntrantKg + " kg (CMP: " + m5Ench.cmpPlancheAKg.toFixed(3) + "€) | B = " + m5Ench.stockPlanchesBEntrantKg + " kg (CMP: 2.50€)");
 console.log("- Stock Maroc M5   : A = " + m5Ench.stockPlanchesMarocAEntrantKg + " kg (CMP: " + m5Ench.cmpPlancheMarocAKg.toFixed(3) + "€) | B = " + m5Ench.stockPlanchesMarocBEntrantKg + " kg (CMP: " + m5Ench.cmpPlancheMarocBKg.toFixed(3) + "€)");
-console.log("- Coûts lots Nat   : Espagne A = 20.30€, Espagne B = 25.30€ | Maroc A = " + m5Ench.cmpNatMarocALot.toFixed(2) + "€, Maroc B = " + m5Ench.cmpNatMarocBLot.toFixed(2) + "€");
+console.log("- Coûts lots Nat   : Espagne A = " + m5Ench.cmpNatALot.toFixed(2) + "€, Espagne B = 25.30€ | Maroc A = " + m5Ench.cmpNatMarocALot.toFixed(2) + "€, Maroc B = " + m5Ench.cmpNatMarocBLot.toFixed(2) + "€");
 console.log("- Décaissement enchères : -" + m5Ench.achatEncheresDecaisse + " € | Trésorerie fin Mai : " + Math.round(m5Ench.tresorerieFinMois).toLocaleString('fr-FR') + " €");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), tubage, séparation Espagne/Maroc, prix planches, trieuse, bonus M3, tresoDebutForce et réduction fournisseur sont passés avec succès !");
+console.log("\n Tous les tests du moteur mathématique (8 mois), tubage, séparation Espagne/Maroc, 2 lots enchères M5, prix planches, trieuse, bonus M3, tresoDebutForce et réduction fournisseur sont passés avec succès !");
 
 
 
