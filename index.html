@@ -2433,8 +2433,8 @@
         elPmM1.innerText = calcM1.pointMortLots.toLocaleString('fr-FR') + ' lots';
       }
 
-      // Mois 2 (Coût commande 150k = 8.4286 €)
-      const calcM2 = calcProfitFromPrice(prix, volume, 8.4286);
+      // Mois 2 (Coût commande 150k @ 0.425€ = 8.3571 €)
+      const calcM2 = calcProfitFromPrice(prix, volume, calcDirectCost(0.425));
       const elRnM2 = document.getElementById('slider-out-rn-m2');
       if (elRnM2) {
         elRnM2.innerText = (calcM2.rn >= 0 ? '+' : '') + Math.round(calcM2.rn).toLocaleString('fr-FR') + ' €';
@@ -2540,11 +2540,11 @@
           isM1: false
         },
         {
-          nom: 'Liège brut à 0,43 € / kg',
-          desc: '★ Palier 150 000 kg (-14% - Recommandé SuberTech)',
-          coutDirect: calcDirectCost(0.43),
+          nom: 'Liège brut à 0,425 € / kg',
+          desc: '★ Palier 150 000 kg (-15% - Facturé 63 750 €)',
+          coutDirect: calcDirectCost(0.425),
           prixConseille: '20,50 € à 21,50 €',
-          consigne: '★ Force de frappe SuberTech : Rentable dès 20,00 € !',
+          consigne: '★ Force de frappe SuberTech : Rentable dès 19,90 € !',
           isM2: true
         }
       ];

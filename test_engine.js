@@ -99,7 +99,7 @@ console.log("CMP blended en Mois 2 (Stock restant M1 + Production M2) :", res.al
 console.log("Coût unitaire de fabrication brute en M2 :", res.coutDirectLotMois2.toFixed(4), "€ / lot");
 
 assert(Math.abs(res.coutDirectLot - 9.5054) < 0.01, "Le CMP en Mois 1 doit être ~9.51€");
-assert(Math.abs(res.allMonths.moisResults[2].cmpBouchonLot - 8.6281) < 0.02, "Le CMP blended en Mois 2 doit être ~8.63€");
+assert(Math.abs(res.allMonths.moisResults[2].cmpBouchonLot - 8.5708) < 0.02, "Le CMP blended en Mois 2 doit être ~8.57€");
 assert(res.resultatNet >= 0, "Le résultat net en M1 avec la stratégie par défaut doit être positif");
 assert(res.allMonths.moisResults[2].resultatNet > res.resultatNet, "Le résultat net en M2 doit être supérieur grâce à la réduction de coût");
 
@@ -112,20 +112,20 @@ assert(testSlider21_5.rn > 3500, "À 21.50€ pour 10k lots en M1, le RN doit ê
 console.log("\n=== VALIDATION BOUSSOLE DE NÉGOCIATION & PRIX NEUTRES ===");
 const direct050 = sim.calcDirectCost(0.50);
 const direct046 = sim.calcDirectCost(0.46);
-const direct043 = sim.calcDirectCost(0.43);
+const direct0425 = sim.calcDirectCost(0.425);
 
 assert(Math.abs(direct050 - 9.4285) < 0.01, "Coût direct liège 0.50€ = 9.43€");
 assert(Math.abs(direct046 - 8.8571) < 0.01, "Coût direct liège 0.46€ = 8.86€");
-assert(Math.abs(direct043 - 8.4286) < 0.01, "Coût direct liège 0.43€ = 8.43€");
+assert(Math.abs(direct0425 - 8.3571) < 0.01, "Coût direct liège 0.425€ = 8.36€");
 
 const neutreM1 = sim.calcPrixNeutre(res.coutDirectLot, 10000, 0.95);
-const neutreM2 = sim.calcPrixNeutre(direct043, 10000, 0.95);
+const neutreM2 = sim.calcPrixNeutre(direct0425, 10000, 0.95);
 
 console.log("Prix Neutre Mois 1 (Stock Départ 9.51€, 10k lots) :", neutreM1.toFixed(2), "€ / lot");
-console.log("Prix Neutre Mois 2 (Liège 0.43€, 10k lots) :", neutreM2.toFixed(2), "€ / lot");
+console.log("Prix Neutre Mois 2 (Liège 0.425€, 10k lots) :", neutreM2.toFixed(2), "€ / lot");
 
 assert(Math.abs(neutreM1 - 21.07) < 0.03, "Prix neutre M1 doit être ~21.07€");
-assert(Math.abs(neutreM2 - 19.93) < 0.02, "Prix neutre M2 doit être ~19.93€");
+assert(Math.abs(neutreM2 - 19.86) < 0.02, "Prix neutre M2 doit être ~19.86€");
 
 // Test analyseur d'offre
 const offreRentable = sim.analyzeOffreDistributeur(21.5, 3000, 1, 10000, 'camion');
@@ -147,8 +147,8 @@ console.log("Mode Instant : Décaissement M1 =", allInstant[1].decaissementFourn
 assert.strictEqual(allInstant[1].livraisonRecueKg, 0, "En Mois 1, livraison = 0 kg");
 assert.strictEqual(allInstant[1].stockLiegeEntrantKg, 110000, "En Mois 1, stock = 110k kg");
 assert.strictEqual(allInstant[2].livraisonRecueKg, 150000, "En Mois 2, livraison = 150k kg");
-assert.strictEqual(allInstant[1].decaissementFournisseur, 64500, "En mode Instant, décaissement M1 = 64 500 € dès la commande");
-assert.strictEqual(allInstant[2].decaissementFournisseur, 64500, "En mode Instant, décaissement M2 = 64 500 €");
+assert.strictEqual(allInstant[1].decaissementFournisseur, 63750, "En mode Instant, décaissement M1 = 63 750 € dès la commande");
+assert.strictEqual(allInstant[2].decaissementFournisseur, 63750, "En mode Instant, décaissement M2 = 63 750 €");
 assert(allInstant[1].tresorerieFinMois > 300000, "En mode Instant, trésorerie M1 > 300 000 € (très largement positive)");
 
 // B. Test Mode Différé 30 jours après livraison (Règle officielle : 30j après 30j = M+2)
@@ -158,8 +158,8 @@ const all30j = sim.simulateAllMonths(state30j).moisResults;
 console.log("Mode 30j : Décaissement M1 =", all30j[1].decaissementFournisseur, "€ | M2 =", all30j[2].decaissementFournisseur, "€ | M3 =", all30j[3].decaissementFournisseur, "€ | M4 =", all30j[4].decaissementFournisseur, "€");
 assert.strictEqual(all30j[1].decaissementFournisseur, 0, "En mode 30j, décaissement M1 = 0 € (différé M3)");
 assert.strictEqual(all30j[2].decaissementFournisseur, 0, "En mode 30j, décaissement M2 = 0 € (différé M4)");
-assert.strictEqual(all30j[3].decaissementFournisseur, 64500, "En mode 30j, décaissement M3 = 64 500 € (Paiement commande M1 livrée en M2)");
-assert.strictEqual(all30j[4].decaissementFournisseur, 64500, "En mode 30j, décaissement M4 = 64 500 € (Paiement commande M2 livrée en M3)");
+assert.strictEqual(all30j[3].decaissementFournisseur, 63750, "En mode 30j, décaissement M3 = 63 750 € (Paiement commande M1 livrée en M2)");
+assert.strictEqual(all30j[4].decaissementFournisseur, 63750, "En mode 30j, décaissement M4 = 63 750 € (Paiement commande M2 livrée en M3)");
 assert(all30j[3].tresorerieFinMois > 450000, "Trésorerie en fin M3 reste > 450 000 € en mode 30j après livraison");
 
 // 9. Validation de la simulation complète sur 8 mois

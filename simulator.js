@@ -80,13 +80,14 @@ const PARAMS = {
     C: 65.0  // Espagne C
   },
 
-  // Grille de remise producteur espagnol (Liège brut)
+  // Grille de remise producteur espagnol (Liège brut : -3% par tranche de 20k kg dès 70k kg)
   getPrixLiege: function(kg) {
-    if (kg >= 150000) return 0.43;
-    if (kg >= 130000) return 0.44;
-    if (kg >= 110000) return 0.46;
-    if (kg >= 90000)  return 0.47;
-    return 0.50; // Tarif de base (< 90 000 kg, min 35 000 kg)
+    if (kg >= 150000) return 0.425; // -15% (ex: 150k kg = 63 750 €, 155k kg = 65 875 €)
+    if (kg >= 130000) return 0.440; // -12%
+    if (kg >= 110000) return 0.455; // -9%
+    if (kg >= 90000)  return 0.470; // -6%
+    if (kg >= 70000)  return 0.485; // -3% (ex: 70k kg = 33 950 €)
+    return 0.50; // Tarif de base (< 70 000 kg)
   },
 
   // Grilles de prix des planches (Commande min 5 000 €, réductions dès 10 000 €)
