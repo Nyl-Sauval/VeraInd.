@@ -319,6 +319,7 @@ function getDefaultState() {
   }
   return {
     moisActif: 1,
+    recapMaxMonth: 8,
     reglementFournisseur: '30j', // Règle officielle : 30j après livraison (M+2, donc 30j après 30j)
     moisData
   };
@@ -365,6 +366,7 @@ function migrateState(parsed) {
   if (parsed.moisData && parsed.moisData[1]) {
     appState = parsed;
     if (!appState.moisActif) appState.moisActif = 1;
+    if (!appState.recapMaxMonth) appState.recapMaxMonth = 8;
     // Règle officielle demandée : 30j après la livraison (M+2, donc 30j après 30j)
     if (!appState.reglementFournisseur || appState.reglementFournisseur === 'instant') {
       appState.reglementFournisseur = '30j';

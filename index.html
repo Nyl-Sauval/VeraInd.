@@ -1807,46 +1807,75 @@
           </div>
         </div>
 
+        <!-- BARRE DE SÉLECTION D'HORIZON / VUE TEMPORELLE -->
+        <div class="bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-filter text-indigo-600"></i>
+              <span>Vue jusqu'au mois :</span>
+            </span>
+            <span id="recap-horizon-badge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200">
+              Mois 1 à 8 (Complet)
+            </span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5" id="recap-horizon-btns">
+            <button type="button" onclick="setRecapMaxMonth(1)" id="btn-recap-h-1" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M1 (Jan)</button>
+            <button type="button" onclick="setRecapMaxMonth(2)" id="btn-recap-h-2" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M2 (Fév)</button>
+            <button type="button" onclick="setRecapMaxMonth(3)" id="btn-recap-h-3" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M3 (Mar)</button>
+            <button type="button" onclick="setRecapMaxMonth(4)" id="btn-recap-h-4" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M4 (Avr)</button>
+            <button type="button" onclick="setRecapMaxMonth(5)" id="btn-recap-h-5" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M5 (Mai)</button>
+            <button type="button" onclick="setRecapMaxMonth(6)" id="btn-recap-h-6" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M6 (Juin)</button>
+            <button type="button" onclick="setRecapMaxMonth(7)" id="btn-recap-h-7" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">M7 (Juil)</button>
+            <button type="button" onclick="setRecapMaxMonth(8)" id="btn-recap-h-8" class="recap-h-btn px-2.5 py-1 rounded-lg text-xs font-black transition border border-indigo-600 bg-indigo-600 text-white shadow-sm">M8 (Tous)</button>
+            <span class="text-slate-300 mx-0.5 hidden sm:inline">|</span>
+            <button type="button" onclick="setRecapToActiveMonth()" id="btn-recap-h-active" class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition flex items-center gap-1">
+              <i class="fa-solid fa-crosshairs text-[10px]"></i>
+              <span id="btn-recap-active-text">Mois actif (M1)</span>
+            </button>
+          </div>
+        </div>
+
         <!-- 4 CARTES KPIS GLOBAUX -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
           <div class="bg-indigo-50/70 border border-indigo-100 p-3.5 rounded-2xl">
-            <div class="text-[10px] uppercase font-bold text-indigo-600 tracking-wider">Chiffre d'Affaires Cumulé</div>
+            <div id="kpi-ca-titre" class="text-[10px] uppercase font-bold text-indigo-600 tracking-wider">Chiffre d'Affaires Cumulé</div>
             <div id="kpi-ca-cumul" class="text-lg md:text-xl font-black text-slate-900 mt-0.5">890 250 €</div>
             <div class="text-[10px] text-slate-500 mt-0.5" id="kpi-lots-cumul">40 000 lots vendus</div>
           </div>
           <div class="bg-emerald-50/70 border border-emerald-100 p-3.5 rounded-2xl">
-            <div class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Résultat Net Cumulé</div>
+            <div id="kpi-rn-titre" class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Résultat Net Cumulé</div>
             <div id="kpi-rn-cumul" class="text-lg md:text-xl font-black text-emerald-600 mt-0.5">+50 014 €</div>
-            <div class="text-[10px] text-emerald-700/80 mt-0.5">Marge globale sécurisée</div>
+            <div id="kpi-rn-sub" class="text-[10px] text-emerald-700/80 mt-0.5">Marge globale sécurisée</div>
           </div>
           <div class="bg-blue-50/70 border border-blue-100 p-3.5 rounded-2xl">
-            <div class="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Trésorerie Finale (Fin M8)</div>
+            <div id="kpi-treso-titre" class="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Trésorerie Finale (Fin M8)</div>
             <div id="kpi-treso-fin" class="text-lg md:text-xl font-black text-blue-900 mt-0.5">530 881 €</div>
-            <div class="text-[10px] text-blue-700/80 mt-0.5">Zéro découvert</div>
+            <div id="kpi-treso-sub" class="text-[10px] text-blue-700/80 mt-0.5">Zéro découvert</div>
           </div>
           <div class="bg-amber-50/70 border border-amber-100 p-3.5 rounded-2xl">
-            <div class="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Score Total Cumulé</div>
+            <div id="kpi-score-titre" class="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Score Total Cumulé</div>
             <div id="kpi-score-cumul" class="text-lg md:text-xl font-black text-amber-600 mt-0.5">1 080 / 1 080 pts</div>
-            <div class="text-[10px] text-amber-800/80 mt-0.5">Coeffs x1 à x8 (Simulation 8 mois)</div>
+            <div id="kpi-score-sub" class="text-[10px] text-amber-800/80 mt-0.5">Coeffs x1 à x8 (Simulation 8 mois)</div>
           </div>
         </div>
       </div>
 
-      <!-- LE GRAND TABLEAU COMPARATIF MOIS PAR MOIS (8 MOIS) -->
+      <!-- LE GRAND TABLEAU COMPARATIF MOIS PAR MOIS -->
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-200 space-y-4 overflow-x-auto">
         <div class="flex items-center justify-between">
           <h3 class="font-black text-slate-900 text-sm flex items-center space-x-2">
             <i class="fa-solid fa-table text-indigo-600"></i>
-            <span>Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à 8)</span>
+            <span id="recap-table-title">Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à 8)</span>
           </h3>
-          <span class="text-[11px] bg-indigo-50 text-indigo-800 font-bold px-2.5 py-0.5 rounded border border-indigo-200">
+          <span id="recap-table-badge" class="text-[11px] bg-indigo-50 text-indigo-800 font-bold px-2.5 py-0.5 rounded border border-indigo-200">
             📊 Vue consolidée complète
           </span>
         </div>
 
-        <table class="w-full text-xs text-left border-collapse min-w-[980px]">
+        <table id="recap-table" class="w-full text-xs text-left border-collapse min-w-[980px]">
           <thead>
-            <tr class="bg-slate-900 text-white border-b">
+            <tr id="recap-table-header" class="bg-slate-900 text-white border-b">
               <th class="p-2.5 font-bold rounded-l-xl whitespace-nowrap">POSTE DE GESTION</th>
               <th class="p-2 text-right font-bold">M1 (x1)</th>
               <th class="p-2 text-right font-bold">M2 (x2)</th>
@@ -2778,21 +2807,145 @@
       updateSimuDistributeur();
     }
 
+    const MONTH_NAMES = {
+      1: 'Janvier',
+      2: 'Février',
+      3: 'Mars',
+      4: 'Avril',
+      5: 'Mai',
+      6: 'Juin',
+      7: 'Juillet',
+      8: 'Août'
+    };
+
+    const MONTH_ABBR = {
+      1: 'Jan',
+      2: 'Fév',
+      3: 'Mar',
+      4: 'Avr',
+      5: 'Mai',
+      6: 'Juin',
+      7: 'Juil',
+      8: 'Août'
+    };
+
+    function setRecapMaxMonth(m) {
+      appState.recapMaxMonth = Math.max(1, Math.min(8, Number(m) || 8));
+      saveToLocalStorage();
+      const all = simulateAllMonths(appState);
+      renderRecap(all);
+    }
+
+    function setRecapToActiveMonth() {
+      setRecapMaxMonth(appState.moisActif || 1);
+    }
+
     function renderRecap(all) {
-      document.getElementById('kpi-ca-cumul').innerText = Math.round(all.totaux.caCumule).toLocaleString('fr-FR') + ' €';
-      document.getElementById('kpi-lots-cumul').innerText = Math.round(all.totaux.lotsCumule).toLocaleString('fr-FR') + ' lots vendus';
-      document.getElementById('kpi-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
-      
-      const finM8Treso = all.moisResults[8] ? all.moisResults[8].tresorerieFinMois : 500000;
-      document.getElementById('kpi-treso-fin').innerText = Math.round(finM8Treso).toLocaleString('fr-FR') + ' €';
-      document.getElementById('kpi-score-cumul').innerText = all.totaux.scoreCumule + ' / 1 080 pts';
+      const maxM = Math.max(1, Math.min(8, Number(appState.recapMaxMonth) || 8));
+      const months = [];
+      for (let i = 1; i <= maxM; i++) months.push(i);
+      const resM = all.moisResults;
+      const sumField = (fn) => months.reduce((acc, m) => acc + (resM[m] ? fn(resM[m]) : 0), 0);
+
+      const caCumul = sumField(r => r.caTotal);
+      const lotsCumul = sumField(r => r.lotsVendusTotal);
+      const rnCumul = sumField(r => r.resultatNet);
+      const tresoFin = resM[maxM] ? resM[maxM].tresorerieFinMois : 500000;
+      const scoreCumul = resM[maxM] ? resM[maxM].scoreCumule : 0;
+      const scoreMax = 30 * (maxM * (maxM + 1) / 2);
+
+      // Met à jour les boutons d'horizon
+      for (let m = 1; m <= 8; m++) {
+        const btn = document.getElementById(`btn-recap-h-${m}`);
+        if (btn) {
+          if (m === maxM) {
+            btn.className = 'recap-h-btn px-2.5 py-1 rounded-lg text-xs font-black transition border border-indigo-600 bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-300';
+          } else {
+            btn.className = 'recap-h-btn px-2.5 py-1 rounded-lg text-xs font-bold transition border border-slate-300 bg-white text-slate-700 hover:bg-slate-100';
+          }
+        }
+      }
+
+      const activeBadge = document.getElementById('recap-horizon-badge');
+      if (activeBadge) {
+        activeBadge.innerText = maxM === 8 ? 'Mois 1 à 8 (Complet)' : `Mois 1 à ${maxM} (${MONTH_NAMES[maxM]})`;
+      }
+
+      const btnActiveText = document.getElementById('btn-recap-active-text');
+      if (btnActiveText) {
+        btnActiveText.innerText = `Mois actuel (M${appState.moisActif || 1})`;
+      }
+
+      // 1. Chiffre d'Affaires Cumulé
+      const elCaTitre = document.getElementById('kpi-ca-titre');
+      if (elCaTitre) elCaTitre.innerText = maxM === 8 ? "Chiffre d'Affaires Cumulé" : `Chiffre d'Affaires (M1 à M${maxM})`;
+      document.getElementById('kpi-ca-cumul').innerText = Math.round(caCumul).toLocaleString('fr-FR') + ' €';
+      document.getElementById('kpi-lots-cumul').innerText = Math.round(lotsCumul).toLocaleString('fr-FR') + ` lots vendus (${maxM === 8 ? '8 mois' : `M1 à M${maxM}`})`;
+
+      // 2. Résultat Net Cumulé
+      const elRnTitre = document.getElementById('kpi-rn-titre');
+      if (elRnTitre) elRnTitre.innerText = maxM === 8 ? "Résultat Net Cumulé" : `Résultat Net (M1 à M${maxM})`;
+      document.getElementById('kpi-rn-cumul').innerText = (rnCumul >= 0 ? '+' : '') + Math.round(rnCumul).toLocaleString('fr-FR') + ' €';
+      const elRnSub = document.getElementById('kpi-rn-sub');
+      if (elRnSub) elRnSub.innerText = maxM === 8 ? 'Marge globale sécurisée' : `Marge nette sur ${maxM} mois`;
+
+      // 3. Trésorerie Finale / Actuelle
+      const elTresoTitre = document.getElementById('kpi-treso-titre');
+      if (elTresoTitre) elTresoTitre.innerText = maxM === 8 ? "Trésorerie Finale (Fin M8)" : `Trésorerie Actuelle (Fin M${maxM})`;
+      document.getElementById('kpi-treso-fin').innerText = Math.round(tresoFin).toLocaleString('fr-FR') + ' €';
+      const elTresoSub = document.getElementById('kpi-treso-sub');
+      if (elTresoSub) {
+        if (tresoFin >= 0) {
+          elTresoSub.innerText = maxM === 8 ? 'Zéro découvert (Fin M8)' : `Solde disponible fin ${MONTH_NAMES[maxM]}`;
+          elTresoSub.className = 'text-[10px] text-blue-700/80 mt-0.5';
+        } else {
+          elTresoSub.innerText = `⚠️ Découvert fin ${MONTH_NAMES[maxM]}`;
+          elTresoSub.className = 'text-[10px] text-rose-600 font-bold mt-0.5';
+        }
+      }
+
+      // 4. Score Total Cumulé
+      const elScoreTitre = document.getElementById('kpi-score-titre');
+      if (elScoreTitre) elScoreTitre.innerText = maxM === 8 ? "Score Total Cumulé" : `Score Cumulé (M1 à M${maxM})`;
+      document.getElementById('kpi-score-cumul').innerText = `${scoreCumul} / ${scoreMax} pts`;
+      const elScoreSub = document.getElementById('kpi-score-sub');
+      if (elScoreSub) elScoreSub.innerText = `Coeffs x1 à x${maxM} (${maxM === 8 ? 'Simulation 8 mois' : `Jusqu'à ${MONTH_NAMES[maxM]}`})`;
+
+      // En-tête du tableau et adaptabilité largeur
+      const theadRow = document.getElementById('recap-table-header');
+      if (theadRow) {
+        let thHtml = `<th class="p-2.5 font-bold rounded-l-xl whitespace-nowrap">POSTE DE GESTION</th>`;
+        months.forEach(m => {
+          const isActif = (m === appState.moisActif);
+          thHtml += `<th class="p-2 text-right font-bold whitespace-nowrap ${isActif ? 'bg-indigo-950 text-amber-300 ring-1 ring-amber-400/50' : ''}">
+            M${m} (${MONTH_ABBR[m]})
+            <br><span class="text-[9px] ${isActif ? 'text-amber-200' : 'text-slate-400'} font-normal">Coeff x${m}</span>
+          </th>`;
+        });
+        thHtml += `<th class="p-2.5 text-right font-black bg-indigo-900 text-amber-300 rounded-r-xl whitespace-nowrap">
+          ${maxM === 8 ? 'TOTAL 8 MOIS' : `TOTAL (M1-M${maxM})`}
+        </th>`;
+        theadRow.innerHTML = thHtml;
+      }
+
+      const tableEl = document.getElementById('recap-table');
+      if (tableEl) {
+        tableEl.className = `w-full text-xs text-left border-collapse ${maxM <= 3 ? 'min-w-[560px]' : maxM <= 5 ? 'min-w-[740px]' : 'min-w-[980px]'}`;
+      }
+
+      const tableBadge = document.getElementById('recap-table-badge');
+      if (tableBadge) {
+        tableBadge.innerText = maxM === 8 ? '📊 Vue consolidée complète (8 mois)' : `📊 Vue restreinte : Mois 1 à ${maxM} (${MONTH_NAMES[maxM]})`;
+      }
+      const tableTitle = document.getElementById('recap-table-title');
+      if (tableTitle) {
+        tableTitle.innerText = maxM === 8 
+          ? "Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à 8)" 
+          : `Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à ${maxM} : Janvier à ${MONTH_NAMES[maxM]})`;
+      }
 
       const tbody = document.getElementById('recap-table-body');
       if (!tbody) return;
-
-      const months = [1, 2, 3, 4, 5, 6, 7, 8];
-      const resM = all.moisResults;
-      const sumField = (fn) => months.reduce((acc, m) => acc + (resM[m] ? fn(resM[m]) : 0), 0);
 
       const rows = [
         { section: '📦 APPROVISIONNEMENT & FOURNISSEUR' },
@@ -2856,19 +3009,19 @@
         { 
           label: 'Stock final bouchons agglomérés', u: 'lots', 
           vals: months.map(m => resM[m].stockBouchonsFinLots), 
-          tot: resM[8] ? resM[8].stockBouchonsFinLots : 0 
+          tot: resM[maxM] ? resM[maxM].stockBouchonsFinLots : 0 
         },
         { 
           label: 'Stock final bouchons naturels (Total)', u: 'lots', 
           vals: months.map(m => (resM[m].stockNatAFinLots + resM[m].stockNatBFinLots + resM[m].stockNatCFinLots + resM[m].stockNatMarocAFinLots + resM[m].stockNatMarocBFinLots + resM[m].stockNatMarocCFinLots)), 
-          tot: resM[8] ? (resM[8].stockNatAFinLots + resM[8].stockNatBFinLots + resM[8].stockNatCFinLots + resM[8].stockNatMarocAFinLots + resM[8].stockNatMarocBFinLots + resM[8].stockNatMarocCFinLots) : 0 
+          tot: resM[maxM] ? (resM[maxM].stockNatAFinLots + resM[maxM].stockNatBFinLots + resM[maxM].stockNatCFinLots + resM[maxM].stockNatMarocAFinLots + resM[maxM].stockNatMarocBFinLots + resM[maxM].stockNatMarocCFinLots) : 0 
         },
 
         { section: '🤝 COMMERCIALISATION & VENTES' },
         { 
           label: 'Lots vendus aux distributeurs (Total)', u: 'lots', 
           vals: months.map(m => resM[m].lotsVendusTotal), 
-          tot: all.totaux.lotsCumule 
+          tot: lotsCumul 
         },
         { 
           label: '  • dont Bouchons Agglomérés', u: 'lots', 
@@ -2888,7 +3041,7 @@
         { 
           label: 'PRIX MOYEN PONDÉRÉ PAR LOT', u: '€/lot', highlightGold: true, 
           vals: months.map(m => resM[m].prixMoyenLot.toFixed(2)), 
-          tot: (all.totaux.lotsCumule > 0 ? (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) : '0.00') 
+          tot: (lotsCumul > 0 ? (caCumul / lotsCumul).toFixed(2) : '0.00') 
         },
         { 
           label: 'Coûts de transport pris en charge', u: '€', 
@@ -2905,7 +3058,7 @@
         { 
           label: 'CHIFFRE D\'AFFAIRES TOTAL', u: '€', highlight: true, 
           vals: months.map(m => resM[m].caTotal), 
-          tot: all.totaux.caCumule 
+          tot: caCumul 
         },
         { 
           label: '- Coût matières vendues', u: '€', 
@@ -2935,7 +3088,7 @@
         { 
           label: '- Frais de structure (35k€)', u: '€', 
           vals: months.map(m => -PARAMS.fraisStructureMensuels), 
-          tot: -(PARAMS.fraisStructureMensuels * 8) 
+          tot: -(PARAMS.fraisStructureMensuels * maxM) 
         },
         { 
           label: '- Amortissement machines (750€ dès M2)', u: '€', 
@@ -2950,12 +3103,12 @@
         { 
           label: '= BÉNÉFICE TOTAL DU MOIS (RN)', u: '€', highlightGreen: true, 
           vals: months.map(m => resM[m].resultatNet), 
-          tot: all.totaux.rnCumule 
+          tot: rnCumul 
         },
         { 
           label: '= BÉNÉFICE CUMULÉ', u: '€', bold: true, 
           vals: months.map(m => resM[m].rnCumule), 
-          tot: all.totaux.rnCumule 
+          tot: rnCumul 
         },
 
         { section: '💰 TRÉSORERIE & FINANCES' },
@@ -2977,17 +3130,17 @@
         { 
           label: '- Investissement machines départ (M1)', u: '€', 
           vals: months.map(m => -resM[m].machinesDecaissees), 
-          tot: -30000 
+          tot: -sumField(r => r.machinesDecaissees) 
         },
         { 
           label: '- Achat 5 Tubeuses comptant (Fév M2)', u: '€', 
           vals: months.map(m => -resM[m].achatTubeuseDecaissee), 
-          tot: -15000 
+          tot: -sumField(r => r.achatTubeuseDecaissee) 
         },
         { 
           label: '- Rachat stock allemand 72k kg planches (Mars M3)', u: '€', 
           vals: months.map(m => -resM[m].stockPlanchesAllemandDecaisse), 
-          tot: -175000 
+          tot: -sumField(r => r.stockPlanchesAllemandDecaisse) 
         },
         { 
           label: '- Enchères planches Maroc A & B (Mai M5)', u: '€', 
@@ -3000,9 +3153,10 @@
           tot: -sumField(r => (r.decaissementFixe + r.decaissementVariables + r.detteStockInitDecaissee)) 
         },
         { 
-          label: 'TRÉSORERIE FIN DE MOIS', u: '€', highlightBlue: true, 
+          label: maxM === 8 ? 'TRÉSORERIE FIN DE MOIS' : `TRÉSORERIE FIN DE MOIS (M${maxM})`, 
+          u: '€', highlightBlue: true, 
           vals: months.map(m => resM[m].tresorerieFinMois), 
-          tot: resM[8] ? resM[8].tresorerieFinMois : 500000 
+          tot: tresoFin 
         },
 
         { section: '🎯 SCORE & POINTS OFFICIELS' },
@@ -3014,12 +3168,12 @@
         { 
           label: 'Points du mois', u: 'pts', 
           vals: months.map(m => resM[m].scoreMois), 
-          tot: all.totaux.scoreCumule 
+          tot: scoreCumul 
         },
         { 
           label: 'SCORE TOTAL CUMULÉ', u: 'pts', highlightGold: true, 
           vals: months.map(m => resM[m].scoreCumule), 
-          tot: all.totaux.scoreCumule 
+          tot: scoreCumul 
         }
       ];
 
@@ -3033,7 +3187,7 @@
       let html = '';
       rows.forEach(row => {
         if (row.section) {
-          html += `<tr class="bg-slate-100 font-black text-slate-800 text-[11px]"><td colspan="10" class="p-2.5 uppercase tracking-wider">${row.section}</td></tr>`;
+          html += `<tr class="bg-slate-100 font-black text-slate-800 text-[11px]"><td colspan="${maxM + 2}" class="p-2.5 uppercase tracking-wider">${row.section}</td></tr>`;
         } else {
           let trClass = 'hover:bg-slate-50 transition';
           let tdClass = 'p-2.5 font-medium text-slate-700 whitespace-nowrap';
@@ -3059,7 +3213,11 @@
             trClass = 'font-bold bg-slate-50/50';
           }
 
-          const colsHtml = row.vals.map(v => `<td class="p-2 text-right font-semibold whitespace-nowrap">${fmt(v, row.u)}</td>`).join('');
+          const colsHtml = row.vals.map((v, idx) => {
+            const m = months[idx];
+            const isActif = (m === appState.moisActif);
+            return `<td class="p-2 text-right font-semibold whitespace-nowrap ${isActif ? 'bg-indigo-50/40 font-bold' : ''}">${fmt(v, row.u)}</td>`;
+          }).join('');
 
           html += `<tr class="${trClass}">
             <td class="${tdClass}">${row.label}</td>
@@ -3633,24 +3791,30 @@ Est-ce qu'on valide ce contrat ensemble ? 🤝`;
 
     function copierRecapTexte() {
       const all = simulateAllMonths(appState);
-      let t = "BILAN MULTI-MOIS VINEGO - ÉQUIPE 18 (SUBERTECH INDUSTRIES)\n\n";
-      for (let m = 1; m <= 8; m++) {
+      const maxM = Math.max(1, Math.min(8, Number(appState.recapMaxMonth) || 8));
+      let t = `BILAN VINEGO (Mois 1 à ${maxM}) - ÉQUIPE 18 (SUBERTECH INDUSTRIES)\n\n`;
+      let caCumul = 0, rnCumul = 0, lotsCumul = 0;
+      for (let m = 1; m <= maxM; m++) {
         const r = all.moisResults[m];
-        t += `MOIS ${m} :\n`;
+        caCumul += r.caTotal;
+        rnCumul += r.resultatNet;
+        lotsCumul += r.lotsVendusTotal;
+        t += `MOIS ${m} (${MONTH_NAMES[m] || ''}) :\n`;
         t += `  CA : ${Math.round(r.caTotal).toLocaleString('fr-FR')} €\n`;
         t += `  Lots vendus : ${Math.round(r.lotsVendusTotal).toLocaleString('fr-FR')} lots (Prix moyen : ${r.prixMoyenLot.toFixed(2)} €/lot)\n`;
         t += `  Coût CMP : ${r.cmpBouchonLot.toFixed(2)} €/lot | Transport : ${Math.round(r.coutTransportTotal).toLocaleString('fr-FR')} €\n`;
         t += `  Résultat Net : ${Math.round(r.resultatNet).toLocaleString('fr-FR')} € (Cumulé : ${Math.round(r.rnCumule).toLocaleString('fr-FR')} €)\n`;
         t += `  Trésorerie Fin : ${Math.round(r.tresorerieFinMois).toLocaleString('fr-FR')} €\n`;
-        t += `  Score : ${r.scoreMois} pts (Coeff x${m})\n\n`;
+        t += `  Score : ${r.scoreMois} pts (Coeff x${m} | Cumulé : ${r.scoreCumule} pts)\n\n`;
       }
-      t += `TOTAUX CUMULÉS :\n`;
-      t += `  CA Cumulé : ${Math.round(all.totaux.caCumule).toLocaleString('fr-FR')} €\n`;
-      t += `  Résultat Net Cumulé : ${Math.round(all.totaux.rnCumule).toLocaleString('fr-FR')} €\n`;
-      t += `  Score Total : ${all.totaux.scoreCumule} / 1 080 pts\n`;
+      t += `TOTAUX CUMULÉS (Mois 1 à ${maxM}) :\n`;
+      t += `  CA Cumulé : ${Math.round(caCumul).toLocaleString('fr-FR')} € (${Math.round(lotsCumul).toLocaleString('fr-FR')} lots)\n`;
+      t += `  Résultat Net Cumulé : ${Math.round(rnCumul).toLocaleString('fr-FR')} €\n`;
+      t += `  Trésorerie Actuelle (Fin M${maxM}) : ${Math.round(all.moisResults[maxM].tresorerieFinMois).toLocaleString('fr-FR')} €\n`;
+      t += `  Score Cumulé : ${all.moisResults[maxM].scoreCumule} pts\n`;
 
       navigator.clipboard.writeText(t).then(() => {
-        showToast('Bilan textuel copié dans le presse-papier !');
+        showToast(`Bilan (M1 à M${maxM}) copié dans le presse-papier !`);
       });
     }
 
