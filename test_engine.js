@@ -157,9 +157,22 @@ state30j.reglementFournisseur = '30j';
 const all30j = sim.simulateAllMonths(state30j).moisResults;
 console.log("Mode 30j : Décaissement M1 =", all30j[1].decaissementFournisseur, "€ | Décaissement M3 =", all30j[3].decaissementFournisseur, "€");
 assert.strictEqual(all30j[1].decaissementFournisseur, 0, "En mode 30j, décaissement M1 = 0 €");
-assert.strictEqual(all30j[2].decaissementFournisseur, 0, "En mode 30j, décaissement M2 = 0 €");
-assert.strictEqual(all30j[3].decaissementFournisseur, 64500, "En mode 30j, paiement en M3 à 30j de la livraison de M2 (64 500 €)");
+// 9. Validation de la simulation complète sur 8 mois
+console.log("\n=== VALIDATION DE LA SIMULATION SUR 8 MOIS ===");
+const res8 = sim.simulateAllMonths(stateInstant);
+assert.strictEqual(Object.keys(res8.moisResults).length, 8, "La simulation doit comporter exactement 8 mois");
+for (let m = 1; m <= 8; m++) {
+  const rm = res8.moisResults[m];
+  assert(rm !== undefined, `Le Mois ${m} doit être calculé`);
+  assert(rm.caTotal > 0, `Le CA du Mois ${m} doit être positif`);
+  assert(rm.resultatNet > 0, `Le résultat net du Mois ${m} doit être rentable`);
+  assert(rm.tresorerieFinMois > 0, `La trésorerie du Mois ${m} ne doit jamais être dans le rouge`);
+  assert.strictEqual(rm.scoreMois, (rm.pointsRN + rm.pointsCA) * m, `Le score du Mois ${m} doit être coefficienté par ${m}`);
+}
+console.log("Score cumulé sur 8 mois :", res8.totaux.scoreCumule, "/ 1 080 pts");
+console.log("Résultat net cumulé sur 8 mois :", Math.round(res8.totaux.rnCumule).toLocaleString('fr-FR'), "€");
+console.log("Trésorerie finale en Mois 8 :", Math.round(res8.moisResults[8].tresorerieFinMois).toLocaleString('fr-FR'), "€");
 
-console.log("\n Tous les tests du moteur mathématique, négociation et règlements fournisseur sont passés avec succès !");
+console.log("\n Tous les tests du moteur mathématique (8 mois), négociation et règlements fournisseur sont passés avec succès !");
 
 

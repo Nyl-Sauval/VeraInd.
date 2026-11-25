@@ -43,7 +43,12 @@ const PARAMS = {
     avion:  { id: 'avion',  nom: 'Avion',  capacite: 60,   cout: 79,   rse: 'Très polluant (Urgence)', icone: 'fa-plane' }
   },
 
-  baremePoints: [10, 8, 6, 5, 4, 3, 2, 1]
+  baremePoints: [10, 8, 6, 5, 4, 3, 2, 1],
+
+  // Configuration temporelle de la simulation (8 mois)
+  nbMoisTotal: 8,
+  moisNoms: ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août'],
+  moisCourts: ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août']
 };
 
 // Modèle par défaut pour un mois
@@ -61,7 +66,7 @@ function getDefaultMonthData(m) {
       ]
     };
   }
-  // Par défaut pour M2, M3, M4
+  // Par défaut pour M2 à M8
   return {
     commandeLiegeKg: 150000,
     liegeABroyerKg: 150000, // <= 155 000 kg max moulins
@@ -75,17 +80,16 @@ function getDefaultMonthData(m) {
   };
 }
 
-// Modèle de données complet multi-mois
+// Modèle de données complet multi-mois (8 mois)
 function getDefaultState() {
+  const moisData = {};
+  for (let m = 1; m <= PARAMS.nbMoisTotal; m++) {
+    moisData[m] = getDefaultMonthData(m);
+  }
   return {
     moisActif: 1,
     reglementFournisseur: 'instant', // 'instant' (comptant/instantané) | 'livraison' (M+1) | '30j' (30j après livraison M+2)
-    moisData: {
-      1: getDefaultMonthData(1),
-      2: getDefaultMonthData(2),
-      3: getDefaultMonthData(3),
-      4: getDefaultMonthData(4)
-    }
+    moisData
   };
 }
 
@@ -132,7 +136,7 @@ function migrateState(parsed) {
     if (!appState.moisActif) appState.moisActif = 1;
     if (!appState.reglementFournisseur) appState.reglementFournisseur = 'instant';
     // S'assurer que tous les mois existent et respectent les capacités machines
-    for (let m = 1; m <= 4; m++) {
+    for (let m = 1; m <= PARAMS.nbMoisTotal; m++) {
       if (!appState.moisData[m]) {
         appState.moisData[m] = getDefaultMonthData(m);
       } else {
@@ -180,7 +184,7 @@ function loadFromUrlHash() {
   return false;
 }
 
-// MOTEUR DE SIMULATION ENCHAÎNÉE SUR LES 4 MOIS
+// MOTEUR DE SIMULATION ENCHAÎNÉE SUR LES 8 MOIS
 function simulateAllMonths(state) {
   const results = {};
   let prevResult = null;
@@ -189,7 +193,7 @@ function simulateAllMonths(state) {
   let scoreCumule = 0;
   let lotsCumule = 0;
 
-  for (let m = 1; m <= 4; m++) {
+  for (let m = 1; m <= PARAMS.nbMoisTotal; m++) {
     const isM1 = (m === 1);
     const monthData = (state.moisData && state.moisData[m]) ? state.moisData[m] : getDefaultMonthData(m);
     
@@ -311,10 +315,9 @@ function simulateAllMonths(state) {
     } else if (modeReglement === 'livraison') {
       decaissementFournisseur = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
     } else {
-      if (m === 3 && results[1]) {
-        decaissementFournisseur = results[1].montantCommandeLiege;
-      } else if (m === 4 && results[2]) {
-        decaissementFournisseur = results[2].montantCommandeLiege;
+      // '30j' : payé 30 jours après livraison (ex: commande M1 livrée M2 payée M3)
+      if (m >= 3 && results[m - 2]) {
+        decaissementFournisseur = results[m - 2].montantCommandeLiege || 0;
       }
     }
 

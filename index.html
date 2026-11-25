@@ -86,7 +86,7 @@
         </div>
         <div class="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full font-black text-xs border border-emerald-400/30 flex items-center space-x-2">
           <i class="fa-solid fa-medal text-amber-400"></i>
-          <span>Score Cumulé : <strong id="top-score">300 / 300 pts</strong></span>
+          <span>Score Cumulé : <strong id="top-score">1 080 / 1 080 pts</strong></span>
         </div>
       </div>
     </div>
@@ -122,22 +122,38 @@
       <div class="bg-white rounded-2xl p-4 card-shadow border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sélectionnez le Mois à configurer :</div>
-          <div class="flex items-center space-x-2 mt-1.5" id="month-selector-btns">
-            <button type="button" onclick="selectMois(1)" id="btn-m-1" class="month-btn px-4 py-2 rounded-xl font-black text-xs transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow">
+          <div class="flex flex-wrap items-center gap-1.5 mt-1.5" id="month-selector-btns">
+            <button type="button" onclick="selectMois(1)" id="btn-m-1" class="month-btn px-3 py-1.5 rounded-xl font-black text-xs transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow">
               <i class="fa-solid fa-calendar-check"></i>
-              <span>Mois 1 (Janvier)</span>
+              <span>Mois 1 (Jan)</span>
             </button>
-            <button type="button" onclick="selectMois(2)" id="btn-m-2" class="month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <button type="button" onclick="selectMois(2)" id="btn-m-2" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
               <i class="fa-solid fa-calendar-days"></i>
-              <span>Mois 2 (Février)</span>
+              <span>Mois 2 (Fév)</span>
             </button>
-            <button type="button" onclick="selectMois(3)" id="btn-m-3" class="month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <button type="button" onclick="selectMois(3)" id="btn-m-3" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
               <i class="fa-solid fa-calendar-days"></i>
-              <span>Mois 3 (Mars)</span>
+              <span>Mois 3 (Mar)</span>
             </button>
-            <button type="button" onclick="selectMois(4)" id="btn-m-4" class="month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <button type="button" onclick="selectMois(4)" id="btn-m-4" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
               <i class="fa-solid fa-calendar-days"></i>
-              <span>Mois 4 (Avril)</span>
+              <span>Mois 4 (Avr)</span>
+            </button>
+            <button type="button" onclick="selectMois(5)" id="btn-m-5" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 5 (Mai)</span>
+            </button>
+            <button type="button" onclick="selectMois(6)" id="btn-m-6" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 6 (Juin)</span>
+            </button>
+            <button type="button" onclick="selectMois(7)" id="btn-m-7" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 7 (Juil)</span>
+            </button>
+            <button type="button" onclick="selectMois(8)" id="btn-m-8" class="month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span>Mois 8 (Août)</span>
             </button>
           </div>
         </div>
@@ -865,7 +881,7 @@
             </div>
             <div class="flex justify-between text-[11px] text-slate-300 border-t border-white/10 pt-1">
               <span>Score Total Cumulé :</span>
-              <strong id="out-pts-cumule" class="text-amber-300 font-bold">300 pts</strong>
+              <strong id="out-pts-cumule" class="text-amber-300 font-bold">1 080 pts</strong>
             </div>
           </div>
 
@@ -896,7 +912,7 @@
               <span>Tableau de Bord Exécutif</span>
             </div>
             <h2 class="text-xl font-black text-slate-900">Récapitulatif Complet Mois par Mois</h2>
-            <p class="text-xs text-slate-500">Visualisez la trajectoire complète de SuberTech Industries (Mois 1 à 4) : achats, production, ventes par distributeur, transport et finances.</p>
+            <p class="text-xs text-slate-500">Visualisez la trajectoire complète de SuberTech Industries (Mois 1 à 8) : achats, production, ventes par distributeur, transport et finances.</p>
           </div>
 
           <div class="flex items-center space-x-2">
@@ -924,34 +940,43 @@
             <div class="text-[10px] text-emerald-700/80 mt-0.5">Marge globale sécurisée</div>
           </div>
           <div class="bg-blue-50/70 border border-blue-100 p-3.5 rounded-2xl">
-            <div class="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Trésorerie Finale (Fin M4)</div>
-            <div id="kpi-treso-fin" class="text-lg md:text-xl font-black text-blue-900 mt-0.5">567 959 €</div>
+            <div class="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Trésorerie Finale (Fin M8)</div>
+            <div id="kpi-treso-fin" class="text-lg md:text-xl font-black text-blue-900 mt-0.5">530 881 €</div>
             <div class="text-[10px] text-blue-700/80 mt-0.5">Zéro découvert</div>
           </div>
           <div class="bg-amber-50/70 border border-amber-100 p-3.5 rounded-2xl">
             <div class="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Score Total Cumulé</div>
-            <div id="kpi-score-cumul" class="text-lg md:text-xl font-black text-amber-600 mt-0.5">300 / 300 pts</div>
-            <div class="text-[10px] text-amber-800/80 mt-0.5">Coeffs x1, x2, x3, x4</div>
+            <div id="kpi-score-cumul" class="text-lg md:text-xl font-black text-amber-600 mt-0.5">1 080 / 1 080 pts</div>
+            <div class="text-[10px] text-amber-800/80 mt-0.5">Coeffs x1 à x8 (Simulation 8 mois)</div>
           </div>
         </div>
       </div>
 
-      <!-- LE GRAND TABLEAU COMPARATIF MOIS PAR MOIS -->
+      <!-- LE GRAND TABLEAU COMPARATIF MOIS PAR MOIS (8 MOIS) -->
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-200 space-y-4 overflow-x-auto">
-        <h3 class="font-black text-slate-900 text-sm flex items-center space-x-2">
-          <i class="fa-solid fa-table text-indigo-600"></i>
-          <span>Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à 4)</span>
-        </h3>
+        <div class="flex items-center justify-between">
+          <h3 class="font-black text-slate-900 text-sm flex items-center space-x-2">
+            <i class="fa-solid fa-table text-indigo-600"></i>
+            <span>Tableau d'Exploitation Prévisionnel & Réel (Mois 1 à 8)</span>
+          </h3>
+          <span class="text-[11px] bg-indigo-50 text-indigo-800 font-bold px-2.5 py-0.5 rounded border border-indigo-200">
+            📊 Vue consolidée complète
+          </span>
+        </div>
 
-        <table class="w-full text-xs text-left border-collapse">
+        <table class="w-full text-xs text-left border-collapse min-w-[980px]">
           <thead>
             <tr class="bg-slate-900 text-white border-b">
-              <th class="p-3 font-bold rounded-l-xl">POSTE DE GESTION</th>
-              <th class="p-3 text-right font-bold">MOIS 1</th>
-              <th class="p-3 text-right font-bold">MOIS 2</th>
-              <th class="p-3 text-right font-bold">MOIS 3</th>
-              <th class="p-3 text-right font-bold">MOIS 4</th>
-              <th class="p-3 text-right font-black bg-indigo-900 text-amber-300 rounded-r-xl">TOTAL CUMULÉ</th>
+              <th class="p-2.5 font-bold rounded-l-xl whitespace-nowrap">POSTE DE GESTION</th>
+              <th class="p-2 text-right font-bold">M1 (x1)</th>
+              <th class="p-2 text-right font-bold">M2 (x2)</th>
+              <th class="p-2 text-right font-bold">M3 (x3)</th>
+              <th class="p-2 text-right font-bold">M4 (x4)</th>
+              <th class="p-2 text-right font-bold">M5 (x5)</th>
+              <th class="p-2 text-right font-bold">M6 (x6)</th>
+              <th class="p-2 text-right font-bold">M7 (x7)</th>
+              <th class="p-2 text-right font-bold">M8 (x8)</th>
+              <th class="p-2.5 text-right font-black bg-indigo-900 text-amber-300 rounded-r-xl whitespace-nowrap">TOTAL 8 MOIS</th>
             </tr>
           </thead>
           <tbody id="recap-table-body" class="divide-y divide-slate-200">
@@ -963,11 +988,15 @@
       <!-- BOUTONS D'ÉDITION DIRECTE DU MOIS -->
       <div class="bg-white rounded-2xl p-4 card-shadow border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
         <span class="font-semibold text-slate-600">Modifier les décisions d'un mois spécifique :</span>
-        <div class="flex flex-wrap gap-2">
-          <button onclick="selectMois(1); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 1</button>
-          <button onclick="selectMois(2); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 2</button>
-          <button onclick="selectMois(3); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 3</button>
-          <button onclick="selectMois(4); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border">✏️ Modifier Mois 4</button>
+        <div class="flex flex-wrap gap-1.5">
+          <button onclick="selectMois(1); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M1</button>
+          <button onclick="selectMois(2); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M2</button>
+          <button onclick="selectMois(3); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M3</button>
+          <button onclick="selectMois(4); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M4</button>
+          <button onclick="selectMois(5); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M5</button>
+          <button onclick="selectMois(6); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M6</button>
+          <button onclick="selectMois(7); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M7</button>
+          <button onclick="selectMois(8); switchTab('simulation');" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-2.5 py-1.5 rounded-lg border">✏️ M8</button>
         </div>
       </div>
 
@@ -1119,13 +1148,13 @@
       saveToLocalStorage();
 
       // Mettre à jour l'état visuel des boutons de mois
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 8; i++) {
         const btn = document.getElementById('btn-m-' + i);
         if (btn) {
           if (i === m) {
-            btn.className = 'month-btn px-4 py-2 rounded-xl font-black text-xs transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow';
+            btn.className = 'month-btn px-3 py-1.5 rounded-xl font-black text-xs transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow';
           } else {
-            btn.className = 'month-btn px-4 py-2 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200';
+            btn.className = 'month-btn px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center space-x-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200';
           }
         }
       }
@@ -1138,10 +1167,10 @@
       document.getElementById('lbl-curseur-mois').innerText = `Mois ${m}`;
 
       const btnNext = document.getElementById('btn-next-mois');
-      if (m < 4) {
+      if (m < 8) {
         btnNext.innerHTML = `<span>Passer au Mois ${m + 1}</span> <i class="fa-solid fa-arrow-right"></i>`;
       } else {
-        btnNext.innerHTML = `<span>Voir le Récapitulatif Final</span> <i class="fa-solid fa-trophy text-amber-400"></i>`;
+        btnNext.innerHTML = `<span>Voir le Récapitulatif Final (8 mois)</span> <i class="fa-solid fa-trophy text-amber-400"></i>`;
       }
 
       loadStateIntoUI();
@@ -1151,12 +1180,12 @@
 
     function passerMoisSuivant() {
       const cur = appState.moisActif || 1;
-      if (cur < 4) {
+      if (cur < 8) {
         selectMois(cur + 1);
         showToast(`Passage au Mois ${cur + 1} ! Stocks et livraisons reportés.`);
       } else {
         switchTab('recap');
-        showToast('Voici le récapitulatif complet de votre simulation !');
+        showToast('Voici le récapitulatif complet sur 8 mois de votre simulation !');
       }
     }
 
@@ -1254,7 +1283,7 @@
         if (alerteLivraison) {
           alerteLivraison.innerHTML = `<i class="fa-solid fa-clock text-amber-600 shrink-0"></i> <span><strong>Règle de livraison M+1 :</strong> Cette commande de <strong>${Math.round(res.commandeLiegeKg).toLocaleString('fr-FR')} kg</strong> sera livrée au <strong>Mois 2</strong>. En Mois 1, seul le <strong>stock initial (110 000 kg)</strong> est disponible au broyage.</span>`;
         }
-      } else if (m < 4) {
+      } else if (m < 8) {
         if (badgeLivraison) {
           badgeLivraison.innerHTML = `🚚 Commandé en M${m} ➔ Livré au début du Mois ${m + 1}`;
           badgeLivraison.className = 'text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded border border-emerald-300';
@@ -1264,11 +1293,11 @@
         }
       } else {
         if (badgeLivraison) {
-          badgeLivraison.innerHTML = `🚚 Commandé en M4 ➔ Livré post-simulation (Mois 5)`;
+          badgeLivraison.innerHTML = `🚚 Commandé en M8 ➔ Livré post-simulation (Mois 9)`;
           badgeLivraison.className = 'text-[11px] bg-slate-100 text-slate-800 font-bold px-2.5 py-0.5 rounded border border-slate-300';
         }
         if (alerteLivraison) {
-          alerteLivraison.innerHTML = `<i class="fa-solid fa-flag-checkered text-indigo-600 shrink-0"></i> <span><strong>Dernier tour (Mois 4) :</strong> Vous transformez la livraison reçue du Mois 3 (<strong>${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg</strong>) + stock restant.</span>`;
+          alerteLivraison.innerHTML = `<i class="fa-solid fa-flag-checkered text-indigo-600 shrink-0"></i> <span><strong>Dernier tour (Mois 8) :</strong> Vous transformez la livraison reçue du Mois 7 (<strong>${Math.round(res.livraisonRecueKg).toLocaleString('fr-FR')} kg</strong>) + stock restant pour maximiser le résultat final.</span>`;
         }
       }
 
@@ -1436,7 +1465,7 @@
       document.getElementById('top-ca').innerText = Math.round(res.caTotal).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-treso').innerText = Math.round(res.tresorerieFinMois).toLocaleString('fr-FR') + ' €';
       document.getElementById('top-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
-      document.getElementById('top-score').innerText = all.totaux.scoreCumule + ' / 300 pts';
+      document.getElementById('top-score').innerText = all.totaux.scoreCumule + ' / 1 080 pts';
 
       // MAJ Grand Récapitulatif & Boussole
       renderRecap(all);
@@ -1449,60 +1478,179 @@
       document.getElementById('kpi-lots-cumul').innerText = Math.round(all.totaux.lotsCumule).toLocaleString('fr-FR') + ' lots vendus';
       document.getElementById('kpi-rn-cumul').innerText = (all.totaux.rnCumule >= 0 ? '+' : '') + Math.round(all.totaux.rnCumule).toLocaleString('fr-FR') + ' €';
       
-      const finM4Treso = all.moisResults[4] ? all.moisResults[4].tresorerieFinMois : 500000;
-      document.getElementById('kpi-treso-fin').innerText = Math.round(finM4Treso).toLocaleString('fr-FR') + ' €';
-      document.getElementById('kpi-score-cumul').innerText = all.totaux.scoreCumule + ' / 300 pts';
+      const finM8Treso = all.moisResults[8] ? all.moisResults[8].tresorerieFinMois : 500000;
+      document.getElementById('kpi-treso-fin').innerText = Math.round(finM8Treso).toLocaleString('fr-FR') + ' €';
+      document.getElementById('kpi-score-cumul').innerText = all.totaux.scoreCumule + ' / 1 080 pts';
 
       const tbody = document.getElementById('recap-table-body');
       if (!tbody) return;
 
-      const r1 = all.moisResults[1];
-      const r2 = all.moisResults[2];
-      const r3 = all.moisResults[3];
-      const r4 = all.moisResults[4];
+      const months = [1, 2, 3, 4, 5, 6, 7, 8];
+      const resM = all.moisResults;
+      const sumField = (fn) => months.reduce((acc, m) => acc + (resM[m] ? fn(resM[m]) : 0), 0);
 
       const rows = [
         { section: '📦 APPROVISIONNEMENT & FOURNISSEUR' },
-        { label: 'Liège brut commandé', u: 'kg', v1: r1.commandeLiegeKg, v2: r2.commandeLiegeKg, v3: r3.commandeLiegeKg, v4: r4.commandeLiegeKg, tot: r1.commandeLiegeKg + r2.commandeLiegeKg + r3.commandeLiegeKg + r4.commandeLiegeKg },
-        { label: 'Prix d\'achat liège', u: '€/kg', v1: r1.prixLiegeKg.toFixed(2), v2: r2.prixLiegeKg.toFixed(2), v3: r3.prixLiegeKg.toFixed(2), v4: r4.prixLiegeKg.toFixed(2), tot: '-' },
-        { label: 'Montant facture commande', u: '€', v1: r1.montantCommandeLiege, v2: r2.montantCommandeLiege, v3: r3.montantCommandeLiege, v4: r4.montantCommandeLiege, tot: r1.montantCommandeLiege + r2.montantCommandeLiege + r3.montantCommandeLiege + r4.montantCommandeLiege },
-        { label: 'Livraison reçue du fournisseur', u: 'kg', v1: 0, v2: r2.livraisonRecueKg, v3: r3.livraisonRecueKg, v4: r4.livraisonRecueKg, tot: r2.livraisonRecueKg + r3.livraisonRecueKg + r4.livraisonRecueKg },
+        { 
+          label: 'Liège brut commandé', u: 'kg', 
+          vals: months.map(m => resM[m].commandeLiegeKg), 
+          tot: sumField(r => r.commandeLiegeKg) 
+        },
+        { 
+          label: 'Prix d\'achat liège', u: '€/kg', 
+          vals: months.map(m => resM[m].prixLiegeKg.toFixed(2)), 
+          tot: '-' 
+        },
+        { 
+          label: 'Montant facture commande', u: '€', 
+          vals: months.map(m => resM[m].montantCommandeLiege), 
+          tot: sumField(r => r.montantCommandeLiege) 
+        },
+        { 
+          label: 'Livraison reçue du fournisseur', u: 'kg', 
+          vals: months.map(m => resM[m].livraisonRecueKg), 
+          tot: sumField(r => r.livraisonRecueKg) 
+        },
 
         { section: '🏭 PRODUCTION & GESTION DES STOCKS' },
-        { label: 'Liège brut broyé', u: 'kg', v1: r1.liegeABroyerKg, v2: r2.liegeABroyerKg, v3: r3.liegeABroyerKg, v4: r4.liegeABroyerKg, tot: r1.liegeABroyerKg + r2.liegeABroyerKg + r3.liegeABroyerKg + r4.liegeABroyerKg },
-        { label: 'Grains moulés', u: 'kg', v1: r1.grainsAMoulerKg, v2: r2.grainsAMoulerKg, v3: r3.grainsAMoulerKg, v4: r4.grainsAMoulerKg, tot: r1.grainsAMoulerKg + r2.grainsAMoulerKg + r3.grainsAMoulerKg + r4.grainsAMoulerKg },
-        { label: 'Bouchons produits', u: 'lots', v1: r1.bouchonsProduitsLots, v2: r2.bouchonsProduitsLots, v3: r3.bouchonsProduitsLots, v4: r4.bouchonsProduitsLots, tot: r1.bouchonsProduitsLots + r2.bouchonsProduitsLots + r3.bouchonsProduitsLots + r4.bouchonsProduitsLots },
-        { label: 'Coût unitaire moyen (CMP)', u: '€/lot', v1: r1.cmpBouchonLot.toFixed(2), v2: r2.cmpBouchonLot.toFixed(2), v3: r3.cmpBouchonLot.toFixed(2), v4: r4.cmpBouchonLot.toFixed(2), tot: '-' },
-        { label: 'Stock final de bouchons', u: 'lots', v1: r1.stockBouchonsFinLots, v2: r2.stockBouchonsFinLots, v3: r3.stockBouchonsFinLots, v4: r4.stockBouchonsFinLots, tot: r4.stockBouchonsFinLots },
+        { 
+          label: 'Liège brut broyé', u: 'kg', 
+          vals: months.map(m => resM[m].liegeABroyerKg), 
+          tot: sumField(r => r.liegeABroyerKg) 
+        },
+        { 
+          label: 'Grains moulés', u: 'kg', 
+          vals: months.map(m => resM[m].grainsAMoulerKg), 
+          tot: sumField(r => r.grainsAMoulerKg) 
+        },
+        { 
+          label: 'Bouchons produits', u: 'lots', 
+          vals: months.map(m => resM[m].bouchonsProduitsLots), 
+          tot: sumField(r => r.bouchonsProduitsLots) 
+        },
+        { 
+          label: 'Coût unitaire moyen (CMP)', u: '€/lot', 
+          vals: months.map(m => resM[m].cmpBouchonLot.toFixed(2)), 
+          tot: '-' 
+        },
+        { 
+          label: 'Stock final de bouchons', u: 'lots', 
+          vals: months.map(m => resM[m].stockBouchonsFinLots), 
+          tot: resM[8] ? resM[8].stockBouchonsFinLots : 0 
+        },
 
         { section: '🤝 COMMERCIALISATION & VENTES' },
-        { label: 'Lots vendus aux distributeurs', u: 'lots', v1: r1.lotsVendusTotal, v2: r2.lotsVendusTotal, v3: r3.lotsVendusTotal, v4: r4.lotsVendusTotal, tot: all.totaux.lotsCumule },
-        { label: 'PRIX MOYEN PAR LOT', u: '€/lot', highlightGold: true, v1: r1.prixMoyenLot.toFixed(2), v2: r2.prixMoyenLot.toFixed(2), v3: r3.prixMoyenLot.toFixed(2), v4: r4.prixMoyenLot.toFixed(2), tot: (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) },
-        { label: 'Coûts de transport pris en charge', u: '€', v1: r1.coutTransportTotal, v2: r2.coutTransportTotal, v3: r3.coutTransportTotal, v4: r4.coutTransportTotal, tot: r1.coutTransportTotal + r2.coutTransportTotal + r3.coutTransportTotal + r4.coutTransportTotal },
-        { label: 'Frais de marketing (5%)', u: '€', v1: r1.fraisMarketing, v2: r2.fraisMarketing, v3: r3.fraisMarketing, v4: r4.fraisMarketing, tot: r1.fraisMarketing + r2.fraisMarketing + r3.fraisMarketing + r4.fraisMarketing },
+        { 
+          label: 'Lots vendus aux distributeurs', u: 'lots', 
+          vals: months.map(m => resM[m].lotsVendusTotal), 
+          tot: all.totaux.lotsCumule 
+        },
+        { 
+          label: 'PRIX MOYEN PAR LOT', u: '€/lot', highlightGold: true, 
+          vals: months.map(m => resM[m].prixMoyenLot.toFixed(2)), 
+          tot: (all.totaux.lotsCumule > 0 ? (all.totaux.caCumule / all.totaux.lotsCumule).toFixed(2) : '0.00') 
+        },
+        { 
+          label: 'Coûts de transport pris en charge', u: '€', 
+          vals: months.map(m => resM[m].coutTransportTotal), 
+          tot: sumField(r => r.coutTransportTotal) 
+        },
+        { 
+          label: 'Frais de marketing (5%)', u: '€', 
+          vals: months.map(m => resM[m].fraisMarketing), 
+          tot: sumField(r => r.fraisMarketing) 
+        },
 
         { section: '📊 COMPTE DE RÉSULTAT (P&L)' },
-        { label: 'CHIFFRE D\'AFFAIRES', u: '€', highlight: true, v1: r1.caTotal, v2: r2.caTotal, v3: r3.caTotal, v4: r4.caTotal, tot: all.totaux.caCumule },
-        { label: '- Coût matières vendues', u: '€', v1: -r1.coutDirectVendus, v2: -r2.coutDirectVendus, v3: -r3.coutDirectVendus, v4: -r4.coutDirectVendus, tot: -(r1.coutDirectVendus + r2.coutDirectVendus + r3.coutDirectVendus + r4.coutDirectVendus) },
-        { label: '- Coûts transports', u: '€', v1: -r1.coutTransportTotal, v2: -r2.coutTransportTotal, v3: -r3.coutTransportTotal, v4: -r4.coutTransportTotal, tot: -(r1.coutTransportTotal + r2.coutTransportTotal + r3.coutTransportTotal + r4.coutTransportTotal) },
-        { label: '- Marketing (5%)', u: '€', v1: -r1.fraisMarketing, v2: -r2.fraisMarketing, v3: -r3.fraisMarketing, v4: -r4.fraisMarketing, tot: -(r1.fraisMarketing + r2.fraisMarketing + r3.fraisMarketing + r4.fraisMarketing) },
-        { label: '= Marge sur Coûts Variables', u: '€', v1: r1.margeBrute, v2: r2.margeBrute, v3: r3.margeBrute, v4: r4.margeBrute, tot: r1.margeBrute + r2.margeBrute + r3.margeBrute + r4.margeBrute },
-        { label: '- Charges fixes (Salaires + Structure)', u: '€', v1: -r1.chargesFixes, v2: -r2.chargesFixes, v3: -r3.chargesFixes, v4: -r4.chargesFixes, tot: -(r1.chargesFixes * 4) },
-        { label: '- Frais de stockage (0,42%)', u: '€', v1: -r1.fraisStockage, v2: -r2.fraisStockage, v3: -r3.fraisStockage, v4: -r4.fraisStockage, tot: -(r1.fraisStockage + r2.fraisStockage + r3.fraisStockage + r4.fraisStockage) },
-        { label: '= BÉNÉFICE TOTAL DU MOIS (RN)', u: '€', highlightGreen: true, v1: r1.resultatNet, v2: r2.resultatNet, v3: r3.resultatNet, v4: r4.resultatNet, tot: all.totaux.rnCumule },
-        { label: '= BÉNÉFICE CUMULÉ', u: '€', bold: true, v1: r1.rnCumule, v2: r2.rnCumule, v3: r3.rnCumule, v4: r4.rnCumule, tot: all.totaux.rnCumule },
+        { 
+          label: 'CHIFFRE D\'AFFAIRES', u: '€', highlight: true, 
+          vals: months.map(m => resM[m].caTotal), 
+          tot: all.totaux.caCumule 
+        },
+        { 
+          label: '- Coût matières vendues', u: '€', 
+          vals: months.map(m => -resM[m].coutDirectVendus), 
+          tot: -sumField(r => r.coutDirectVendus) 
+        },
+        { 
+          label: '- Coûts transports', u: '€', 
+          vals: months.map(m => -resM[m].coutTransportTotal), 
+          tot: -sumField(r => r.coutTransportTotal) 
+        },
+        { 
+          label: '- Marketing (5%)', u: '€', 
+          vals: months.map(m => -resM[m].fraisMarketing), 
+          tot: -sumField(r => r.fraisMarketing) 
+        },
+        { 
+          label: '= Marge sur Coûts Variables', u: '€', 
+          vals: months.map(m => resM[m].margeBrute), 
+          tot: sumField(r => r.margeBrute) 
+        },
+        { 
+          label: '- Charges fixes (Salaires + Structure)', u: '€', 
+          vals: months.map(m => -resM[m].chargesFixes), 
+          tot: -sumField(r => r.chargesFixes) 
+        },
+        { 
+          label: '- Frais de stockage (0,42%)', u: '€', 
+          vals: months.map(m => -resM[m].fraisStockage), 
+          tot: -sumField(r => r.fraisStockage) 
+        },
+        { 
+          label: '= BÉNÉFICE TOTAL DU MOIS (RN)', u: '€', highlightGreen: true, 
+          vals: months.map(m => resM[m].resultatNet), 
+          tot: all.totaux.rnCumule 
+        },
+        { 
+          label: '= BÉNÉFICE CUMULÉ', u: '€', bold: true, 
+          vals: months.map(m => resM[m].rnCumule), 
+          tot: all.totaux.rnCumule 
+        },
 
         { section: '💰 TRÉSORERIE & FINANCES' },
-        { label: 'Trésorerie début de mois', u: '€', v1: r1.tresoDebut, v2: r2.tresoDebut, v3: r3.tresoDebut, v4: r4.tresoDebut, tot: 500000 },
-        { label: '+ Encaissements ventes', u: '€', v1: r1.totalEncaissements, v2: r2.totalEncaissements, v3: r3.totalEncaissements, v4: r4.totalEncaissements, tot: r1.totalEncaissements + r2.totalEncaissements + r3.totalEncaissements + r4.totalEncaissements },
-        { label: '- Décaissement commande liège brut', u: '€', v1: -r1.decaissementFournisseur, v2: -r2.decaissementFournisseur, v3: -r3.decaissementFournisseur, v4: -r4.decaissementFournisseur, tot: -(r1.decaissementFournisseur + r2.decaissementFournisseur + r3.decaissementFournisseur + r4.decaissementFournisseur) },
-        { label: '- Autres décaissements (salaires, usine, machines, stocks)', u: '€', v1: -(r1.totalDecaissements - r1.decaissementFournisseur), v2: -(r2.totalDecaissements - r2.decaissementFournisseur), v3: -(r3.totalDecaissements - r3.decaissementFournisseur), v4: -(r4.totalDecaissements - r4.decaissementFournisseur), tot: -((r1.totalDecaissements - r1.decaissementFournisseur) + (r2.totalDecaissements - r2.decaissementFournisseur) + (r3.totalDecaissements - r3.decaissementFournisseur) + (r4.totalDecaissements - r4.decaissementFournisseur)) },
-        { label: 'TRÉSORERIE FIN DE MOIS', u: '€', highlightBlue: true, v1: r1.tresorerieFinMois, v2: r2.tresorerieFinMois, v3: r3.tresorerieFinMois, v4: r4.tresorerieFinMois, tot: r4.tresorerieFinMois },
+        { 
+          label: 'Trésorerie début de mois', u: '€', 
+          vals: months.map(m => resM[m].tresoDebut), 
+          tot: 500000 
+        },
+        { 
+          label: '+ Encaissements ventes', u: '€', 
+          vals: months.map(m => resM[m].totalEncaissements), 
+          tot: sumField(r => r.totalEncaissements) 
+        },
+        { 
+          label: '- Décaissement commande liège brut', u: '€', 
+          vals: months.map(m => -resM[m].decaissementFournisseur), 
+          tot: -sumField(r => r.decaissementFournisseur) 
+        },
+        { 
+          label: '- Autres décaissements (salaires, usine, machines, stocks)', u: '€', 
+          vals: months.map(m => -(resM[m].totalDecaissements - resM[m].decaissementFournisseur)), 
+          tot: -sumField(r => (r.totalDecaissements - r.decaissementFournisseur)) 
+        },
+        { 
+          label: 'TRÉSORERIE FIN DE MOIS', u: '€', highlightBlue: true, 
+          vals: months.map(m => resM[m].tresorerieFinMois), 
+          tot: resM[8] ? resM[8].tresorerieFinMois : 500000 
+        },
 
         { section: '🎯 SCORE & POINTS OFFICIELS' },
-        { label: 'Coefficient du mois', u: '', v1: 'x1', v2: 'x2', v3: 'x3', v4: 'x4', tot: '-' },
-        { label: 'Points du mois', u: 'pts', v1: r1.scoreMois, v2: r2.scoreMois, v3: r3.scoreMois, v4: r4.scoreMois, tot: all.totaux.scoreCumule },
-        { label: 'SCORE TOTAL CUMULÉ', u: 'pts', highlightGold: true, v1: r1.scoreCumule, v2: r2.scoreCumule, v3: r3.scoreCumule, v4: r4.scoreCumule, tot: all.totaux.scoreCumule }
+        { 
+          label: 'Coefficient du mois', u: '', 
+          vals: months.map(m => 'x' + m), 
+          tot: '-' 
+        },
+        { 
+          label: 'Points du mois', u: 'pts', 
+          vals: months.map(m => resM[m].scoreMois), 
+          tot: all.totaux.scoreCumule 
+        },
+        { 
+          label: 'SCORE TOTAL CUMULÉ', u: 'pts', highlightGold: true, 
+          vals: months.map(m => resM[m].scoreCumule), 
+          tot: all.totaux.scoreCumule 
+        }
       ];
 
       function fmt(val, u) {
@@ -1515,36 +1663,37 @@
       let html = '';
       rows.forEach(row => {
         if (row.section) {
-          html += `<tr class="bg-slate-100 font-black text-slate-800 text-[11px]"><td colspan="6" class="p-2.5 uppercase tracking-wider">${row.section}</td></tr>`;
+          html += `<tr class="bg-slate-100 font-black text-slate-800 text-[11px]"><td colspan="10" class="p-2.5 uppercase tracking-wider">${row.section}</td></tr>`;
         } else {
           let trClass = 'hover:bg-slate-50 transition';
-          let tdClass = 'p-2.5 font-medium text-slate-700';
-          let totClass = 'p-2.5 text-right font-black bg-indigo-50/50 text-indigo-950';
+          let tdClass = 'p-2.5 font-medium text-slate-700 whitespace-nowrap';
+          let totClass = 'p-2.5 text-right font-black bg-indigo-50/50 text-indigo-950 whitespace-nowrap';
 
           if (row.highlight) {
             trClass = 'bg-indigo-50/30 font-bold';
-            tdClass = 'p-2.5 font-black text-indigo-900';
-            totClass = 'p-2.5 text-right font-black bg-indigo-100 text-indigo-900 text-sm';
+            tdClass = 'p-2.5 font-black text-indigo-900 whitespace-nowrap';
+            totClass = 'p-2.5 text-right font-black bg-indigo-100 text-indigo-900 text-sm whitespace-nowrap';
           } else if (row.highlightGreen) {
             trClass = 'bg-emerald-50/50 font-bold';
-            tdClass = 'p-2.5 font-black text-emerald-800';
-            totClass = 'p-2.5 text-right font-black bg-emerald-100 text-emerald-800 text-sm';
+            tdClass = 'p-2.5 font-black text-emerald-800 whitespace-nowrap';
+            totClass = 'p-2.5 text-right font-black bg-emerald-100 text-emerald-800 text-sm whitespace-nowrap';
           } else if (row.highlightBlue) {
             trClass = 'bg-blue-50/50 font-bold';
-            tdClass = 'p-2.5 font-black text-blue-900';
-            totClass = 'p-2.5 text-right font-black bg-blue-100 text-blue-900 text-sm';
+            tdClass = 'p-2.5 font-black text-blue-900 whitespace-nowrap';
+            totClass = 'p-2.5 text-right font-black bg-blue-100 text-blue-900 text-sm whitespace-nowrap';
           } else if (row.highlightGold) {
             trClass = 'bg-amber-50/50 font-bold';
-            tdClass = 'p-2.5 font-black text-amber-900';
-            totClass = 'p-2.5 text-right font-black bg-amber-100 text-amber-900 text-sm';
+            tdClass = 'p-2.5 font-black text-amber-900 whitespace-nowrap';
+            totClass = 'p-2.5 text-right font-black bg-amber-100 text-amber-900 text-sm whitespace-nowrap';
+          } else if (row.bold) {
+            trClass = 'font-bold bg-slate-50/50';
           }
+
+          const colsHtml = row.vals.map(v => `<td class="p-2 text-right font-semibold whitespace-nowrap">${fmt(v, row.u)}</td>`).join('');
 
           html += `<tr class="${trClass}">
             <td class="${tdClass}">${row.label}</td>
-            <td class="p-2.5 text-right font-semibold">${fmt(row.v1, row.u)}</td>
-            <td class="p-2.5 text-right font-semibold">${fmt(row.v2, row.u)}</td>
-            <td class="p-2.5 text-right font-semibold">${fmt(row.v3, row.u)}</td>
-            <td class="p-2.5 text-right font-semibold">${fmt(row.v4, row.u)}</td>
+            ${colsHtml}
             <td class="${totClass}">${fmt(row.tot, row.u)}</td>
           </tr>`;
         }
@@ -1877,7 +2026,7 @@
     function copierRecapTexte() {
       const all = simulateAllMonths(appState);
       let t = "BILAN MULTI-MOIS VINEGO - ÉQUIPE 18 (SUBERTECH INDUSTRIES)\n\n";
-      for (let m = 1; m <= 4; m++) {
+      for (let m = 1; m <= 8; m++) {
         const r = all.moisResults[m];
         t += `MOIS ${m} :\n`;
         t += `  CA : ${Math.round(r.caTotal).toLocaleString('fr-FR')} €\n`;
@@ -1890,7 +2039,7 @@
       t += `TOTAUX CUMULÉS :\n`;
       t += `  CA Cumulé : ${Math.round(all.totaux.caCumule).toLocaleString('fr-FR')} €\n`;
       t += `  Résultat Net Cumulé : ${Math.round(all.totaux.rnCumule).toLocaleString('fr-FR')} €\n`;
-      t += `  Score Total : ${all.totaux.scoreCumule} / 300 pts\n`;
+      t += `  Score Total : ${all.totaux.scoreCumule} / 1 080 pts\n`;
 
       navigator.clipboard.writeText(t).then(() => {
         showToast('Bilan textuel copié dans le presse-papier !');
