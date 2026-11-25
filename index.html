@@ -1825,7 +1825,7 @@
           alerteLivraison.innerHTML = `<i class="fa-solid fa-clock text-indigo-600 shrink-0"></i> <span><strong>Règle officielle de gestion :</strong> Commande passée en Mois 1 ${detailM1} En Mois 1, seul le stock initial (110 000 kg) est utilisable.</span>`;
         } else if (m < 8) {
           const detailM = (modeReg === '30j')
-            ? `livrée début Mois ${m + 1} et <strong>payée au Mois ${m + 2} (30j après livraison)</strong>. Décaissement fournisseur en Mois ${m} : <strong>${res.decaissementFournisseur > 0 ? ('-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' € (Commande M' + (m - 2) + ')') : '0 € (Différé)')}</strong>.`
+            ? `livrée début Mois ${m + 1} et <strong>payée au Mois ${m + 2} (30j après livraison)</strong>. Décaissement fournisseur en Mois ${m} : <strong>${res.decaissementFournisseur > 0 ? ('-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' € (Commande M' + (m - 2) + ')') : '0 € (Différé)'}</strong>.`
             : `livrée début Mois ${m + 1}. Décaissement fournisseur effectif en Mois ${m} : <strong>${res.decaissementFournisseur > 0 ? ('-' + Math.round(res.decaissementFournisseur).toLocaleString('fr-FR') + ' €') : '0 €'}</strong>.`;
           alerteLivraison.innerHTML = `<i class="fa-solid fa-truck-ramp-box text-indigo-600 shrink-0"></i> <span><strong>Cycle d'approvisionnement :</strong> Commande de <strong>${Math.round(totFactureFournisseur).toLocaleString('fr-FR')} €</strong> ${detailM}</span>`;
         } else {
