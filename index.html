@@ -558,12 +558,32 @@
               </div>
             </div>
 
+            <!-- Encart Bonus Événementiel Mois 3 (+2 000 bouchons agglomérés gagnés) -->
+            <div id="row-bonus-bouchons" class="bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-xl border border-amber-300 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-950 shadow-sm">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🎁</span>
+                <div>
+                  <span class="font-black text-amber-900">Bonus Événementiel (gagné entre Fév et Mars) :</span>
+                  <span class="text-amber-800 text-[11px] block sm:inline font-semibold"> +2 000 bouchons agglomérés ajoutés au stock entrant de Mars</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="inp-bonus-bouchons" class="text-[11px] font-bold text-amber-900">Bonus M3 :</label>
+                <input type="number" id="inp-bonus-bouchons" value="2000" min="0" step="500" class="w-24 text-xs font-bold border border-amber-300 rounded-md px-2 py-1 bg-white text-slate-900 focus:ring-2 focus:ring-amber-500" onchange="handleInputChange()">
+                <span class="text-[10px] text-amber-800 font-bold">lots</span>
+              </div>
+            </div>
+
             <!-- Bilan des stocks disponibles -->
             <div class="bg-indigo-50/70 p-3.5 rounded-xl border border-indigo-100 text-xs text-indigo-950 space-y-2">
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-200/60 pb-2">
-                <div><strong>Bouchons Agglomérés :</strong> Stock début : <span id="out-txt-stock-debut">3 000 lots</span> + Production : <span id="out-txt-prod">9 000 lots</span> <span class="text-slate-500 text-[10px]">(Grains restants : <span id="out-stock-grains-report" class="text-indigo-800 font-bold">1 000 kg</span>)</span></div>
+                <div>
+                  <strong>Bouchons Agglomérés :</strong> Stock début : <span id="out-txt-stock-debut">3 000 lots</span> + Production : <span id="out-txt-prod">9 000 lots</span>
+                  <span id="badge-bonus-bouchons" class="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-0.5 rounded-full ml-1">🎁 +<span id="out-txt-bonus-bouchons">2 000</span> lots gagnés</span>
+                  <span class="text-slate-500 text-[10px] ml-1">(Grains restants : <span id="out-stock-grains-report" class="text-indigo-800 font-bold">1 000 kg</span>)</span>
+                </div>
                 <div class="bg-white px-2.5 py-1 rounded-lg border border-indigo-200 font-black text-indigo-700 text-sm">
-                  Dispo Agglomérés : <span id="out-total-dispo">12 000</span> lots
+                  Dispo Agglomérés : <span id="out-total-dispo">11 000</span> lots
                 </div>
               </div>
               <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5" id="row-stock-nat-dispo">
@@ -1664,6 +1684,9 @@
       const planchesATuberBKg = Number(document.getElementById('inp-tubage-b')?.value) || 0;
       const planchesATuberCKg = Number(document.getElementById('inp-tubage-c')?.value) || 0;
 
+      const inpBonus = document.getElementById('inp-bonus-bouchons');
+      const bonusBouchonsLots = inpBonus ? Number(inpBonus.value) : (m === 3 ? 2000 : 0);
+
       function getVente(i) {
         const lots = Number(document.getElementById(`v-d${i}-lots`)?.value) || 0;
         const prix = Number(document.getElementById(`v-d${i}-prix`)?.value) || 0;
@@ -1688,6 +1711,7 @@
         planchesATuberAKg,
         planchesATuberBKg,
         planchesATuberCKg,
+        bonusBouchonsLots,
         ventes: [getVente(1), getVente(2), getVente(3), getVente(4)]
       };
 
@@ -1845,7 +1869,23 @@
       document.getElementById('out-grains-obtenus').innerText = Math.round(res.grainsProduitsKg).toLocaleString('fr-FR') + ' kg';
       document.getElementById('out-bouchons-produits').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';
       document.getElementById('out-txt-prod').innerText = Math.round(res.bouchonsProduitsLots).toLocaleString('fr-FR') + ' lots';
-      document.getElementById('out-txt-stock-debut').innerText = Math.round(res.stockBouchonsEntrantLots).toLocaleString('fr-FR') + ' lots';
+
+      const elBonusRow = document.getElementById('row-bonus-bouchons');
+      const elBonusBadge = document.getElementById('badge-bonus-bouchons');
+      const elBonusTxt = document.getElementById('out-txt-bonus-bouchons');
+      const bonusQty = res.bonusBouchonsLots || 0;
+      if (bonusQty > 0 || m === 3) {
+        if (elBonusRow) elBonusRow.classList.remove('hidden');
+        if (elBonusBadge) elBonusBadge.classList.remove('hidden');
+        if (elBonusTxt) elBonusTxt.innerText = Math.round(bonusQty).toLocaleString('fr-FR');
+      } else {
+        if (elBonusRow) elBonusRow.classList.add('hidden');
+        if (elBonusBadge) elBonusBadge.classList.add('hidden');
+      }
+
+      const stockEntrantBase = (res.stockBouchonsEntrantPreBonus !== undefined) ? res.stockBouchonsEntrantPreBonus : (res.stockBouchonsEntrantLots - bonusQty);
+      const stockEntrantLabel = Math.round(stockEntrantBase).toLocaleString('fr-FR') + ' lots' + (bonusQty > 0 ? ` (+${Math.round(bonusQty).toLocaleString('fr-FR')} bonus)` : '');
+      document.getElementById('out-txt-stock-debut').innerText = stockEntrantLabel;
       document.getElementById('out-total-dispo').innerText = Math.round(res.totalBouchonsDispoLots).toLocaleString('fr-FR');
       document.getElementById('badge-stock-dispo-mois').innerText = Math.round(res.totalBouchonsDispoLots).toLocaleString('fr-FR') + ' lots dispos';
 
@@ -2646,6 +2686,12 @@
       if (inpTubB) inpTubB.value = curData.planchesATuberBKg !== undefined ? curData.planchesATuberBKg : (m >= 3 ? 10000 : 0);
       if (inpTubC) inpTubC.value = curData.planchesATuberCKg !== undefined ? curData.planchesATuberCKg : (m >= 3 ? 10000 : 0);
 
+      // Bonus bouchons agglomérés (Mois 3)
+      const inpBonus = document.getElementById('inp-bonus-bouchons');
+      if (inpBonus) {
+        inpBonus.value = curData.bonusBouchonsLots !== undefined ? curData.bonusBouchonsLots : (m === 3 ? 2000 : 0);
+      }
+
       // Ventes aux 4 Distributeurs (Agglomérés + Naturels)
       for (let i = 1; i <= 4; i++) {
         const v = (curData.ventes && curData.ventes[i - 1]) ? curData.ventes[i - 1] : {};
@@ -2660,7 +2706,7 @@
         const selDelai = document.getElementById(`v-d${i}-delai`);
         const selTrans = document.getElementById(`v-d${i}-transport`);
 
-        if (inpLots) inpLots.value = v.lots !== undefined ? v.lots : (m >= 3 ? 2250 : 2500);
+        if (inpLots) inpLots.value = v.lots !== undefined ? v.lots : (m === 3 ? 2750 : (m > 3 ? 2250 : 2500));
         if (inpPrix) inpPrix.value = v.prix !== undefined ? v.prix : 21.5;
         if (inpLotsA) inpLotsA.value = v.lotsNatA !== undefined ? v.lotsNatA : (m >= 3 ? 250 : 0);
         if (inpPrixA) inpPrixA.value = v.prixNatA !== undefined ? v.prixNatA : 55.0;

@@ -252,6 +252,16 @@ const margeDistB = sim.calcMargeDistributeur('B', 60.0);
 console.log("Marge brute distributeur (Espagne B racheté à 60€) :", margeDistB.margeBruteDistributeur.toFixed(2), "€ / lot (Revente moyenne client : " + margeDistB.revenuReventeLot.toFixed(2) + " €)");
 assert(margeDistB.margeBruteDistributeur > 60.0, "Le distributeur réalise plus de 60 € de marge brute par lot trié !");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage (75k cap, 30k/22k/20k stocks), prix planches et trieuse sont passés avec succès !");
+// 11. Validation des 2 000 bouchons agglomérés bonus gagnés en Mois 3
+console.log("\n--- Validation des 2 000 bouchons agglomérés bonus (Mois 3) ---");
+assert.strictEqual(m3.bonusBouchonsLots, 2000, "Le bonus en Mois 3 doit être exactement de 2 000 lots");
+assert.strictEqual(m3.totalBouchonsDispoLots, 11000, "Disponibilité totale agglomérés en M3 = 9 000 produits + 2 000 bonus = 11 000 lots");
+assert.strictEqual(m3.lotsVendusAggloTotal, 11000, "Les 11 000 lots d'agglomérés sont vendus aux distributeurs (4 x 2 750)");
+assert.strictEqual(m3.lotsVendusTotal, 14000, "Total lots vendus en M3 = 11 000 agglomérés + 3 000 naturels = 14 000 lots");
+console.log("Mois 3 avec +2 000 lots bonus -> CA Total :", Math.round(m3.caTotal).toLocaleString('fr-FR'), "€ | Résultat Net :", Math.round(m3.resultatNet).toLocaleString('fr-FR'), "€");
+assert(m3.caTotal >= 415000, "Le CA en Mois 3 dépasse 415 000 € grâce aux 2 000 bouchons bonus");
+assert(m3.resultatNet > 80000, "Le résultat net en Mois 3 dépasse 80 000 €");
+
+console.log("\n Tous les tests du moteur mathématique (8 mois), conjoncture Mois 3, tubage (75k cap, 30k/22k/20k stocks), prix planches, trieuse et +2 000 bouchons bonus sont passés avec succès !");
 
 

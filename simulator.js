@@ -54,6 +54,7 @@ const PARAMS = {
   // Événements de trésorerie exceptionnels
   achatTubeuseComptantM2: 15000, // Payé comptant en Février (M2)
   rachatStockPlanchesM3: 175000,  // Payé en Mars (M3)
+  bonusBouchonsGagnesM3Lots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars (ajoutés en stock M3)
 
   // Paramètres de trieuse des distributeurs (pour simulation et négociation)
   trieuse: {
@@ -150,7 +151,8 @@ function getDefaultMonthData(m) {
         { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
         { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 30, transport: 'train' },
         { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
-      ]
+      ],
+      bonusBouchonsLots: 0
     };
   }
   if (m === 2) {
@@ -164,15 +166,38 @@ function getDefaultMonthData(m) {
       planchesATuberAKg: 0,
       planchesATuberBKg: 0,
       planchesATuberCKg: 0,
+      bonusBouchonsLots: 0,
       ventes: [
         { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
         { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' },
         { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 4', lots: 2000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
+        { client: 'Équipe Distributeur 4', lots: 2500, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, delai: 0, transport: 'camion' }
       ]
     };
   }
-  // Par défaut pour M3 à M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels (3k)
+  if (m === 3) {
+    // En Mois 3 : 9 000 lots produits + 2 000 lots bonus gagnés = 11 000 lots d'agglomérés disponibles
+    // + 3 000 lots de bouchons naturels (1 000 A + 1 000 B + 1 000 C)
+    return {
+      commandeLiegeKg: 150000,
+      commandePlanchesAKg: 0,
+      commandePlanchesBKg: 0,
+      commandePlanchesCKg: 0,
+      liegeABroyerKg: 150000, // <= 155 000 kg max moulins
+      grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
+      planchesATuberAKg: 10000, // 1 000 lots A
+      planchesATuberBKg: 10000, // 1 000 lots B
+      planchesATuberCKg: 10000, // 1 000 lots C
+      bonusBouchonsLots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars
+      ventes: [
+        { client: 'Équipe Distributeur 1', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 2', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 3', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
+        { client: 'Équipe Distributeur 4', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' }
+      ]
+    };
+  }
+  // Par défaut pour M4 à M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels (3k)
   return {
     commandeLiegeKg: 150000,
     commandePlanchesAKg: 0,
@@ -183,6 +208,7 @@ function getDefaultMonthData(m) {
     planchesATuberAKg: 10000, // 1 000 lots A
     planchesATuberBKg: 10000, // 1 000 lots B
     planchesATuberCKg: 10000, // 1 000 lots C
+    bonusBouchonsLots: 0,
     ventes: [
       { client: 'Équipe Distributeur 1', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
       { client: 'Équipe Distributeur 2', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, delai: 0, transport: 'train' },
@@ -247,6 +273,9 @@ function migrateState(parsed) {
     appState = parsed;
     if (!appState.moisActif) appState.moisActif = 1;
     if (!appState.reglementFournisseur) appState.reglementFournisseur = 'instant';
+    if (appState.moisData[3] && appState.moisData[3].bonusBouchonsLots === undefined) {
+      appState.moisData[3].bonusBouchonsLots = 2000;
+    }
     // S'assurer que tous les mois existent et respectent les capacités machines
     for (let m = 1; m <= PARAMS.nbMoisTotal; m++) {
       if (!appState.moisData[m]) {
@@ -342,8 +371,12 @@ function simulateAllMonths(state) {
     const valStockGrainsEntrant = isM1 ? (PARAMS.stockInitGrainsKg * PARAMS.prixAchatGrainsInit) : prevResult.valStockGrainsFin;
     const cmpGrainsKg = stockGrainsEntrantKg > 0 ? (valStockGrainsEntrant / stockGrainsEntrantKg) : 1.335;
 
-    // C. Bouchons agglomérés
-    const stockBouchonsEntrantLots = isM1 ? PARAMS.stockInitBouchonsLots : prevResult.stockBouchonsFinLots;
+    // C. Bouchons agglomérés (avec intégration des 2 000 bouchons bonus gagnés entre Fév et Mars en M3)
+    const bonusBouchonsLots = (monthData.bonusBouchonsLots !== undefined)
+      ? Number(monthData.bonusBouchonsLots)
+      : (m === 3 ? (PARAMS.bonusBouchonsGagnesM3Lots || 2000) : 0);
+    const stockBouchonsEntrantPreBonus = isM1 ? PARAMS.stockInitBouchonsLots : prevResult.stockBouchonsFinLots;
+    const stockBouchonsEntrantLots = stockBouchonsEntrantPreBonus + bonusBouchonsLots;
     const valStockBouchonsEntrant = isM1 ? (PARAMS.stockInitBouchonsLots * PARAMS.prixAchatBouchonsInit) : prevResult.valStockBouchonsFin;
 
     // D. Planches (Espagne A, B, C) - Disponibles dès M3 grâce au rachat allemand (175 000 €) puis réapprovisionnements
@@ -621,6 +654,8 @@ function simulateAllMonths(state) {
       valStockLiegeFin,
       stockGrainsFinKg,
       valStockGrainsFin,
+      stockBouchonsEntrantPreBonus,
+      bonusBouchonsLots,
       stockBouchonsEntrantLots,
       bouchonsProduitsLots,
       totalBouchonsDispoLots,
