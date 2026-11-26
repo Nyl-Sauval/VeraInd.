@@ -436,6 +436,131 @@
                 </div>
               </div>
 
+              <!-- SECTION NOUVEAU PRODUCTEUR PORTUGAIS (LIÈGE À BROYER & PLANCHES PORTUGAL A, B, C) -->
+              <div id="section-fournisseur-portugal" class="bg-gradient-to-r from-rose-50/70 via-white to-rose-50/50 p-3 rounded-xl border border-rose-300 space-y-3">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 border-b border-rose-200 pb-2">
+                  <div class="flex items-center gap-1.5 text-xs font-bold text-rose-950">
+                    <span class="text-sm">🇵🇹</span>
+                    <span>Nouveau Producteur Portugais (Liège à broyer &amp; Planches A, B, C)</span>
+                    <span class="text-[9px] bg-rose-100 text-rose-800 font-bold px-1.5 py-0.5 rounded border border-rose-300">Nouveau Fournisseur</span>
+                  </div>
+                  <span class="text-[10px] bg-rose-50 text-rose-900 font-semibold px-2 py-0.5 rounded border border-rose-200">
+                    Liège : min 50k kg • Planches : min 4k kg • Réductions dès 8k / 100k kg • Livré en M+1
+                  </span>
+                </div>
+
+                <!-- Liège à broyer Portugal -->
+                <div class="bg-white p-3 rounded-xl border border-rose-200 space-y-2">
+                  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs gap-1">
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-slate-800">Liège à broyer Portugal</span>
+                      <span class="text-[10px] text-slate-500 font-medium">Stock dispo : 3 900 000 kg • Min 50 000 kg</span>
+                    </div>
+                    <span id="badge-prix-liege-portugal" class="text-[10px] font-black text-rose-900 bg-rose-100 px-2 py-0.5 rounded border border-rose-300">0,50 €/kg (Base)</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-center">
+                    <div class="relative sm:col-span-1">
+                      <input type="number" id="inp-commande-liege-portugal" value="0" step="5000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1.5 bg-white text-slate-900 pr-8" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="sm:col-span-2 flex flex-wrap gap-1">
+                      <button type="button" onclick="setLiegePortugal(0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-600 font-semibold">0</button>
+                      <button type="button" onclick="setLiegePortugal(50000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-700 font-semibold">50k (0,50€)</button>
+                      <button type="button" onclick="setLiegePortugal(100000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-700 font-semibold">100k (0,49€)</button>
+                      <button type="button" onclick="setLiegePortugal(110000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-700 font-semibold">110k (0,47€)</button>
+                      <button type="button" onclick="setLiegePortugal(120000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-1 rounded text-slate-700 font-semibold">120k (0,46€)</button>
+                      <button type="button" onclick="setLiegePortugal(130000)" class="text-[9px] bg-rose-100 hover:bg-rose-200 px-1.5 py-1 rounded text-rose-800 font-semibold border border-rose-200">130k (0,44€)</button>
+                      <button type="button" onclick="setLiegePortugal(140000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-1 rounded text-emerald-800 font-bold border border-emerald-300">★ 140k (0,43€)</button>
+                    </div>
+                  </div>
+                  <div class="flex justify-between text-[10px] text-slate-600 border-t border-rose-200/60 pt-1">
+                    <span>Montant Liège Portugal :</span>
+                    <strong id="out-montant-liege-portugal" class="text-slate-900 font-mono">0 €</strong>
+                  </div>
+                </div>
+
+                <!-- Planches Portugal A, B, C -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <!-- Portugal A -->
+                  <div class="bg-white p-2.5 rounded-xl border border-rose-200 space-y-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="font-bold text-slate-800 flex items-center gap-1"><span>🇵🇹</span> Portugal A</span>
+                      <span id="badge-prix-planche-portugal-a" class="text-[10px] font-black text-rose-900 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-300">1,80 €/kg</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500">Dispo : 3 885 000 kg • Min 4k kg</div>
+                    <div class="relative">
+                      <input type="number" id="inp-commande-planche-portugal-a" value="0" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold">0</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 4000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">4k (1,80€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 8000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">8k (1,75€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 10000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">10k (1,69€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 12000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">12k (1,64€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 14000)" class="text-[9px] bg-rose-100 hover:bg-rose-200 px-1.5 py-0.5 rounded text-rose-800 font-semibold border border-rose-200">14k (1,58€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('a', 16000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-bold border border-emerald-300">★ 16k (1,53€)</button>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500 border-t pt-1">
+                      <span>Montant :</span>
+                      <strong id="out-montant-planche-portugal-a" class="text-slate-900 font-mono">0 €</strong>
+                    </div>
+                  </div>
+
+                  <!-- Portugal B -->
+                  <div class="bg-white p-2.5 rounded-xl border border-rose-200 space-y-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="font-bold text-slate-800 flex items-center gap-1"><span>🇵🇹</span> Portugal B</span>
+                      <span id="badge-prix-planche-portugal-b" class="text-[10px] font-black text-rose-900 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-300">2,30 €/kg</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500">Dispo : 3 915 000 kg • Min 4k kg</div>
+                    <div class="relative">
+                      <input type="number" id="inp-commande-planche-portugal-b" value="0" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold">0</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 4000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">4k (2,30€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 8000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">8k (2,23€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 10000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">10k (2,16€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 12000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">12k (2,09€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 14000)" class="text-[9px] bg-rose-100 hover:bg-rose-200 px-1.5 py-0.5 rounded text-rose-800 font-semibold border border-rose-200">14k (2,02€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('b', 16000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-bold border border-emerald-300">★ 16k (1,95€)</button>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500 border-t pt-1">
+                      <span>Montant :</span>
+                      <strong id="out-montant-planche-portugal-b" class="text-slate-900 font-mono">0 €</strong>
+                    </div>
+                  </div>
+
+                  <!-- Portugal C -->
+                  <div class="bg-white p-2.5 rounded-xl border border-rose-200 space-y-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="font-bold text-slate-800 flex items-center gap-1"><span>🇵🇹</span> Portugal C</span>
+                      <span id="badge-prix-planche-portugal-c" class="text-[10px] font-black text-rose-900 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-300">2,80 €/kg</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500">Dispo : 3 985 000 kg • Min 4k kg</div>
+                    <div class="relative">
+                      <input type="number" id="inp-commande-planche-portugal-c" value="0" step="1000" min="0" class="w-full text-xs font-bold border rounded-md px-2 py-1 bg-white text-slate-900" onchange="handleInputChange()">
+                      <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">kg</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 0)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold">0</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 4000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">4k (2,80€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 8000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">8k (2,72€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 10000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">10k (2,63€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 12000)" class="text-[9px] bg-slate-100 hover:bg-slate-200 px-1.5 py-0.5 rounded text-slate-700 font-semibold">12k (2,55€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 14000)" class="text-[9px] bg-rose-100 hover:bg-rose-200 px-1.5 py-0.5 rounded text-rose-800 font-semibold border border-rose-200">14k (2,46€)</button>
+                      <button type="button" onclick="setCommandePlanchePortugal('c', 16000)" class="text-[9px] bg-emerald-100 hover:bg-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-bold border border-emerald-300">★ 16k (2,38€)</button>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500 border-t pt-1">
+                      <span>Montant :</span>
+                      <strong id="out-montant-planche-portugal-c" class="text-slate-900 font-mono">0 €</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Synthèse commande fournisseur globale -->
               <div class="bg-slate-100 p-2.5 rounded-lg flex flex-wrap justify-between items-center text-xs text-slate-800 gap-2">
                 <div class="space-y-0.5">
@@ -712,6 +837,102 @@
                   </div>
                 </div>
 
+                <!-- Rubrique 3 : Planches & Bouchons Portugal (A, B, C) -->
+                <div id="section-tubage-portugal" class="space-y-1.5 pt-2 border-t border-blue-200">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-blue-950 border-b border-blue-200 pb-1">
+                    <span class="flex items-center gap-1.5">
+                      <span class="bg-blue-100 text-blue-900 border border-blue-300 px-1.5 py-0.5 rounded text-[10px] font-black">🇵🇹 FOURNISSEUR PORTUGAL</span>
+                      <span>Planches & Bouchons Portugal (A, B, C)</span>
+                    </span>
+                    <span class="text-[10px] text-blue-700 font-bold">✨ Coût direct planches dès 15,60 € / lot (Paliers dès 8k-16k)</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Planches Portugal A -->
+                    <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1 shadow-2xs">
+                      <div class="flex justify-between items-center text-[11px]">
+                        <span class="font-bold text-blue-950 flex items-center gap-1">
+                          <span>🇵🇹 Portugal A</span>
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-portugal-a">Dispo : 0 kg</span>
+                      </div>
+                      <div class="relative">
+                        <input type="number" id="inp-tubage-portugal-a" value="0" step="1000" min="0" class="w-full text-xs font-bold border border-blue-300 rounded-md px-2 py-1 bg-white text-slate-900 focus:ring-1 focus:ring-blue-500" onchange="handleInputChange()">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">planches</span>
+                      </div>
+                      <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>Lots produits :</span>
+                        <strong id="out-lots-tubage-portugal-a" class="text-blue-800 font-bold">0 lots</strong>
+                      </div>
+                      <div class="border-t border-blue-100 pt-1 space-y-0.5">
+                        <div class="flex justify-between items-center text-[10px]">
+                          <span class="text-slate-500">Prix de revient direct :</span>
+                          <strong id="out-cmp-nat-portugal-a" class="text-blue-700 font-black">15,60 € / lot</strong>
+                        </div>
+                        <div class="flex justify-between items-center text-[9px]">
+                          <span class="text-slate-600">🎯 Gagne dès : <strong class="text-blue-700" id="lbl-seuil-nat-portugal-a">&gt; 15,60 €</strong></span>
+                          <span class="text-indigo-600 font-bold">Marché : ~55 €</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Planches Portugal B -->
+                    <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1 shadow-2xs">
+                      <div class="flex justify-between items-center text-[11px]">
+                        <span class="font-bold text-blue-950 flex items-center gap-1">
+                          <span>🇵🇹 Portugal B</span>
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-portugal-b">Dispo : 0 kg</span>
+                      </div>
+                      <div class="relative">
+                        <input type="number" id="inp-tubage-portugal-b" value="0" step="1000" min="0" class="w-full text-xs font-bold border border-blue-300 rounded-md px-2 py-1 bg-white text-slate-900 focus:ring-1 focus:ring-blue-500" onchange="handleInputChange()">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">planches</span>
+                      </div>
+                      <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>Lots produits :</span>
+                        <strong id="out-lots-tubage-portugal-b" class="text-blue-800 font-bold">0 lots</strong>
+                      </div>
+                      <div class="border-t border-blue-100 pt-1 space-y-0.5">
+                        <div class="flex justify-between items-center text-[10px]">
+                          <span class="text-slate-500">Prix de revient direct :</span>
+                          <strong id="out-cmp-nat-portugal-b" class="text-blue-700 font-black">19,80 € / lot</strong>
+                        </div>
+                        <div class="flex justify-between items-center text-[9px]">
+                          <span class="text-slate-600">🎯 Gagne dès : <strong class="text-blue-700" id="lbl-seuil-nat-portugal-b">&gt; 19,80 €</strong></span>
+                          <span class="text-indigo-600 font-bold">Marché : ~60 €</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Planches Portugal C -->
+                    <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1 shadow-2xs">
+                      <div class="flex justify-between items-center text-[11px]">
+                        <span class="font-bold text-blue-950 flex items-center gap-1">
+                          <span>🇵🇹 Portugal C</span>
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-semibold" id="lbl-stock-planches-portugal-c">Dispo : 0 kg</span>
+                      </div>
+                      <div class="relative">
+                        <input type="number" id="inp-tubage-portugal-c" value="0" step="1000" min="0" class="w-full text-xs font-bold border border-blue-300 rounded-md px-2 py-1 bg-white text-slate-900 focus:ring-1 focus:ring-blue-500" onchange="handleInputChange()">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 font-bold">planches</span>
+                      </div>
+                      <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>Lots produits :</span>
+                        <strong id="out-lots-tubage-portugal-c" class="text-blue-800 font-bold">0 lots</strong>
+                      </div>
+                      <div class="border-t border-blue-100 pt-1 space-y-0.5">
+                        <div class="flex justify-between items-center text-[10px]">
+                          <span class="text-slate-500">Prix de revient direct :</span>
+                          <strong id="out-cmp-nat-portugal-c" class="text-blue-700 font-black">24,10 € / lot</strong>
+                        </div>
+                        <div class="flex justify-between items-center text-[9px]">
+                          <span class="text-slate-600">🎯 Gagne dès : <strong class="text-blue-700" id="lbl-seuil-nat-portugal-c">&gt; 24,10 €</strong></span>
+                          <span class="text-indigo-600 font-bold">Marché : ~65 €</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Résumé atelier tubage -->
                 <div class="bg-amber-100/80 p-2.5 rounded-lg border border-amber-300 flex flex-wrap items-center justify-between text-xs text-amber-950 gap-2">
                   <div>
@@ -846,6 +1067,8 @@
                   <span class="font-semibold text-slate-700">🇪🇸 A: <strong id="out-dispo-nat-a">1 000</strong> • B: <strong id="out-dispo-nat-b">1 000</strong> • C: <strong id="out-dispo-nat-c">1 000</strong></span>
                   <span class="mx-1.5 text-slate-400">|</span>
                   <span class="font-semibold text-emerald-800">🇲🇦 Maroc A: <strong id="out-dispo-nat-maroc-a">0</strong> • B: <strong id="out-dispo-nat-maroc-b">0</strong></span>
+                  <span class="mx-1.5 text-slate-400">|</span>
+                  <span class="font-semibold text-blue-800">🇵🇹 Port. A: <strong id="out-dispo-nat-portugal-a">0</strong> • B: <strong id="out-dispo-nat-portugal-b">0</strong> • C: <strong id="out-dispo-nat-portugal-c">0</strong></span>
                 </div>
                 <div class="bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-300 font-black text-amber-900 text-sm">
                   Total Dispo Naturels : <span id="out-total-nat-dispo">3 000</span> lots
@@ -1032,6 +1255,9 @@
                     <option value="Maroc A">🇲🇦 Maroc A (Enchères • Coût 9,49 €)</option>
                     <option value="Maroc B">🇲🇦 Maroc B (Enchères • Coût 9,39 €)</option>
                     <option value="Maroc C">🇲🇦 Maroc C (Enchères • Coût 14,08 €)</option>
+                    <option value="Portugal A">🇵🇹 Portugal A (Coût dès 15,60 € • Paliers 8k-16k)</option>
+                    <option value="Portugal B">🇵🇹 Portugal B (Coût dès 19,80 € • Paliers 8k-16k)</option>
+                    <option value="Portugal C">🇵🇹 Portugal C (Coût dès 24,10 € • Paliers 8k-16k)</option>
                   </select>
                 </div>
 
@@ -1219,6 +1445,28 @@
                   </div>
                 </div>
 
+                <!-- Ligne Naturels Portugal (A, B, C) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-blue-50/70 p-2 rounded-lg border border-blue-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. A:</span>
+                    <input type="number" id="v-d1-lots-portugal-a" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d1-prix-portugal-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. B:</span>
+                    <input type="number" id="v-d1-lots-portugal-b" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d1-prix-portugal-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. C:</span>
+                    <input type="number" id="v-d1-lots-portugal-c" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d1-prix-portugal-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
                 <!-- Ligne Règlement & Transport -->
                 <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-slate-200">
                   <div class="flex items-center space-x-2">
@@ -1310,6 +1558,28 @@
                     <span class="font-bold text-emerald-950 text-[11px]">🇲🇦 Maroc C:</span>
                     <input type="number" id="v-d2-lots-maroc-c" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
                     <input type="number" id="v-d2-prix-maroc-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-emerald-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
+                <!-- Ligne Naturels Portugal (A, B, C) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-blue-50/70 p-2 rounded-lg border border-blue-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. A:</span>
+                    <input type="number" id="v-d2-lots-portugal-a" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d2-prix-portugal-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. B:</span>
+                    <input type="number" id="v-d2-lots-portugal-b" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d2-prix-portugal-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. C:</span>
+                    <input type="number" id="v-d2-lots-portugal-c" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d2-prix-portugal-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
                     <span class="text-slate-400 text-[10px]">€</span>
                   </div>
                 </div>
@@ -1409,6 +1679,28 @@
                   </div>
                 </div>
 
+                <!-- Ligne Naturels Portugal (A, B, C) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-blue-50/70 p-2 rounded-lg border border-blue-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. A:</span>
+                    <input type="number" id="v-d3-lots-portugal-a" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d3-prix-portugal-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. B:</span>
+                    <input type="number" id="v-d3-lots-portugal-b" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d3-prix-portugal-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. C:</span>
+                    <input type="number" id="v-d3-lots-portugal-c" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d3-prix-portugal-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
                 <!-- Ligne Règlement & Transport -->
                 <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 border-t border-slate-200">
                   <div class="flex items-center space-x-2">
@@ -1499,6 +1791,28 @@
                     <span class="font-bold text-emerald-950 text-[11px]">🇲🇦 Maroc C:</span>
                     <input type="number" id="v-d4-lots-maroc-c" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
                     <input type="number" id="v-d4-prix-maroc-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-emerald-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                </div>
+
+                <!-- Ligne Naturels Portugal (A, B, C) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-blue-50/70 p-2 rounded-lg border border-blue-200 text-xs">
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. A:</span>
+                    <input type="number" id="v-d4-lots-portugal-a" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d4-prix-portugal-a" value="55.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. B:</span>
+                    <input type="number" id="v-d4-lots-portugal-b" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d4-prix-portugal-b" value="60.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
+                    <span class="text-slate-400 text-[10px]">€</span>
+                  </div>
+                  <div class="flex items-center justify-between space-x-1">
+                    <span class="font-bold text-blue-950 text-[11px]">🇵🇹 Port. C:</span>
+                    <input type="number" id="v-d4-lots-portugal-c" value="0" step="25" min="0" placeholder="0" class="w-16 px-1.5 py-0.5 border rounded text-right font-bold" onchange="handleInputChange()">
+                    <input type="number" id="v-d4-prix-portugal-c" value="65.0" step="0.5" class="w-14 px-1 py-0.5 border rounded text-right font-bold text-blue-800" onchange="handleInputChange()">
                     <span class="text-slate-400 text-[10px]">€</span>
                   </div>
                 </div>
@@ -2118,8 +2432,24 @@
       handleInputChange();
     }
 
+    function setLiegePortugal(kg) {
+      const inp = document.getElementById('inp-commande-liege-portugal');
+      if (inp) {
+        inp.value = kg;
+        handleInputChange();
+      }
+    }
+
     function setCommandePlanche(type, kg) {
       const inp = document.getElementById(`inp-commande-planche-${type}`);
+      if (inp) {
+        inp.value = kg;
+        handleInputChange();
+      }
+    }
+
+    function setCommandePlanchePortugal(type, kg) {
+      const inp = document.getElementById(`inp-commande-planche-portugal-${type}`);
       if (inp) {
         inp.value = kg;
         handleInputChange();
@@ -2137,6 +2467,11 @@
       const commandePlanchesBKg = Number(document.getElementById('inp-commande-planche-b')?.value) || 0;
       const commandePlanchesCKg = Number(document.getElementById('inp-commande-planche-c')?.value) || 0;
 
+      const commandeLiegePortugalKg = Number(document.getElementById('inp-commande-liege-portugal')?.value) || 0;
+      const commandePlanchesPortugalAKg = Number(document.getElementById('inp-commande-planche-portugal-a')?.value) || 0;
+      const commandePlanchesPortugalBKg = Number(document.getElementById('inp-commande-planche-portugal-b')?.value) || 0;
+      const commandePlanchesPortugalCKg = Number(document.getElementById('inp-commande-planche-portugal-c')?.value) || 0;
+
       const liegeABroyerKg = Number(document.getElementById('rng-broyage').value) || 0;
       const grainsAMoulerKg = Number(document.getElementById('rng-moulage').value) || 0;
 
@@ -2147,6 +2482,10 @@
       const planchesATuberMarocAKg = Number(document.getElementById('inp-tubage-maroc-a')?.value) || 0;
       const planchesATuberMarocBKg = Number(document.getElementById('inp-tubage-maroc-b')?.value) || 0;
       const planchesATuberMarocCKg = Number(document.getElementById('inp-tubage-maroc-c')?.value) || 0;
+
+      const planchesATuberPortugalAKg = Number(document.getElementById('inp-tubage-portugal-a')?.value) || 0;
+      const planchesATuberPortugalBKg = Number(document.getElementById('inp-tubage-portugal-b')?.value) || 0;
+      const planchesATuberPortugalCKg = Number(document.getElementById('inp-tubage-portugal-c')?.value) || 0;
 
       const inpBonus = document.getElementById('inp-bonus-bouchons');
       const bonusBouchonsLots = inpBonus ? Number(inpBonus.value) : (m === 3 ? 2000 : 0);
@@ -2194,12 +2533,20 @@
         const lotsNatMarocC = Number(document.getElementById(`v-d${i}-lots-maroc-c`)?.value) || 0;
         const prixNatMarocC = Number(document.getElementById(`v-d${i}-prix-maroc-c`)?.value) || 65.0;
 
+        const lotsNatPortugalA = Number(document.getElementById(`v-d${i}-lots-portugal-a`)?.value) || 0;
+        const prixNatPortugalA = Number(document.getElementById(`v-d${i}-prix-portugal-a`)?.value) || 55.0;
+        const lotsNatPortugalB = Number(document.getElementById(`v-d${i}-lots-portugal-b`)?.value) || 0;
+        const prixNatPortugalB = Number(document.getElementById(`v-d${i}-prix-portugal-b`)?.value) || 60.0;
+        const lotsNatPortugalC = Number(document.getElementById(`v-d${i}-lots-portugal-c`)?.value) || 0;
+        const prixNatPortugalC = Number(document.getElementById(`v-d${i}-prix-portugal-c`)?.value) || 65.0;
+
         const delai = Number(document.getElementById(`v-d${i}-delai`)?.value) || 0;
         const transport = document.getElementById(`v-d${i}-transport`)?.value || 'camion';
         return {
           client: `D${i}`, lots, prix,
           lotsNatA, prixNatA, lotsNatB, prixNatB, lotsNatC, prixNatC,
           lotsNatMarocA, prixNatMarocA, lotsNatMarocB, prixNatMarocB, lotsNatMarocC, prixNatMarocC,
+          lotsNatPortugalA, prixNatPortugalA, lotsNatPortugalB, prixNatPortugalB, lotsNatPortugalC, prixNatPortugalC,
           delai, transport
         };
       }
@@ -2210,6 +2557,10 @@
         commandePlanchesAKg,
         commandePlanchesBKg,
         commandePlanchesCKg,
+        commandeLiegePortugalKg,
+        commandePlanchesPortugalAKg,
+        commandePlanchesPortugalBKg,
+        commandePlanchesPortugalCKg,
         encheresLot1PlanchesAKg,
         encheresLot1PlanchesBKg,
         encheresLot1Prix,
@@ -2229,6 +2580,9 @@
         planchesATuberMarocAKg,
         planchesATuberMarocBKg,
         planchesATuberMarocCKg,
+        planchesATuberPortugalAKg,
+        planchesATuberPortugalBKg,
+        planchesATuberPortugalCKg,
         bonusBouchonsLots,
         tresoDebutForce,
         ventes: [getVente(1), getVente(2), getVente(3), getVente(4)]
@@ -2343,6 +2697,41 @@
       if (outTotLiegeSynth) outTotLiegeSynth.innerText = Math.round(res.montantCommandeLiege).toLocaleString('fr-FR') + ' €';
       const outTotFactFourn = document.getElementById('out-total-facture-fournisseur');
       if (outTotFactFourn) outTotFactFourn.innerText = Math.round(totFactureFournisseur).toLocaleString('fr-FR') + ' €';
+
+      // MAJ Phase 1 Approvisionnement Portugal (Liège & Planches)
+      const pLiegePort = res.prixLiegePortugalKg || 0.50;
+      const mtLiegePort = res.montantCommandeLiegePortugal || 0;
+      const bLiegePort = document.getElementById('badge-prix-liege-portugal');
+      if (bLiegePort) bLiegePort.innerText = `${pLiegePort.toFixed(2)} €/kg` + (pLiegePort < 0.50 ? ` (-${Math.round((1 - pLiegePort/0.50)*100)}%)` : ' (Base)');
+      const outMtLiegePort = document.getElementById('out-montant-liege-portugal');
+      if (outMtLiegePort) outMtLiegePort.innerText = Math.round(mtLiegePort).toLocaleString('fr-FR') + ' €';
+
+      const pPortA = res.prixPlanchePortugalAKg || 1.80;
+      const pPortB = res.prixPlanchePortugalBKg || 2.30;
+      const pPortC = res.prixPlanchePortugalCKg || 2.80;
+      const mtPortA = res.montantCommandePlanchePortugalA || 0;
+      const mtPortB = res.montantCommandePlanchePortugalB || 0;
+      const mtPortC = res.montantCommandePlanchePortugalC || 0;
+
+      const bPortA = document.getElementById('badge-prix-planche-portugal-a');
+      if (bPortA) bPortA.innerText = `${pPortA.toFixed(2)} €/kg` + (pPortA < 1.80 ? ` (-${Math.round((1 - pPortA/1.80)*100)}%)` : '');
+      const outMtPortA = document.getElementById('out-montant-planche-portugal-a');
+      if (outMtPortA) outMtPortA.innerText = Math.round(mtPortA).toLocaleString('fr-FR') + ' €';
+
+      const bPortB = document.getElementById('badge-prix-planche-portugal-b');
+      if (bPortB) bPortB.innerText = `${pPortB.toFixed(2)} €/kg` + (pPortB < 2.30 ? ` (-${Math.round((1 - pPortB/2.30)*100)}%)` : '');
+      const outMtPortB = document.getElementById('out-montant-planche-portugal-b');
+      if (outMtPortB) outMtPortB.innerText = Math.round(mtPortB).toLocaleString('fr-FR') + ' €';
+
+      const bPortC = document.getElementById('badge-prix-planche-portugal-c');
+      if (bPortC) bPortC.innerText = `${pPortC.toFixed(2)} €/kg` + (pPortC < 2.80 ? ` (-${Math.round((1 - pPortC/2.80)*100)}%)` : '');
+      const outMtPortC = document.getElementById('out-montant-planche-portugal-c');
+      if (outMtPortC) outMtPortC.innerText = Math.round(mtPortC).toLocaleString('fr-FR') + ' €';
+
+      const outTotPort = document.getElementById('out-total-cmd-portugal');
+      if (outTotPort) outTotPort.innerText = Math.round(res.montantCommandePlanchesPortugalTotal || 0).toLocaleString('fr-FR') + ' €';
+      const outTotPortSummary = document.getElementById('out-total-cmd-portugal-summary');
+      if (outTotPortSummary) outTotPortSummary.innerText = Math.round((mtLiegePort + (res.montantCommandePlanchesPortugalTotal || 0))).toLocaleString('fr-FR') + ' €';
 
       const outSynthLigne = document.getElementById('out-synth-reduc-ligne');
       const outSynthBrut = document.getElementById('out-total-fournisseur-brut');
@@ -2530,6 +2919,14 @@
       const elStockMarocC = document.getElementById('lbl-stock-planches-maroc-c');
       if (elStockMarocC) elStockMarocC.innerText = 'Dispo : ' + Math.round(res.stockPlanchesMarocCEntrantKg).toLocaleString('fr-FR') + ' kg';
 
+      // Stocks Planches Portugal (Rubrique dédiée)
+      const elStockPortA = document.getElementById('lbl-stock-planches-portugal-a');
+      if (elStockPortA) elStockPortA.innerText = 'Dispo : ' + Math.round(res.stockPlanchesPortugalAEntrantKg || 0).toLocaleString('fr-FR') + ' kg';
+      const elStockPortB = document.getElementById('lbl-stock-planches-portugal-b');
+      if (elStockPortB) elStockPortB.innerText = 'Dispo : ' + Math.round(res.stockPlanchesPortugalBEntrantKg || 0).toLocaleString('fr-FR') + ' kg';
+      const elStockPortC = document.getElementById('lbl-stock-planches-portugal-c');
+      if (elStockPortC) elStockPortC.innerText = 'Dispo : ' + Math.round(res.stockPlanchesPortugalCEntrantKg || 0).toLocaleString('fr-FR') + ' kg';
+
       // Lots tubage Espagne
       const elLotsTubA = document.getElementById('out-lots-tubage-a');
       if (elLotsTubA) elLotsTubA.innerText = Math.round(res.bouchonsNatAProduitsLots).toLocaleString('fr-FR') + ' lots';
@@ -2546,6 +2943,14 @@
       const elLotsTubMarocC = document.getElementById('out-lots-tubage-maroc-c');
       if (elLotsTubMarocC) elLotsTubMarocC.innerText = Math.round(res.bouchonsNatMarocCProduitsLots).toLocaleString('fr-FR') + ' lots';
 
+      // Lots tubage Portugal
+      const elLotsTubPortA = document.getElementById('out-lots-tubage-portugal-a');
+      if (elLotsTubPortA) elLotsTubPortA.innerText = Math.round(res.bouchonsNatPortugalAProduitsLots || 0).toLocaleString('fr-FR') + ' lots';
+      const elLotsTubPortB = document.getElementById('out-lots-tubage-portugal-b');
+      if (elLotsTubPortB) elLotsTubPortB.innerText = Math.round(res.bouchonsNatPortugalBProduitsLots || 0).toLocaleString('fr-FR') + ' lots';
+      const elLotsTubPortC = document.getElementById('out-lots-tubage-portugal-c');
+      if (elLotsTubPortC) elLotsTubPortC.innerText = Math.round(res.bouchonsNatPortugalCProduitsLots || 0).toLocaleString('fr-FR') + ' lots';
+
       const elTotTub = document.getElementById('out-total-planches-tubees');
       if (elTotTub) elTotTub.innerText = Math.round(res.totalPlanchesTubees).toLocaleString('fr-FR');
       const elTotNatProd = document.getElementById('out-total-nat-produits');
@@ -2555,7 +2960,7 @@
       const elCoutTubTot = document.getElementById('out-cout-tubage-total');
       if (elCoutTubTot) elCoutTubTot.innerText = Math.round(res.coutTubage).toLocaleString('fr-FR') + ' €';
 
-      // Disponibilités Naturels Espagne & Maroc
+      // Disponibilités Naturels Espagne & Maroc & Portugal
       const elDispoNatA = document.getElementById('out-dispo-nat-a');
       if (elDispoNatA) elDispoNatA.innerText = Math.round(res.stockNatAFinLots + res.lotsVendusNatATotal).toLocaleString('fr-FR') + ' lots';
       const elDispoNatB = document.getElementById('out-dispo-nat-b');
@@ -2568,12 +2973,22 @@
       const elDispoNatMarocB = document.getElementById('out-dispo-nat-maroc-b');
       if (elDispoNatMarocB) elDispoNatMarocB.innerText = Math.round(res.stockNatMarocBFinLots + res.lotsVendusNatMarocBTotal).toLocaleString('fr-FR') + ' lots';
 
+      const elDispoNatPortA = document.getElementById('out-dispo-nat-portugal-a');
+      if (elDispoNatPortA) elDispoNatPortA.innerText = Math.round((res.stockNatPortugalAFinLots || 0) + (res.lotsVendusNatPortugalATotal || 0)).toLocaleString('fr-FR') + ' lots';
+      const elDispoNatPortB = document.getElementById('out-dispo-nat-portugal-b');
+      if (elDispoNatPortB) elDispoNatPortB.innerText = Math.round((res.stockNatPortugalBFinLots || 0) + (res.lotsVendusNatPortugalBTotal || 0)).toLocaleString('fr-FR') + ' lots';
+      const elDispoNatPortC = document.getElementById('out-dispo-nat-portugal-c');
+      if (elDispoNatPortC) elDispoNatPortC.innerText = Math.round((res.stockNatPortugalCFinLots || 0) + (res.lotsVendusNatPortugalCTotal || 0)).toLocaleString('fr-FR') + ' lots';
+
       const totalNatDispo = (res.stockNatAFinLots + res.lotsVendusNatATotal) + 
                             (res.stockNatBFinLots + res.lotsVendusNatBTotal) + 
                             (res.stockNatCFinLots + res.lotsVendusNatCTotal) +
                             (res.stockNatMarocAFinLots + res.lotsVendusNatMarocATotal) +
                             (res.stockNatMarocBFinLots + res.lotsVendusNatMarocBTotal) +
-                            (res.stockNatMarocCFinLots + res.lotsVendusNatMarocCTotal);
+                            (res.stockNatMarocCFinLots + res.lotsVendusNatMarocCTotal) +
+                            ((res.stockNatPortugalAFinLots || 0) + (res.lotsVendusNatPortugalATotal || 0)) +
+                            ((res.stockNatPortugalBFinLots || 0) + (res.lotsVendusNatPortugalBTotal || 0)) +
+                            ((res.stockNatPortugalCFinLots || 0) + (res.lotsVendusNatPortugalCTotal || 0));
       const elTotNatDispo = document.getElementById('out-total-nat-dispo');
       if (elTotNatDispo) elTotNatDispo.innerText = Math.round(totalNatDispo).toLocaleString('fr-FR');
 
@@ -2599,6 +3014,21 @@
       if (elSeuilMarocB && res.cmpNatMarocBLot) elSeuilMarocB.innerText = '> ' + res.cmpNatMarocBLot.toFixed(2) + ' €';
       const elSeuilMarocC = document.getElementById('lbl-seuil-nat-maroc-c');
       if (elSeuilMarocC && res.cmpNatMarocCLot) elSeuilMarocC.innerText = '> ' + res.cmpNatMarocCLot.toFixed(2) + ' €';
+
+      // Prix de revient direct Portugal
+      const elCmpPortA = document.getElementById('out-cmp-nat-portugal-a');
+      if (elCmpPortA && res.cmpNatPortugalALot) elCmpPortA.innerText = res.cmpNatPortugalALot.toFixed(2) + ' € / lot';
+      const elCmpPortB = document.getElementById('out-cmp-nat-portugal-b');
+      if (elCmpPortB && res.cmpNatPortugalBLot) elCmpPortB.innerText = res.cmpNatPortugalBLot.toFixed(2) + ' € / lot';
+      const elCmpPortC = document.getElementById('out-cmp-nat-portugal-c');
+      if (elCmpPortC && res.cmpNatPortugalCLot) elCmpPortC.innerText = res.cmpNatPortugalCLot.toFixed(2) + ' € / lot';
+
+      const elSeuilPortA = document.getElementById('lbl-seuil-nat-portugal-a');
+      if (elSeuilPortA && res.cmpNatPortugalALot) elSeuilPortA.innerText = '> ' + res.cmpNatPortugalALot.toFixed(2) + ' €';
+      const elSeuilPortB = document.getElementById('lbl-seuil-nat-portugal-b');
+      if (elSeuilPortB && res.cmpNatPortugalBLot) elSeuilPortB.innerText = '> ' + res.cmpNatPortugalBLot.toFixed(2) + ' €';
+      const elSeuilPortC = document.getElementById('lbl-seuil-nat-portugal-c');
+      if (elSeuilPortC && res.cmpNatPortugalCLot) elSeuilPortC.innerText = '> ' + res.cmpNatPortugalCLot.toFixed(2) + ' €';
 
       // Bannière contexte du mois
       const txtContexte = document.getElementById('txt-mois-contexte');
@@ -2640,8 +3070,15 @@
         const qMarocC = Number(v.lotsNatMarocC) || 0;
         const pMarocC = Number(v.prixNatMarocC) || 0;
 
-        const totLotsDeal = qAgglo + qA + qB + qC + qMarocA + qMarocB + qMarocC;
-        const totCaDeal = (qAgglo * pAgglo) + (qA * pA) + (qB * pB) + (qC * pC) + (qMarocA * pMarocA) + (qMarocB * pMarocB) + (qMarocC * pMarocC);
+        const qPortA = Number(v.lotsNatPortugalA) || 0;
+        const pPortA = Number(v.prixNatPortugalA) || 0;
+        const qPortB = Number(v.lotsNatPortugalB) || 0;
+        const pPortB = Number(v.prixNatPortugalB) || 0;
+        const qPortC = Number(v.lotsNatPortugalC) || 0;
+        const pPortC = Number(v.prixNatPortugalC) || 0;
+
+        const totLotsDeal = qAgglo + qA + qB + qC + qMarocA + qMarocB + qMarocC + qPortA + qPortB + qPortC;
+        const totCaDeal = (qAgglo * pAgglo) + (qA * pA) + (qB * pB) + (qC * pC) + (qMarocA * pMarocA) + (qMarocB * pMarocB) + (qMarocC * pMarocC) + (qPortA * pPortA) + (qPortB * pPortB) + (qPortC * pPortC);
 
         const bLots = document.getElementById(`badge-d${i}-deal-lots`);
         if (bLots) bLots.innerText = totLotsDeal.toLocaleString('fr-FR') + ' lots';
@@ -2965,9 +3402,14 @@
           tot: sumField(r => r.montantCommandeLiege) 
         },
         { 
-          label: 'Livraison reçue du fournisseur', u: 'kg', 
+          label: 'Livraison reçue du fournisseur (Total)', u: 'kg', 
           vals: months.map(m => resM[m].livraisonRecueKg), 
           tot: sumField(r => r.livraisonRecueKg) 
+        },
+        { 
+          label: 'Planches Portugal commandées', u: 'kg', 
+          vals: months.map(m => ((resM[m].commandePlanchesPortugalAKg || 0) + (resM[m].commandePlanchesPortugalBKg || 0) + (resM[m].commandePlanchesPortugalCKg || 0))), 
+          tot: sumField(r => ((r.commandePlanchesPortugalAKg || 0) + (r.commandePlanchesPortugalBKg || 0) + (r.commandePlanchesPortugalCKg || 0))) 
         },
 
         { section: '🏭 PRODUCTION & GESTION DES STOCKS' },
@@ -3013,8 +3455,8 @@
         },
         { 
           label: 'Stock final bouchons naturels (Total)', u: 'lots', 
-          vals: months.map(m => (resM[m].stockNatAFinLots + resM[m].stockNatBFinLots + resM[m].stockNatCFinLots + resM[m].stockNatMarocAFinLots + resM[m].stockNatMarocBFinLots + resM[m].stockNatMarocCFinLots)), 
-          tot: resM[maxM] ? (resM[maxM].stockNatAFinLots + resM[maxM].stockNatBFinLots + resM[maxM].stockNatCFinLots + resM[maxM].stockNatMarocAFinLots + resM[maxM].stockNatMarocBFinLots + resM[maxM].stockNatMarocCFinLots) : 0 
+          vals: months.map(m => (resM[m].stockNatAFinLots + resM[m].stockNatBFinLots + resM[m].stockNatCFinLots + resM[m].stockNatMarocAFinLots + resM[m].stockNatMarocBFinLots + resM[m].stockNatMarocCFinLots + (resM[m].stockNatPortugalAFinLots || 0) + (resM[m].stockNatPortugalBFinLots || 0) + (resM[m].stockNatPortugalCFinLots || 0))), 
+          tot: resM[maxM] ? (resM[maxM].stockNatAFinLots + resM[maxM].stockNatBFinLots + resM[maxM].stockNatCFinLots + resM[maxM].stockNatMarocAFinLots + resM[maxM].stockNatMarocBFinLots + resM[maxM].stockNatMarocCFinLots + (resM[maxM].stockNatPortugalAFinLots || 0) + (resM[maxM].stockNatPortugalBFinLots || 0) + (resM[maxM].stockNatPortugalCFinLots || 0)) : 0 
         },
 
         { section: '🤝 COMMERCIALISATION & VENTES' },
@@ -3037,6 +3479,11 @@
           label: '  • dont Bouchons Naturels Maroc (Enchères M5)', u: 'lots', 
           vals: months.map(m => (resM[m].lotsVendusNatMarocATotal + resM[m].lotsVendusNatMarocBTotal + resM[m].lotsVendusNatMarocCTotal)), 
           tot: sumField(r => (r.lotsVendusNatMarocATotal + r.lotsVendusNatMarocBTotal + r.lotsVendusNatMarocCTotal)) 
+        },
+        { 
+          label: '  • dont Bouchons Naturels Portugal', u: 'lots', 
+          vals: months.map(m => ((resM[m].lotsVendusNatPortugalATotal || 0) + (resM[m].lotsVendusNatPortugalBTotal || 0) + (resM[m].lotsVendusNatPortugalCTotal || 0))), 
+          tot: sumField(r => ((r.lotsVendusNatPortugalATotal || 0) + (r.lotsVendusNatPortugalBTotal || 0) + (r.lotsVendusNatPortugalCTotal || 0))) 
         },
         { 
           label: 'PRIX MOYEN PONDÉRÉ PAR LOT', u: '€/lot', highlightGold: true, 
@@ -3568,6 +4015,16 @@
       if (inpCmdPB) inpCmdPB.value = curData.commandePlanchesBKg || 0;
       if (inpCmdPC) inpCmdPC.value = curData.commandePlanchesCKg || 0;
 
+      // Approvisionnement Portugal (Liège & Planches A, B, C)
+      const inpCmdLiegePort = document.getElementById('inp-commande-liege-portugal');
+      const inpCmdPortA = document.getElementById('inp-commande-planche-portugal-a');
+      const inpCmdPortB = document.getElementById('inp-commande-planche-portugal-b');
+      const inpCmdPortC = document.getElementById('inp-commande-planche-portugal-c');
+      if (inpCmdLiegePort) inpCmdLiegePort.value = curData.commandeLiegePortugalKg || 0;
+      if (inpCmdPortA) inpCmdPortA.value = curData.commandePlanchesPortugalAKg || 0;
+      if (inpCmdPortB) inpCmdPortB.value = curData.commandePlanchesPortugalBKg || 0;
+      if (inpCmdPortC) inpCmdPortC.value = curData.commandePlanchesPortugalCKg || 0;
+
       document.getElementById('rng-broyage').value = broyageKg;
       document.getElementById('val-broyage-kg').innerText = broyageKg.toLocaleString('fr-FR') + ' kg';
       document.getElementById('rng-moulage').value = moulageKg;
@@ -3588,6 +4045,14 @@
       if (inpTubMarocA) inpTubMarocA.value = curData.planchesATuberMarocAKg !== undefined ? curData.planchesATuberMarocAKg : (m === 5 ? 5000 : 0);
       if (inpTubMarocB) inpTubMarocB.value = curData.planchesATuberMarocBKg !== undefined ? curData.planchesATuberMarocBKg : (m === 5 ? 5000 : 0);
       if (inpTubMarocC) inpTubMarocC.value = curData.planchesATuberMarocCKg !== undefined ? curData.planchesATuberMarocCKg : 0;
+
+      // Atelier Tubage (Planches Portugal A, B, C)
+      const inpTubPortA = document.getElementById('inp-tubage-portugal-a');
+      const inpTubPortB = document.getElementById('inp-tubage-portugal-b');
+      const inpTubPortC = document.getElementById('inp-tubage-portugal-c');
+      if (inpTubPortA) inpTubPortA.value = curData.planchesATuberPortugalAKg !== undefined ? curData.planchesATuberPortugalAKg : 0;
+      if (inpTubPortB) inpTubPortB.value = curData.planchesATuberPortugalBKg !== undefined ? curData.planchesATuberPortugalBKg : 0;
+      if (inpTubPortC) inpTubPortC.value = curData.planchesATuberPortugalCKg !== undefined ? curData.planchesATuberPortugalCKg : 0;
 
       // Bonus bouchons agglomérés (Mois 3)
       const inpBonus = document.getElementById('inp-bonus-bouchons');
@@ -3611,7 +4076,7 @@
       if (inpEnch2B) inpEnch2B.value = curData.encheresLot2PlanchesBKg !== undefined ? curData.encheresLot2PlanchesBKg : (m === 5 ? 30000 : 0);
       if (inpEnch2Prix) inpEnch2Prix.value = curData.encheresLot2Prix !== undefined ? curData.encheresLot2Prix : (m === 5 ? 30000 : 0);
 
-      // Ventes aux 4 Distributeurs (Agglomérés + Naturels Espagne & Maroc)
+      // Ventes aux 4 Distributeurs (Agglomérés + Naturels Espagne & Maroc & Portugal)
       for (let i = 1; i <= 4; i++) {
         const v = (curData.ventes && curData.ventes[i - 1]) ? curData.ventes[i - 1] : {};
         const inpLots = document.getElementById(`v-d${i}-lots`);
@@ -3629,6 +4094,13 @@
         const inpPrixMarocB = document.getElementById(`v-d${i}-prix-maroc-b`);
         const inpLotsMarocC = document.getElementById(`v-d${i}-lots-maroc-c`);
         const inpPrixMarocC = document.getElementById(`v-d${i}-prix-maroc-c`);
+
+        const inpLotsPortA = document.getElementById(`v-d${i}-lots-portugal-a`);
+        const inpPrixPortA = document.getElementById(`v-d${i}-prix-portugal-a`);
+        const inpLotsPortB = document.getElementById(`v-d${i}-lots-portugal-b`);
+        const inpPrixPortB = document.getElementById(`v-d${i}-prix-portugal-b`);
+        const inpLotsPortC = document.getElementById(`v-d${i}-lots-portugal-c`);
+        const inpPrixPortC = document.getElementById(`v-d${i}-prix-portugal-c`);
 
         const selDelai = document.getElementById(`v-d${i}-delai`);
         const selTrans = document.getElementById(`v-d${i}-transport`);
@@ -3649,6 +4121,13 @@
         if (inpLotsMarocC) inpLotsMarocC.value = v.lotsNatMarocC !== undefined ? v.lotsNatMarocC : 0;
         if (inpPrixMarocC) inpPrixMarocC.value = v.prixNatMarocC !== undefined ? v.prixNatMarocC : 65.0;
 
+        if (inpLotsPortA) inpLotsPortA.value = v.lotsNatPortugalA !== undefined ? v.lotsNatPortugalA : 0;
+        if (inpPrixPortA) inpPrixPortA.value = v.prixNatPortugalA !== undefined ? v.prixNatPortugalA : 55.0;
+        if (inpLotsPortB) inpLotsPortB.value = v.lotsNatPortugalB !== undefined ? v.lotsNatPortugalB : 0;
+        if (inpPrixPortB) inpPrixPortB.value = v.prixNatPortugalB !== undefined ? v.prixNatPortugalB : 60.0;
+        if (inpLotsPortC) inpLotsPortC.value = v.lotsNatPortugalC !== undefined ? v.lotsNatPortugalC : 0;
+        if (inpPrixPortC) inpPrixPortC.value = v.prixNatPortugalC !== undefined ? v.prixNatPortugalC : 65.0;
+
         if (selDelai) selDelai.value = v.delai !== undefined ? v.delai : (i === 3 ? 30 : 0);
         if (selTrans) selTrans.value = v.transport || (m >= 3 ? 'train' : 'camion');
       }
@@ -3663,7 +4142,7 @@
 
       // 1. Bilan Fabricant SuberTech
       const subNom = document.getElementById('out-suber-sim-nom-planche');
-      if (subNom) subNom.innerText = type.startsWith('Maroc') ? type : `Espagne ${type}`;
+      if (subNom) subNom.innerText = (type.startsWith('Maroc') || type.startsWith('Portugal')) ? type : `Espagne ${type}`;
 
       const elSubCout = document.getElementById('out-suber-sim-cout');
       if (elSubCout) elSubCout.innerText = info.coutDirectFabricant.toFixed(2) + ' € / lot';
@@ -3676,6 +4155,9 @@
       else if (type === 'Maroc A') pInit = 0.9185;
       else if (type === 'Maroc B') pInit = 1.1481;
       else if (type === 'Maroc C') pInit = 1.3778;
+      else if (type === 'Portugal A') pInit = 1.53;
+      else if (type === 'Portugal B') pInit = 1.95;
+      else if (type === 'Portugal C') pInit = 2.38;
       if (elSubDet) elSubDet.innerText = `10 planches @ ${pInit.toFixed(2)}€ + tubage 0,30€`;
 
       const elSubPrix = document.getElementById('out-suber-sim-prix');
@@ -3736,7 +4218,7 @@
       const elRep = document.getElementById('txt-dist-sim-repartition');
       const rep = info.repartition;
       if (elRep) {
-        const nomQualite = type.startsWith('Maroc') ? type : `Espagne ${type}`;
+        const nomQualite = (type.startsWith('Maroc') || type.startsWith('Portugal')) ? type : `Espagne ${type}`;
         elRep.innerHTML = `Répartition Trieuse (<strong>${nomQualite}</strong>) : <strong>${Math.round(rep.Q1 * 100)}% Q1</strong> (170€) • <strong>${Math.round(rep.Q2 * 100)}% Q2</strong> (145€) • <strong>${Math.round(rep.Q3 * 100)}% Q3</strong> (120€) • <strong>${Math.round(rep.Q4 * 100)}% Q4</strong> (95€).`;
       }
     }
@@ -3748,7 +4230,7 @@
       const info = calcMargeDistributeur(type, prix);
       const rep = info.repartition;
       const gainTotal = Math.round(info.margeBruteDistributeur * vol);
-      const nomPlanche = type.startsWith('Maroc') ? `Planches ${type}` : `Planches Espagne ${type}`;
+      const nomPlanche = (type.startsWith('Maroc') || type.startsWith('Portugal')) ? `Planches ${type}` : `Planches Espagne ${type}`;
 
       const pitch = 
 `Bonjour à l'équipe ! 🍷

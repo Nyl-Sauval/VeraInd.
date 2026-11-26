@@ -134,6 +134,47 @@ const PARAMS = {
     return 3.00; // Base (< 10 000 kg, min 5 000 € soit 1 667 kg)
   },
 
+  // Grilles de prix Portugal (Nouveau Producteur)
+  // Planches Portugal A : Base 1.80€ (min 4 000 kg), 8k: 1.75€, 10k: 1.69€, 12k: 1.64€, 14k: 1.58€, 16k: 1.53€
+  getPrixPlanchePortugalA: function(kg) {
+    if (kg >= 16000) return 1.53;
+    if (kg >= 14000) return 1.58;
+    if (kg >= 12000) return 1.64;
+    if (kg >= 10000) return 1.69;
+    if (kg >= 8000)  return 1.75;
+    return 1.80; // Base (< 8 000 kg, min 4 000 kg)
+  },
+
+  // Planches Portugal B : Base 2.30€ (min 4 000 kg), 8k: 2.23€, 10k: 2.16€, 12k: 2.09€, 14k: 2.02€, 16k: 1.95€
+  getPrixPlanchePortugalB: function(kg) {
+    if (kg >= 16000) return 1.95;
+    if (kg >= 14000) return 2.02;
+    if (kg >= 12000) return 2.09;
+    if (kg >= 10000) return 2.16;
+    if (kg >= 8000)  return 2.23;
+    return 2.30; // Base (< 8 000 kg, min 4 000 kg)
+  },
+
+  // Planches Portugal C : Base 2.80€ (min 4 000 kg), 8k: 2.72€, 10k: 2.63€, 12k: 2.55€, 14k: 2.46€, 16k: 2.38€
+  getPrixPlanchePortugalC: function(kg) {
+    if (kg >= 16000) return 2.38;
+    if (kg >= 14000) return 2.46;
+    if (kg >= 12000) return 2.55;
+    if (kg >= 10000) return 2.63;
+    if (kg >= 8000)  return 2.72;
+    return 2.80; // Base (< 8 000 kg, min 4 000 kg)
+  },
+
+  // Portugal Liège à broyer : Base 0.50€ (min 50 000 kg), 100k: 0.49€, 110k: 0.47€, 120k: 0.46€, 130k: 0.44€, 140k: 0.43€
+  getPrixLiegePortugal: function(kg) {
+    if (kg >= 140000) return 0.43;
+    if (kg >= 130000) return 0.44;
+    if (kg >= 120000) return 0.46;
+    if (kg >= 110000) return 0.47;
+    if (kg >= 100000) return 0.49;
+    return 0.50; // Base (< 100 000 kg, min 50 000 kg)
+  },
+
   // Modes de transport disponibles
   transports: {
     camion: { id: 'camion', nom: 'Camion', capacite: 1980, cout: 1721, rse: 'Plutôt polluant', icone: 'fa-truck' },
@@ -152,106 +193,104 @@ const PARAMS = {
 
 // Modèle par défaut pour un mois
 function getDefaultMonthData(m) {
+  function makeVente(client, lots, prix, delai, transport, extra = {}) {
+    return {
+      client,
+      lots,
+      prix,
+      lotsNatA: extra.lotsNatA || 0,
+      prixNatA: extra.prixNatA || 55,
+      lotsNatB: extra.lotsNatB || 0,
+      prixNatB: extra.prixNatB || 60,
+      lotsNatC: extra.lotsNatC || 0,
+      prixNatC: extra.prixNatC || 65,
+      lotsNatMarocA: extra.lotsNatMarocA || 0,
+      prixNatMarocA: extra.prixNatMarocA || 55,
+      lotsNatMarocB: extra.lotsNatMarocB || 0,
+      prixNatMarocB: extra.prixNatMarocB || 60,
+      lotsNatMarocC: extra.lotsNatMarocC || 0,
+      prixNatMarocC: extra.prixNatMarocC || 65,
+      lotsNatPortugalA: extra.lotsNatPortugalA || 0,
+      prixNatPortugalA: extra.prixNatPortugalA || 55,
+      lotsNatPortugalB: extra.lotsNatPortugalB || 0,
+      prixNatPortugalB: extra.prixNatPortugalB || 60,
+      lotsNatPortugalC: extra.lotsNatPortugalC || 0,
+      prixNatPortugalC: extra.prixNatPortugalC || 65,
+      delai,
+      transport
+    };
+  }
+
+  const baseData = {
+    commandeLiegeKg: 150000,
+    reductionFournisseurPct: 0,
+    commandePlanchesAKg: 0,
+    commandePlanchesBKg: 0,
+    commandePlanchesCKg: 0,
+    commandeLiegePortugalKg: 0,
+    commandePlanchesPortugalAKg: 0,
+    commandePlanchesPortugalBKg: 0,
+    commandePlanchesPortugalCKg: 0,
+    liegeABroyerKg: 150000,
+    grainsAMoulerKg: 45000,
+    planchesATuberAKg: 0,
+    planchesATuberBKg: 0,
+    planchesATuberCKg: 0,
+    planchesATuberMarocAKg: 0,
+    planchesATuberMarocBKg: 0,
+    planchesATuberMarocCKg: 0,
+    planchesATuberPortugalAKg: 0,
+    planchesATuberPortugalBKg: 0,
+    planchesATuberPortugalCKg: 0,
+    bonusBouchonsLots: 0,
+    tresoDebutForce: null,
+    encheresPlanchesAKg: 0,
+    encheresPlanchesBKg: 0,
+    encheresPlanchesCKg: 0,
+    encheresPrixTotal: 0
+  };
+
   if (m === 1) {
     return {
-      commandeLiegeKg: 150000,
-      reductionFournisseurPct: 0,
-      commandePlanchesAKg: 0,
-      commandePlanchesBKg: 0,
-      commandePlanchesCKg: 0,
-      liegeABroyerKg: 110000, // Stock initial usine (<= 155 000 kg limite moulins)
-      grainsAMoulerKg: 45000, // Plafonné à la capacité machine des mouleuses (45 000 kg max)
-      planchesATuberAKg: 0,
-      planchesATuberBKg: 0,
-      planchesATuberCKg: 0,
-      planchesATuberMarocAKg: 0,
-      planchesATuberMarocBKg: 0,
-      planchesATuberMarocCKg: 0,
+      ...baseData,
+      liegeABroyerKg: 110000,
       ventes: [
-        { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'camion' },
-        { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'camion' },
-        { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 30, transport: 'train' },
-        { client: 'Équipe Distributeur 4', lots: 1500, prix: 21.0, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'camion' }
-      ],
-      bonusBouchonsLots: 0,
-      tresoDebutForce: null,
-      encheresPlanchesAKg: 0,
-      encheresPlanchesBKg: 0,
-      encheresPlanchesCKg: 0,
-      encheresPrixTotal: 0
+        makeVente('Équipe Distributeur 1', 3000, 21.5, 0, 'camion'),
+        makeVente('Équipe Distributeur 2', 3000, 21.5, 0, 'camion'),
+        makeVente('Équipe Distributeur 3', 2500, 21.0, 30, 'train'),
+        makeVente('Équipe Distributeur 4', 1500, 21.0, 0, 'camion')
+      ]
     };
   }
   if (m === 2) {
     return {
-      commandeLiegeKg: 150000,
-      reductionFournisseurPct: 0,
-      commandePlanchesAKg: 0,
-      commandePlanchesBKg: 0,
-      commandePlanchesCKg: 0,
-      liegeABroyerKg: 150000, // <= 155 000 kg max moulins
-      grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses
-      planchesATuberAKg: 0,
-      planchesATuberBKg: 0,
-      planchesATuberCKg: 0,
-      planchesATuberMarocAKg: 0,
-      planchesATuberMarocBKg: 0,
-      planchesATuberMarocCKg: 0,
-      bonusBouchonsLots: 0,
-      tresoDebutForce: null,
-      encheresPlanchesAKg: 0,
-      encheresPlanchesBKg: 0,
-      encheresPlanchesCKg: 0,
-      encheresPrixTotal: 0,
+      ...baseData,
       ventes: [
-        { client: 'Équipe Distributeur 1', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'camion' },
-        { client: 'Équipe Distributeur 2', lots: 3000, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'camion' },
-        { client: 'Équipe Distributeur 3', lots: 2500, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 4', lots: 2500, prix: 21.5, lotsNatA: 0, prixNatA: 55, lotsNatB: 0, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'camion' }
+        makeVente('Équipe Distributeur 1', 3000, 21.5, 0, 'camion'),
+        makeVente('Équipe Distributeur 2', 3000, 21.5, 0, 'camion'),
+        makeVente('Équipe Distributeur 3', 2500, 21.5, 0, 'train'),
+        makeVente('Équipe Distributeur 4', 2500, 21.5, 0, 'camion')
       ]
     };
   }
   if (m === 3) {
-    // En Mois 3 : 9 000 lots produits + 2 000 lots bonus gagnés = 11 000 lots d'agglomérés disponibles
-    // + 3 000 lots de bouchons naturels (1 000 A + 1 000 B + 1 000 C)
     return {
-      commandeLiegeKg: 150000,
-      reductionFournisseurPct: 0,
-      commandePlanchesAKg: 0,
-      commandePlanchesBKg: 0,
-      commandePlanchesCKg: 0,
-      liegeABroyerKg: 150000, // <= 155 000 kg max moulins
-      grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
-      planchesATuberAKg: 10000, // 1 000 lots A
-      planchesATuberBKg: 10000, // 1 000 lots B
-      planchesATuberCKg: 10000, // 1 000 lots C
-      planchesATuberMarocAKg: 0,
-      planchesATuberMarocBKg: 0,
-      planchesATuberMarocCKg: 0,
-      bonusBouchonsLots: 2000, // 2 000 bouchons agglomérés gagnés entre Fév et Mars
-      tresoDebutForce: null,
-      encheresPlanchesAKg: 0,
-      encheresPlanchesBKg: 0,
-      encheresPlanchesCKg: 0,
-      encheresPrixTotal: 0,
+      ...baseData,
+      planchesATuberAKg: 10000,
+      planchesATuberBKg: 10000,
+      planchesATuberCKg: 10000,
+      bonusBouchonsLots: 2000,
       ventes: [
-        { client: 'Équipe Distributeur 1', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 2', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 3', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 4', lots: 2750, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' }
+        makeVente('Équipe Distributeur 1', 2750, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 }),
+        makeVente('Équipe Distributeur 2', 2750, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 }),
+        makeVente('Équipe Distributeur 3', 2750, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 }),
+        makeVente('Équipe Distributeur 4', 2750, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 })
       ]
     };
   }
   if (m === 5) {
-    // En Mai (Mois 5) : 2 Enchères remportées
-    // Lot 1 : 15 000 Maroc A + 15 000 Maroc B pour 31 000 €
-    // Lot 2 : 30 000 Maroc B + 10 000 Espagne A pour 30 000 €
-    // Total payé comptant : 61 000 €
     return {
-      commandeLiegeKg: 150000,
-      reductionFournisseurPct: 0,
-      commandePlanchesAKg: 0,
-      commandePlanchesBKg: 0,
-      commandePlanchesCKg: 0,
+      ...baseData,
       encheresLot1PlanchesAKg: 15000,
       encheresLot1PlanchesBKg: 15000,
       encheresLot1Prix: 31000,
@@ -263,50 +302,30 @@ function getDefaultMonthData(m) {
       encheresPlanchesCKg: 0,
       encheresPlanchesEspagneAKg: 10000,
       encheresPrixTotal: 61000,
-      liegeABroyerKg: 150000, // <= 155 000 kg max moulins
-      grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
-      planchesATuberAKg: 10000, // 1 000 lots Espagne A
-      planchesATuberBKg: 2000,  // 200 lots Espagne B
-      planchesATuberCKg: 0,     // Planches Espagne C épuisées
-      planchesATuberMarocAKg: 5000, // 500 lots Maroc A tubés
-      planchesATuberMarocBKg: 5000, // 500 lots Maroc B tubés
+      planchesATuberAKg: 10000,
+      planchesATuberBKg: 2000,
+      planchesATuberCKg: 0,
+      planchesATuberMarocAKg: 5000,
+      planchesATuberMarocBKg: 5000,
       planchesATuberMarocCKg: 0,
-      bonusBouchonsLots: 0,
-      tresoDebutForce: null,
       ventes: [
-        { client: 'Équipe Distributeur 1', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 50, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 125, prixNatMarocA: 55, lotsNatMarocB: 125, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 2', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 50, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 125, prixNatMarocA: 55, lotsNatMarocB: 125, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 3', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 50, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 125, prixNatMarocA: 55, lotsNatMarocB: 125, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-        { client: 'Équipe Distributeur 4', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 50, prixNatB: 60, lotsNatC: 0, prixNatC: 65, lotsNatMarocA: 125, prixNatMarocA: 55, lotsNatMarocB: 125, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' }
+        makeVente('Équipe Distributeur 1', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 50, lotsNatMarocA: 125, lotsNatMarocB: 125 }),
+        makeVente('Équipe Distributeur 2', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 50, lotsNatMarocA: 125, lotsNatMarocB: 125 }),
+        makeVente('Équipe Distributeur 3', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 50, lotsNatMarocA: 125, lotsNatMarocB: 125 }),
+        makeVente('Équipe Distributeur 4', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 50, lotsNatMarocA: 125, lotsNatMarocB: 125 })
       ]
     };
   }
-  // Par défaut pour M4, M6, M7, M8 : Mix de production optimal Agglomérés (9k) + Bouchons Naturels
   return {
-    commandeLiegeKg: 150000,
-    reductionFournisseurPct: 0,
-    commandePlanchesAKg: 0,
-    commandePlanchesBKg: 0,
-    commandePlanchesCKg: 0,
-    encheresPlanchesAKg: 0,
-    encheresPlanchesBKg: 0,
-    encheresPlanchesCKg: 0,
-    encheresPrixTotal: 0,
-    liegeABroyerKg: 150000, // <= 155 000 kg max moulins
-    grainsAMoulerKg: 45000, // <= 45 000 kg max mouleuses (9 000 lots)
-    planchesATuberAKg: 10000, // 1 000 lots A
-    planchesATuberBKg: 10000, // 1 000 lots B
-    planchesATuberCKg: 10000, // 1 000 lots C
-    planchesATuberMarocAKg: 0,
-    planchesATuberMarocBKg: 0,
-    planchesATuberMarocCKg: 0,
-    bonusBouchonsLots: 0,
-    tresoDebutForce: null,
+    ...baseData,
+    planchesATuberAKg: 10000,
+    planchesATuberBKg: 10000,
+    planchesATuberCKg: 10000,
     ventes: [
-      { client: 'Équipe Distributeur 1', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-      { client: 'Équipe Distributeur 2', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-      { client: 'Équipe Distributeur 3', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' },
-      { client: 'Équipe Distributeur 4', lots: 2250, prix: 21.5, lotsNatA: 250, prixNatA: 55, lotsNatB: 250, prixNatB: 60, lotsNatC: 250, prixNatC: 65, lotsNatMarocA: 0, prixNatMarocA: 55, lotsNatMarocB: 0, prixNatMarocB: 60, lotsNatMarocC: 0, prixNatMarocC: 65, delai: 0, transport: 'train' }
+      makeVente('Équipe Distributeur 1', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 }),
+      makeVente('Équipe Distributeur 2', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 }),
+      makeVente('Équipe Distributeur 3', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 }),
+      makeVente('Équipe Distributeur 4', 2250, 21.5, 0, 'train', { lotsNatA: 250, lotsNatB: 250, lotsNatC: 250 })
     ]
   };
 }
@@ -420,9 +439,16 @@ function migrateState(parsed) {
         if (appState.moisData[m].grainsAMoulerKg > PARAMS.capaciteMouleusesKg) {
           appState.moisData[m].grainsAMoulerKg = PARAMS.capaciteMouleusesKg;
         }
+        if (appState.moisData[m].commandeLiegePortugalKg === undefined) appState.moisData[m].commandeLiegePortugalKg = 0;
+        if (appState.moisData[m].commandePlanchesPortugalAKg === undefined) appState.moisData[m].commandePlanchesPortugalAKg = 0;
+        if (appState.moisData[m].commandePlanchesPortugalBKg === undefined) appState.moisData[m].commandePlanchesPortugalBKg = 0;
+        if (appState.moisData[m].commandePlanchesPortugalCKg === undefined) appState.moisData[m].commandePlanchesPortugalCKg = 0;
         if (appState.moisData[m].planchesATuberMarocAKg === undefined) appState.moisData[m].planchesATuberMarocAKg = 0;
         if (appState.moisData[m].planchesATuberMarocBKg === undefined) appState.moisData[m].planchesATuberMarocBKg = 0;
         if (appState.moisData[m].planchesATuberMarocCKg === undefined) appState.moisData[m].planchesATuberMarocCKg = 0;
+        if (appState.moisData[m].planchesATuberPortugalAKg === undefined) appState.moisData[m].planchesATuberPortugalAKg = 0;
+        if (appState.moisData[m].planchesATuberPortugalBKg === undefined) appState.moisData[m].planchesATuberPortugalBKg = 0;
+        if (appState.moisData[m].planchesATuberPortugalCKg === undefined) appState.moisData[m].planchesATuberPortugalCKg = 0;
         if (appState.moisData[m].ventes) {
           appState.moisData[m].ventes.forEach(v => {
             if (v.lotsNatMarocA === undefined) v.lotsNatMarocA = 0;
@@ -431,6 +457,12 @@ function migrateState(parsed) {
             if (v.prixNatMarocB === undefined) v.prixNatMarocB = 60.0;
             if (v.lotsNatMarocC === undefined) v.lotsNatMarocC = 0;
             if (v.prixNatMarocC === undefined) v.prixNatMarocC = 65.0;
+            if (v.lotsNatPortugalA === undefined) v.lotsNatPortugalA = 0;
+            if (v.prixNatPortugalA === undefined) v.prixNatPortugalA = 55.0;
+            if (v.lotsNatPortugalB === undefined) v.lotsNatPortugalB = 0;
+            if (v.prixNatPortugalB === undefined) v.prixNatPortugalB = 60.0;
+            if (v.lotsNatPortugalC === undefined) v.lotsNatPortugalC = 0;
+            if (v.prixNatPortugalC === undefined) v.prixNatPortugalC = 65.0;
           });
         }
       }
@@ -487,7 +519,7 @@ function simulateAllMonths(state) {
     // 1. Commande au producteur espagnol (Liège brut)
     const commandeLiegeKg = Number(monthData.commandeLiegeKg) || 0;
     const prixLiegeKg = PARAMS.getPrixLiege(commandeLiegeKg);
-    const montantCommandeLiegeBrut = commandeLiegeKg * prixLiegeKg;
+    const montantCommandeLiegeEspagneBrut = commandeLiegeKg * prixLiegeKg;
 
     // 1 bis. Commandes de planches Espagne A, B, C (dès M3)
     const commandePlanchesAKg = (m >= 3) ? (Number(monthData.commandePlanchesAKg) || 0) : 0;
@@ -501,7 +533,28 @@ function simulateAllMonths(state) {
     const montantCommandePlancheABrut = commandePlanchesAKg * prixPlancheAKg;
     const montantCommandePlancheBBrut = commandePlanchesBKg * prixPlancheBKg;
     const montantCommandePlancheCBrut = commandePlanchesCKg * prixPlancheCKg;
-    const montantCommandePlanchesBrut = montantCommandePlancheABrut + montantCommandePlancheBBrut + montantCommandePlancheCBrut;
+    const montantCommandePlanchesEspagneBrut = montantCommandePlancheABrut + montantCommandePlancheBBrut + montantCommandePlancheCBrut;
+
+    // 1 ter. Commandes au Producteur Portugais (Liège à broyer & Planches Portugal A, B, C)
+    const commandeLiegePortugalKg = Number(monthData.commandeLiegePortugalKg) || 0;
+    const prixLiegePortugalKg = PARAMS.getPrixLiegePortugal(commandeLiegePortugalKg);
+    const montantCommandeLiegePortugalBrut = commandeLiegePortugalKg * prixLiegePortugalKg;
+
+    const commandePlanchesPortugalAKg = Number(monthData.commandePlanchesPortugalAKg) || 0;
+    const commandePlanchesPortugalBKg = Number(monthData.commandePlanchesPortugalBKg) || 0;
+    const commandePlanchesPortugalCKg = Number(monthData.commandePlanchesPortugalCKg) || 0;
+
+    const prixPlanchePortugalAKg = PARAMS.getPrixPlanchePortugalA(commandePlanchesPortugalAKg);
+    const prixPlanchePortugalBKg = PARAMS.getPrixPlanchePortugalB(commandePlanchesPortugalBKg);
+    const prixPlanchePortugalCKg = PARAMS.getPrixPlanchePortugalC(commandePlanchesPortugalCKg);
+
+    const montantCommandePlanchePortugalABrut = commandePlanchesPortugalAKg * prixPlanchePortugalAKg;
+    const montantCommandePlanchePortugalBBrut = commandePlanchesPortugalBKg * prixPlanchePortugalBKg;
+    const montantCommandePlanchePortugalCBrut = commandePlanchesPortugalCKg * prixPlanchePortugalCKg;
+    const montantCommandePlanchesPortugalBrut = montantCommandePlanchePortugalABrut + montantCommandePlanchePortugalBBrut + montantCommandePlanchePortugalCBrut;
+
+    const montantCommandeLiegeBrut = montantCommandeLiegeEspagneBrut + montantCommandeLiegePortugalBrut;
+    const montantCommandePlanchesBrut = montantCommandePlanchesEspagneBrut + montantCommandePlanchesPortugalBrut;
     const montantCommandeFournisseurBrut = montantCommandeLiegeBrut + montantCommandePlanchesBrut;
 
     // Réduction globale négociée sur le total de la commande fournisseur (%)
@@ -509,16 +562,25 @@ function simulateAllMonths(state) {
     const remiseFournisseurFacteur = Math.max(0, 1 - (reductionFournisseurPct / 100));
 
     const montantCommandeLiege = montantCommandeLiegeBrut * remiseFournisseurFacteur;
+    const montantCommandeLiegeEspagne = montantCommandeLiegeEspagneBrut * remiseFournisseurFacteur;
+    const montantCommandeLiegePortugal = montantCommandeLiegePortugalBrut * remiseFournisseurFacteur;
+
     const montantCommandePlancheA = montantCommandePlancheABrut * remiseFournisseurFacteur;
     const montantCommandePlancheB = montantCommandePlancheBBrut * remiseFournisseurFacteur;
     const montantCommandePlancheC = montantCommandePlancheCBrut * remiseFournisseurFacteur;
-    const montantCommandePlanchesTotal = montantCommandePlancheA + montantCommandePlancheB + montantCommandePlancheC;
-    const montantCommandeFournisseurTotal = montantCommandeLiege + montantCommandePlanchesTotal;
+    const montantCommandePlanchesTotal = (montantCommandePlancheABrut + montantCommandePlancheBBrut + montantCommandePlancheCBrut) * remiseFournisseurFacteur;
+
+    const montantCommandePlanchePortugalA = montantCommandePlanchePortugalABrut * remiseFournisseurFacteur;
+    const montantCommandePlanchePortugalB = montantCommandePlanchePortugalBBrut * remiseFournisseurFacteur;
+    const montantCommandePlanchePortugalC = montantCommandePlanchePortugalCBrut * remiseFournisseurFacteur;
+    const montantCommandePlanchesPortugalTotal = montantCommandePlanchesPortugalBrut * remiseFournisseurFacteur;
+
+    const montantCommandeFournisseurTotal = montantCommandeLiege + montantCommandePlanchesTotal + montantCommandePlanchesPortugalTotal;
     const montantEconomieRemiseFournisseur = montantCommandeFournisseurBrut - montantCommandeFournisseurTotal;
 
     // 2. Stocks entrants au début du mois
-    // A. Liège brut
-    const livraisonRecueKg = isM1 ? 0 : (prevResult.commandeLiegeKg || 0);
+    // A. Liège brut (Espagne + Portugal)
+    const livraisonRecueKg = isM1 ? 0 : ((prevResult.commandeLiegeKg || 0) + (prevResult.commandeLiegePortugalKg || 0));
     const livraisonRecueVal = isM1 ? 0 : (prevResult.montantCommandeLiege || 0);
 
     let stockLiegeEntrantKg = isM1 ? PARAMS.stockInitLiegeKg : (prevResult.stockLiegeFinKg + livraisonRecueKg);
@@ -663,7 +725,7 @@ function simulateAllMonths(state) {
     const cmpPlancheMarocBKg = stockPlanchesMarocBEntrantKg > 0 ? (valStockPlanchesMarocBEntrant / stockPlanchesMarocBEntrantKg) : (valEncheresB > 0 ? valEncheresB / (encheresPlanchesBKg || 1) : 0.9090);
     const cmpPlancheMarocCKg = stockPlanchesMarocCEntrantKg > 0 ? (valStockPlanchesMarocCEntrant / stockPlanchesMarocCEntrantKg) : (valEncheresC > 0 ? valEncheresC / (encheresPlanchesCKg || 1) : 1.3778);
 
-    // E. Bouchons naturels tubés en stock (Espagne & Maroc)
+    // E. Bouchons naturels tubés en stock (Espagne, Maroc & Portugal)
     let stockNatAEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatAFinLots || 0) : 0;
     let stockNatBEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatBFinLots || 0) : 0;
     let stockNatCEntrantLots = (m > 3 && prevResult) ? (prevResult.stockNatCFinLots || 0) : 0;
@@ -671,6 +733,40 @@ function simulateAllMonths(state) {
     let stockNatMarocAEntrantLots = (m > 4 && prevResult) ? (prevResult.stockNatMarocAFinLots || 0) : 0;
     let stockNatMarocBEntrantLots = (m > 4 && prevResult) ? (prevResult.stockNatMarocBFinLots || 0) : 0;
     let stockNatMarocCEntrantLots = (m > 4 && prevResult) ? (prevResult.stockNatMarocCFinLots || 0) : 0;
+
+    // F. Planches & Bouchons Portugal (Livraison M+1 suite à commande M)
+    let livraisonPlanchesPortugalAKg = 0;
+    let livraisonPlanchesPortugalAVal = 0;
+    let livraisonPlanchesPortugalBKg = 0;
+    let livraisonPlanchesPortugalBVal = 0;
+    let livraisonPlanchesPortugalCKg = 0;
+    let livraisonPlanchesPortugalCVal = 0;
+
+    if (!isM1 && prevResult) {
+      livraisonPlanchesPortugalAKg = prevResult.commandePlanchesPortugalAKg || 0;
+      livraisonPlanchesPortugalAVal = prevResult.montantCommandePlanchePortugalA || 0;
+      livraisonPlanchesPortugalBKg = prevResult.commandePlanchesPortugalBKg || 0;
+      livraisonPlanchesPortugalBVal = prevResult.montantCommandePlanchePortugalB || 0;
+      livraisonPlanchesPortugalCKg = prevResult.commandePlanchesPortugalCKg || 0;
+      livraisonPlanchesPortugalCVal = prevResult.montantCommandePlanchePortugalC || 0;
+    }
+
+    const stockPlanchesPortugalAEntrantKg = (prevResult ? (prevResult.stockPlanchesPortugalAFinKg || 0) : 0) + livraisonPlanchesPortugalAKg;
+    const valStockPlanchesPortugalAEntrant = (prevResult ? (prevResult.valStockPlanchesPortugalAFin || 0) : 0) + livraisonPlanchesPortugalAVal;
+
+    const stockPlanchesPortugalBEntrantKg = (prevResult ? (prevResult.stockPlanchesPortugalBFinKg || 0) : 0) + livraisonPlanchesPortugalBKg;
+    const valStockPlanchesPortugalBEntrant = (prevResult ? (prevResult.valStockPlanchesPortugalBFin || 0) : 0) + livraisonPlanchesPortugalBVal;
+
+    const stockPlanchesPortugalCEntrantKg = (prevResult ? (prevResult.stockPlanchesPortugalCFinKg || 0) : 0) + livraisonPlanchesPortugalCKg;
+    const valStockPlanchesPortugalCEntrant = (prevResult ? (prevResult.valStockPlanchesPortugalCFin || 0) : 0) + livraisonPlanchesPortugalCVal;
+
+    const cmpPlanchePortugalAKg = stockPlanchesPortugalAEntrantKg > 0 ? (valStockPlanchesPortugalAEntrant / stockPlanchesPortugalAEntrantKg) : 1.53;
+    const cmpPlanchePortugalBKg = stockPlanchesPortugalBEntrantKg > 0 ? (valStockPlanchesPortugalBEntrant / stockPlanchesPortugalBEntrantKg) : 1.95;
+    const cmpPlanchePortugalCKg = stockPlanchesPortugalCEntrantKg > 0 ? (valStockPlanchesPortugalCEntrant / stockPlanchesPortugalCEntrantKg) : 2.38;
+
+    let stockNatPortugalAEntrantLots = (!isM1 && prevResult) ? (prevResult.stockNatPortugalAFinLots || 0) : 0;
+    let stockNatPortugalBEntrantLots = (!isM1 && prevResult) ? (prevResult.stockNatPortugalBFinLots || 0) : 0;
+    let stockNatPortugalCEntrantLots = (!isM1 && prevResult) ? (prevResult.stockNatPortugalCFinLots || 0) : 0;
 
     // 3. Procédé de Tubage (Bouchons Naturels) - Dès M3
     const maxTubageMachine = PARAMS.capaciteTubeusesPlanches; // 75 000 planches / mois
@@ -682,6 +778,10 @@ function simulateAllMonths(state) {
     const planchesDemandeMarocB = (m >= 5) ? (Number(monthData.planchesATuberMarocBKg) || 0) : 0;
     const planchesDemandeMarocC = (m >= 5) ? (Number(monthData.planchesATuberMarocCKg) || 0) : 0;
 
+    const planchesDemandePortugalA = Number(monthData.planchesATuberPortugalAKg) || 0;
+    const planchesDemandePortugalB = Number(monthData.planchesATuberPortugalBKg) || 0;
+    const planchesDemandePortugalC = Number(monthData.planchesATuberPortugalCKg) || 0;
+
     const planchesATuberAKg = Math.min(stockPlanchesAEntrantKg, Math.max(0, planchesDemandeA));
     const planchesATuberBKg = Math.min(stockPlanchesBEntrantKg, Math.max(0, planchesDemandeB));
     const planchesATuberCKg = Math.min(stockPlanchesCEntrantKg, Math.max(0, planchesDemandeC));
@@ -690,8 +790,13 @@ function simulateAllMonths(state) {
     const planchesATuberMarocBKg = Math.min(stockPlanchesMarocBEntrantKg, Math.max(0, planchesDemandeMarocB));
     const planchesATuberMarocCKg = Math.min(stockPlanchesMarocCEntrantKg, Math.max(0, planchesDemandeMarocC));
 
+    const planchesATuberPortugalAKg = Math.min(stockPlanchesPortugalAEntrantKg, Math.max(0, planchesDemandePortugalA));
+    const planchesATuberPortugalBKg = Math.min(stockPlanchesPortugalBEntrantKg, Math.max(0, planchesDemandePortugalB));
+    const planchesATuberPortugalCKg = Math.min(stockPlanchesPortugalCEntrantKg, Math.max(0, planchesDemandePortugalC));
+
     const totalPlanchesTubees = planchesATuberAKg + planchesATuberBKg + planchesATuberCKg +
-                                planchesATuberMarocAKg + planchesATuberMarocBKg + planchesATuberMarocCKg;
+                                planchesATuberMarocAKg + planchesATuberMarocBKg + planchesATuberMarocCKg +
+                                planchesATuberPortugalAKg + planchesATuberPortugalBKg + planchesATuberPortugalCKg;
 
     const alerteDepassementTubeuse = totalPlanchesTubees > maxTubageMachine;
     const coutTubage = totalPlanchesTubees * PARAMS.coutTubagePlanche; // 0,03 € / planche
@@ -705,8 +810,13 @@ function simulateAllMonths(state) {
     const bouchonsNatMarocBProduitsLots = Math.floor(planchesATuberMarocBKg / PARAMS.ratioPlanchesParLot);
     const bouchonsNatMarocCProduitsLots = Math.floor(planchesATuberMarocCKg / PARAMS.ratioPlanchesParLot);
 
+    const bouchonsNatPortugalAProduitsLots = Math.floor(planchesATuberPortugalAKg / PARAMS.ratioPlanchesParLot);
+    const bouchonsNatPortugalBProduitsLots = Math.floor(planchesATuberPortugalBKg / PARAMS.ratioPlanchesParLot);
+    const bouchonsNatPortugalCProduitsLots = Math.floor(planchesATuberPortugalCKg / PARAMS.ratioPlanchesParLot);
+
     const totalBouchonsNatProduitsLots = bouchonsNatAProduitsLots + bouchonsNatBProduitsLots + bouchonsNatCProduitsLots +
-                                         bouchonsNatMarocAProduitsLots + bouchonsNatMarocBProduitsLots + bouchonsNatMarocCProduitsLots;
+                                         bouchonsNatMarocAProduitsLots + bouchonsNatMarocBProduitsLots + bouchonsNatMarocCProduitsLots +
+                                         bouchonsNatPortugalAProduitsLots + bouchonsNatPortugalBProduitsLots + bouchonsNatPortugalCProduitsLots;
 
     // Liège à broyer généré par le tubage (rebuts réinjectés pour le moulin)
     const liegeRecupereTubageKg = totalPlanchesTubees * PARAMS.rendementLiegeABroyerTubage; // 5 kg / lot
@@ -723,6 +833,10 @@ function simulateAllMonths(state) {
     const cmpNatMarocBLot = (PARAMS.ratioPlanchesParLot * cmpPlancheMarocBKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
     const cmpNatMarocCLot = (PARAMS.ratioPlanchesParLot * cmpPlancheMarocCKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
 
+    const cmpNatPortugalALot = (PARAMS.ratioPlanchesParLot * cmpPlanchePortugalAKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    const cmpNatPortugalBLot = (PARAMS.ratioPlanchesParLot * cmpPlanchePortugalBKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+    const cmpNatPortugalCLot = (PARAMS.ratioPlanchesParLot * cmpPlanchePortugalCKg) + (PARAMS.ratioPlanchesParLot * PARAMS.coutTubagePlanche);
+
     const totalNatADispoLots = stockNatAEntrantLots + bouchonsNatAProduitsLots;
     const totalNatBDispoLots = stockNatBEntrantLots + bouchonsNatBProduitsLots;
     const totalNatCDispoLots = stockNatCEntrantLots + bouchonsNatCProduitsLots;
@@ -730,6 +844,10 @@ function simulateAllMonths(state) {
     const totalNatMarocADispoLots = stockNatMarocAEntrantLots + bouchonsNatMarocAProduitsLots;
     const totalNatMarocBDispoLots = stockNatMarocBEntrantLots + bouchonsNatMarocBProduitsLots;
     const totalNatMarocCDispoLots = stockNatMarocCEntrantLots + bouchonsNatMarocCProduitsLots;
+
+    const totalNatPortugalADispoLots = stockNatPortugalAEntrantLots + bouchonsNatPortugalAProduitsLots;
+    const totalNatPortugalBDispoLots = stockNatPortugalBEntrantLots + bouchonsNatPortugalBProduitsLots;
+    const totalNatPortugalCDispoLots = stockNatPortugalCEntrantLots + bouchonsNatPortugalCProduitsLots;
 
     // 4. Transformation & Production classique (Broyage & Moulage Agglomérés)
     const maxBroyageMachine = PARAMS.capaciteMoulinsKg; // 155 000 kg / mois
@@ -760,7 +878,7 @@ function simulateAllMonths(state) {
     const totalValBouchonsDispo = valStockBouchonsEntrant + valBouchonsProduits;
     const cmpBouchonLot = totalBouchonsDispoLots > 0 ? (totalValBouchonsDispo / totalBouchonsDispoLots) : 9.0;
 
-    // 5. Ventes aux distributeurs (Agglomérés + Naturels Espagne + Naturels Maroc)
+    // 5. Ventes aux distributeurs (Agglomérés + Naturels Espagne, Maroc & Portugal)
     let lotsVendusAggloTotal = 0;
     let lotsVendusNatATotal = 0;
     let lotsVendusNatBTotal = 0;
@@ -768,6 +886,9 @@ function simulateAllMonths(state) {
     let lotsVendusNatMarocATotal = 0;
     let lotsVendusNatMarocBTotal = 0;
     let lotsVendusNatMarocCTotal = 0;
+    let lotsVendusNatPortugalATotal = 0;
+    let lotsVendusNatPortugalBTotal = 0;
+    let lotsVendusNatPortugalCTotal = 0;
     let caTotal = 0;
     let encaissementVentesMois = 0;
     let creances30jMois = 0;
@@ -791,10 +912,20 @@ function simulateAllMonths(state) {
       const qteNatMarocC = Number(v.lotsNatMarocC) || 0;
       const prixNatMarocC = Number(v.prixNatMarocC) || 0;
 
+      const qteNatPortugalA = Number(v.lotsNatPortugalA) || 0;
+      const prixNatPortugalA = Number(v.prixNatPortugalA) || 0;
+      const qteNatPortugalB = Number(v.lotsNatPortugalB) || 0;
+      const prixNatPortugalB = Number(v.prixNatPortugalB) || 0;
+      const qteNatPortugalC = Number(v.lotsNatPortugalC) || 0;
+      const prixNatPortugalC = Number(v.prixNatPortugalC) || 0;
+
       const caDeal = (qteAgglo * prixAgglo) +
                      (qteNatA * prixNatA) + (qteNatB * prixNatB) + (qteNatC * prixNatC) +
-                     (qteNatMarocA * prixNatMarocA) + (qteNatMarocB * prixNatMarocB) + (qteNatMarocC * prixNatMarocC);
-      const totalLotsDistributeur = qteAgglo + qteNatA + qteNatB + qteNatC + qteNatMarocA + qteNatMarocB + qteNatMarocC;
+                     (qteNatMarocA * prixNatMarocA) + (qteNatMarocB * prixNatMarocB) + (qteNatMarocC * prixNatMarocC) +
+                     (qteNatPortugalA * prixNatPortugalA) + (qteNatPortugalB * prixNatPortugalB) + (qteNatPortugalC * prixNatPortugalC);
+      const totalLotsDistributeur = qteAgglo + qteNatA + qteNatB + qteNatC +
+                                    qteNatMarocA + qteNatMarocB + qteNatMarocC +
+                                    qteNatPortugalA + qteNatPortugalB + qteNatPortugalC;
 
       lotsVendusAggloTotal += qteAgglo;
       lotsVendusNatATotal += qteNatA;
@@ -803,6 +934,9 @@ function simulateAllMonths(state) {
       lotsVendusNatMarocATotal += qteNatMarocA;
       lotsVendusNatMarocBTotal += qteNatMarocB;
       lotsVendusNatMarocCTotal += qteNatMarocC;
+      lotsVendusNatPortugalATotal += qteNatPortugalA;
+      lotsVendusNatPortugalBTotal += qteNatPortugalB;
+      lotsVendusNatPortugalCTotal += qteNatPortugalC;
       caTotal += caDeal;
 
       if (Number(v.delai) === 0) {
@@ -821,7 +955,8 @@ function simulateAllMonths(state) {
     });
 
     const lotsVendusTotal = lotsVendusAggloTotal + lotsVendusNatATotal + lotsVendusNatBTotal + lotsVendusNatCTotal +
-                            lotsVendusNatMarocATotal + lotsVendusNatMarocBTotal + lotsVendusNatMarocCTotal;
+                            lotsVendusNatMarocATotal + lotsVendusNatMarocBTotal + lotsVendusNatMarocCTotal +
+                            lotsVendusNatPortugalATotal + lotsVendusNatPortugalBTotal + lotsVendusNatPortugalCTotal;
 
     // 6. Stocks de fin de mois
     // A. Liège brut
@@ -854,6 +989,15 @@ function simulateAllMonths(state) {
     const valStockPlanchesMarocCFin = stockPlanchesMarocCFinKg * cmpPlancheMarocCKg;
     const valStockPlanchesMarocFin = valStockPlanchesMarocAFin + valStockPlanchesMarocBFin + valStockPlanchesMarocCFin;
 
+    // D3. Planches Portugal (A, B, C)
+    const stockPlanchesPortugalAFinKg = Math.max(0, stockPlanchesPortugalAEntrantKg - planchesATuberPortugalAKg);
+    const valStockPlanchesPortugalAFin = stockPlanchesPortugalAFinKg * cmpPlanchePortugalAKg;
+    const stockPlanchesPortugalBFinKg = Math.max(0, stockPlanchesPortugalBEntrantKg - planchesATuberPortugalBKg);
+    const valStockPlanchesPortugalBFin = stockPlanchesPortugalBFinKg * cmpPlanchePortugalBKg;
+    const stockPlanchesPortugalCFinKg = Math.max(0, stockPlanchesPortugalCEntrantKg - planchesATuberPortugalCKg);
+    const valStockPlanchesPortugalCFin = stockPlanchesPortugalCFinKg * cmpPlanchePortugalCKg;
+    const valStockPlanchesPortugalFin = valStockPlanchesPortugalAFin + valStockPlanchesPortugalBFin + valStockPlanchesPortugalCFin;
+
     // E. Bouchons naturels Espagne (A, B, C)
     const stockNatAFinLots = Math.max(0, totalNatADispoLots - lotsVendusNatATotal);
     const stockNatBFinLots = Math.max(0, totalNatBDispoLots - lotsVendusNatBTotal);
@@ -866,9 +1010,15 @@ function simulateAllMonths(state) {
     const stockNatMarocCFinLots = Math.max(0, totalNatMarocCDispoLots - lotsVendusNatMarocCTotal);
     const valStockNatMarocFin = (stockNatMarocAFinLots * cmpNatMarocALot) + (stockNatMarocBFinLots * cmpNatMarocBLot) + (stockNatMarocCFinLots * cmpNatMarocCLot);
 
+    // E3. Bouchons naturels Portugal (A, B, C)
+    const stockNatPortugalAFinLots = Math.max(0, totalNatPortugalADispoLots - lotsVendusNatPortugalATotal);
+    const stockNatPortugalBFinLots = Math.max(0, totalNatPortugalBDispoLots - lotsVendusNatPortugalBTotal);
+    const stockNatPortugalCFinLots = Math.max(0, totalNatPortugalCDispoLots - lotsVendusNatPortugalCTotal);
+    const valStockNatPortugalFin = (stockNatPortugalAFinLots * cmpNatPortugalALot) + (stockNatPortugalBFinLots * cmpNatPortugalBLot) + (stockNatPortugalCFinLots * cmpNatPortugalCLot);
+
     const valeurStockTotalFin = valStockLiegeFin + valStockGrainsFin + valStockBouchonsFin +
-                                valStockPlanchesFin + valStockPlanchesMarocFin +
-                                valStockNatFin + valStockNatMarocFin;
+                                valStockPlanchesFin + valStockPlanchesMarocFin + valStockPlanchesPortugalFin +
+                                valStockNatFin + valStockNatMarocFin + valStockNatPortugalFin;
     const fraisStockage = valeurStockTotalFin * PARAMS.tauxStockage; // 0,42%
 
     // 7. P&L (Compte de résultat)
@@ -878,7 +1028,10 @@ function simulateAllMonths(state) {
                              (lotsVendusNatCTotal * cmpNatCLot) +
                              (lotsVendusNatMarocATotal * cmpNatMarocALot) +
                              (lotsVendusNatMarocBTotal * cmpNatMarocBLot) +
-                             (lotsVendusNatMarocCTotal * cmpNatMarocCLot);
+                             (lotsVendusNatMarocCTotal * cmpNatMarocCLot) +
+                             (lotsVendusNatPortugalATotal * cmpNatPortugalALot) +
+                             (lotsVendusNatPortugalBTotal * cmpNatPortugalBLot) +
+                             (lotsVendusNatPortugalCTotal * cmpNatPortugalCLot);
 
     const fraisMarketing = caTotal * PARAMS.tauxMarketing; // 5%
     const salairesMois = PARAMS.getSalairesMensuels(m); // 60k en M1-M2, 100k dès M3
@@ -1071,6 +1224,57 @@ function simulateAllMonths(state) {
       stockNatMarocBFinLots,
       stockNatMarocCFinLots,
       valStockNatMarocFin,
+
+      // Données spécifiques Commandes, Tubage & Bouchons Naturels Portugal
+      commandeLiegePortugalKg,
+      prixLiegePortugalKg,
+      montantCommandeLiegePortugalBrut,
+      montantCommandeLiegePortugal,
+      commandePlanchesPortugalAKg,
+      commandePlanchesPortugalBKg,
+      commandePlanchesPortugalCKg,
+      prixPlanchePortugalAKg,
+      prixPlanchePortugalBKg,
+      prixPlanchePortugalCKg,
+      montantCommandePlanchePortugalA,
+      montantCommandePlanchePortugalB,
+      montantCommandePlanchePortugalC,
+      montantCommandePlanchesPortugalTotal,
+      livraisonPlanchesPortugalAKg,
+      livraisonPlanchesPortugalAVal,
+      livraisonPlanchesPortugalBKg,
+      livraisonPlanchesPortugalBVal,
+      livraisonPlanchesPortugalCKg,
+      livraisonPlanchesPortugalCVal,
+      stockPlanchesPortugalAEntrantKg,
+      stockPlanchesPortugalBEntrantKg,
+      stockPlanchesPortugalCEntrantKg,
+      cmpPlanchePortugalAKg,
+      cmpPlanchePortugalBKg,
+      cmpPlanchePortugalCKg,
+      planchesATuberPortugalAKg,
+      planchesATuberPortugalBKg,
+      planchesATuberPortugalCKg,
+      bouchonsNatPortugalAProduitsLots,
+      bouchonsNatPortugalBProduitsLots,
+      bouchonsNatPortugalCProduitsLots,
+      cmpNatPortugalALot,
+      cmpNatPortugalBLot,
+      cmpNatPortugalCLot,
+      totalNatPortugalADispoLots,
+      totalNatPortugalBDispoLots,
+      totalNatPortugalCDispoLots,
+      stockPlanchesPortugalAFinKg,
+      stockPlanchesPortugalBFinKg,
+      stockPlanchesPortugalCFinKg,
+      valStockPlanchesPortugalFin,
+      stockNatPortugalAFinLots,
+      stockNatPortugalBFinLots,
+      stockNatPortugalCFinLots,
+      valStockNatPortugalFin,
+      lotsVendusNatPortugalATotal,
+      lotsVendusNatPortugalBTotal,
+      lotsVendusNatPortugalCTotal,
 
       // Ventes
       lotsVendusAggloTotal,
@@ -1294,6 +1498,7 @@ function analyzeOffreDistributeur(prixOffert, volume = 3000, mois = 1, volumeTot
 function calcMargeDistributeur(type = 'B', prixAchat = 60.0) {
   let repKey = 'B';
   let isMaroc = false;
+  let isPortugal = false;
   let qualiteLetter = 'B';
   let coutPlancheInit = PARAMS.prixAchatPlanchesBInit;
 
@@ -1312,6 +1517,21 @@ function calcMargeDistributeur(type = 'B', prixAchat = 60.0) {
       qualiteLetter = 'B';
       repKey = 'B';
       coutPlancheInit = (17222.2222 + 23684.2105) / 45000; // ~0.9090 €/kg (Lot 1: 15k + Lot 2: 30k)
+    }
+  } else if (tStr.includes('Portugal') || tStr.startsWith('P')) {
+    isPortugal = true;
+    if (tStr.includes('A')) {
+      qualiteLetter = 'A';
+      repKey = 'A';
+      coutPlancheInit = 1.53; // Palier 16 000 kg (base: 1.80 €)
+    } else if (tStr.includes('C')) {
+      qualiteLetter = 'C';
+      repKey = 'C';
+      coutPlancheInit = 2.38; // Palier 16 000 kg (base: 2.80 €)
+    } else {
+      qualiteLetter = 'B';
+      repKey = 'B';
+      coutPlancheInit = 1.95; // Palier 16 000 kg (base: 2.30 €)
     }
   } else {
     if (tStr === 'A' || tStr.includes('A')) {
@@ -1347,6 +1567,7 @@ function calcMargeDistributeur(type = 'B', prixAchat = 60.0) {
   return {
     type,
     isMaroc,
+    isPortugal,
     qualiteLetter,
     coutPlancheInit,
     prixAchat,

@@ -399,7 +399,96 @@ console.log("- Stock Maroc M5   : A = " + m5Ench.stockPlanchesMarocAEntrantKg + 
 console.log("- Coûts lots Nat   : Espagne A = " + m5Ench.cmpNatALot.toFixed(2) + "€, Espagne B = 25.30€ | Maroc A = " + m5Ench.cmpNatMarocALot.toFixed(2) + "€, Maroc B = " + m5Ench.cmpNatMarocBLot.toFixed(2) + "€");
 console.log("- Décaissement enchères : -" + m5Ench.achatEncheresDecaisse + " € | Trésorerie fin Mai : " + Math.round(m5Ench.tresorerieFinMois).toLocaleString('fr-FR') + " €");
 
-console.log("\n Tous les tests du moteur mathématique (8 mois), tubage, séparation Espagne/Maroc, 2 lots enchères M5, prix planches, trieuse, bonus M3, tresoDebutForce et réduction fournisseur sont passés avec succès !");
+// 13. Validation du Nouveau Producteur Portugais (Grilles dégressives, approvisionnement, tubage et marges)
+console.log("\n--- Validation du Producteur Portugais ---");
+
+// Test des grilles de prix Portugal
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalA(3000), 1.80, "Base Planche Portugal A = 1.80 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalA(8000), 1.75, "Palier 8k Planche Portugal A = 1.75 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalA(10000), 1.69, "Palier 10k Planche Portugal A = 1.69 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalA(12000), 1.64, "Palier 12k Planche Portugal A = 1.64 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalA(14000), 1.58, "Palier 14k Planche Portugal A = 1.58 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalA(16000), 1.53, "Palier 16k Planche Portugal A = 1.53 €/kg");
+
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalB(3000), 2.30, "Base Planche Portugal B = 2.30 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalB(8000), 2.23, "Palier 8k Planche Portugal B = 2.23 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalB(10000), 2.16, "Palier 10k Planche Portugal B = 2.16 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalB(12000), 2.09, "Palier 12k Planche Portugal B = 2.09 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalB(14000), 2.02, "Palier 14k Planche Portugal B = 2.02 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalB(16000), 1.95, "Palier 16k Planche Portugal B = 1.95 €/kg");
+
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalC(3000), 2.80, "Base Planche Portugal C = 2.80 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalC(8000), 2.72, "Palier 8k Planche Portugal C = 2.72 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalC(10000), 2.63, "Palier 10k Planche Portugal C = 2.63 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalC(12000), 2.55, "Palier 12k Planche Portugal C = 2.55 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalC(14000), 2.46, "Palier 14k Planche Portugal C = 2.46 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixPlanchePortugalC(16000), 2.38, "Palier 16k Planche Portugal C = 2.38 €/kg");
+
+assert.strictEqual(sim.PARAMS.getPrixLiegePortugal(50000), 0.50, "Base Liège Portugal = 0.50 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixLiegePortugal(100000), 0.49, "Palier 100k Liège Portugal = 0.49 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixLiegePortugal(110000), 0.47, "Palier 110k Liège Portugal = 0.47 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixLiegePortugal(120000), 0.46, "Palier 12k Liège Portugal = 0.46 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixLiegePortugal(130000), 0.44, "Palier 130k Liège Portugal = 0.44 €/kg");
+assert.strictEqual(sim.PARAMS.getPrixLiegePortugal(140000), 0.43, "Palier 140k Liège Portugal = 0.43 €/kg");
+
+// Test Commande en M3 livrée en M4 + Tubage en M4
+const statePort = sim.getDefaultState();
+// Commande en M3 : 16k Portugal A + 16k Portugal B + 140k Liège Portugal
+statePort.moisData[3].commandePlanchesPortugalAKg = 16000;
+statePort.moisData[3].commandePlanchesPortugalBKg = 16000;
+statePort.moisData[3].commandeLiegePortugalKg = 140000;
+statePort.moisData[3].commandeLiegeKg = 0; // Remplace le liège espagnol par le liège portugais
+
+// En M4 : Tubage des planches portugaises reçues
+statePort.moisData[4].planchesATuberPortugalAKg = 10000;
+statePort.moisData[4].planchesATuberPortugalBKg = 10000;
+statePort.moisData[4].ventes[0].lotsNatPortugalA = 500;
+statePort.moisData[4].ventes[0].prixNatPortugalA = 55.0;
+statePort.moisData[4].ventes[0].lotsNatPortugalB = 500;
+statePort.moisData[4].ventes[0].prixNatPortugalB = 60.0;
+
+const resPort = sim.simulateAllMonths(statePort);
+const m3Res = resPort.moisResults[3];
+const m4Res = resPort.moisResults[4];
+
+// Vérification de la commande M3
+assert.strictEqual(m3Res.montantCommandePlanchePortugalA, 16000 * 1.53, "Montant commande Planche Portugal A = 24 480 €");
+assert.strictEqual(m3Res.montantCommandePlanchePortugalB, 16000 * 1.95, "Montant commande Planche Portugal B = 31 200 €");
+assert.strictEqual(m3Res.montantCommandeLiegePortugal, 140000 * 0.43, "Montant commande Liège Portugal = 60 200 €");
+
+// Vérification des réceptions en M4
+assert.strictEqual(m4Res.stockPlanchesPortugalAEntrantKg, 16000, "Livraison M4 Planche Portugal A = 16 000 kg");
+assert.strictEqual(m4Res.cmpPlanchePortugalAKg, 1.53, "CMP Planche Portugal A = 1.53 €/kg");
+assert.strictEqual(m4Res.stockPlanchesPortugalBEntrantKg, 16000, "Livraison M4 Planche Portugal B = 16 000 kg");
+assert.strictEqual(m4Res.cmpPlanchePortugalBKg, 1.95, "CMP Planche Portugal B = 1.95 €/kg");
+assert.strictEqual(m4Res.livraisonRecueKg, 140000, "Livraison M4 Liège Portugal = 140 000 kg");
+
+// Vérification des coûts unitaires des lots naturels portugais
+assert(Math.abs(m4Res.cmpNatPortugalALot - 15.60) < 1e-4, "Coût direct lot Nat Portugal A = 15.60 € (10x1.53 + 0.30)");
+assert(Math.abs(m4Res.cmpNatPortugalBLot - 19.80) < 1e-4, "Coût direct lot Nat Portugal B = 19.80 € (10x1.95 + 0.30)");
+
+// Vérification des stocks de fin M4
+assert.strictEqual(m4Res.stockPlanchesPortugalAFinKg, 6000, "Stock restant Planche Portugal A = 6 000 kg");
+assert.strictEqual(m4Res.stockNatPortugalAFinLots, 500, "Stock restant bouchons Nat Portugal A = 500 lots (1000 produits - 500 vendus)");
+
+// Vérification de la marge distributeur pour le Portugal
+const boussolePortA = sim.calcMargeDistributeur('Portugal A', 55.0);
+const boussolePortB = sim.calcMargeDistributeur('Portugal B', 60.0);
+const boussolePortC = sim.calcMargeDistributeur('Portugal C', 65.0);
+
+assert.strictEqual(boussolePortA.isPortugal, true, "Type Portugal identifié");
+assert(Math.abs(boussolePortA.coutDirectFabricant - 15.60) < 1e-4, "Coût direct fabricant Portugal A = 15.60 €");
+assert(Math.abs(boussolePortA.margeBruteFabricant - 39.40) < 1e-4, "Marge brute fabricant Portugal A à 55€ = 39.40 € / lot");
+assert(Math.abs(boussolePortB.coutDirectFabricant - 19.80) < 1e-4, "Coût direct fabricant Portugal B = 19.80 €");
+assert(Math.abs(boussolePortC.coutDirectFabricant - 24.10) < 1e-4, "Coût direct fabricant Portugal C = 24.10 €");
+
+console.log("Validation du Producteur Portugais réussie :");
+console.log("- Planches Portugal A : Base 1.80€ -> Palier 16k à 1.53€ -> Coût direct lot = " + boussolePortA.coutDirectFabricant.toFixed(2) + " € (Marge à 55€ : +" + boussolePortA.margeBruteFabricant.toFixed(2) + " €)");
+console.log("- Planches Portugal B : Base 2.30€ -> Palier 16k à 1.95€ -> Coût direct lot = " + boussolePortB.coutDirectFabricant.toFixed(2) + " € (Marge à 60€ : +" + boussolePortB.margeBruteFabricant.toFixed(2) + " €)");
+console.log("- Planches Portugal C : Base 2.80€ -> Palier 16k à 2.38€ -> Coût direct lot = " + boussolePortC.coutDirectFabricant.toFixed(2) + " € (Marge à 65€ : +" + boussolePortC.margeBruteFabricant.toFixed(2) + " €)");
+console.log("- Liège Portugal : Base 0.50€ -> Palier 140k à 0.43€");
+
+console.log("\n Tous les tests du moteur mathématique (8 mois), tubage, séparation Espagne/Maroc/Portugal, enchères M5, boussole et trieuse sont passés avec succès !");
 
 
 
