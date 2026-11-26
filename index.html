@@ -2960,35 +2960,49 @@
       const elCoutTubTot = document.getElementById('out-cout-tubage-total');
       if (elCoutTubTot) elCoutTubTot.innerText = Math.round(res.coutTubage).toLocaleString('fr-FR') + ' €';
 
-      // Disponibilités Naturels Espagne & Maroc & Portugal
+      // Disponibilités Naturels Espagne & Maroc & Portugal (Stock initial disponible du mois, restant & alertes)
+      function formatStockNatBadge(dispo, vendus, stockFin) {
+        const d = Math.round(dispo || 0);
+        const v = Math.round(vendus || 0);
+        const f = Math.round(stockFin || 0);
+        if (v > d) {
+          return `${d.toLocaleString('fr-FR')} lots <span class="text-red-600 font-bold text-[10px] bg-red-100 border border-red-300 px-1 py-0.5 rounded ml-0.5 whitespace-nowrap">⚠️ Vendu ${v.toLocaleString('fr-FR')}</span>`;
+        } else if (v > 0) {
+          return `${d.toLocaleString('fr-FR')} lots <span class="text-slate-500 font-normal text-[10px] ml-0.5 whitespace-nowrap">(Reste ${f.toLocaleString('fr-FR')})</span>`;
+        } else {
+          return `${d.toLocaleString('fr-FR')} lots`;
+        }
+      }
+
       const elDispoNatA = document.getElementById('out-dispo-nat-a');
-      if (elDispoNatA) elDispoNatA.innerText = Math.round(res.stockNatAFinLots + res.lotsVendusNatATotal).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatA) elDispoNatA.innerHTML = formatStockNatBadge(res.totalNatADispoLots, res.lotsVendusNatATotal, res.stockNatAFinLots);
       const elDispoNatB = document.getElementById('out-dispo-nat-b');
-      if (elDispoNatB) elDispoNatB.innerText = Math.round(res.stockNatBFinLots + res.lotsVendusNatBTotal).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatB) elDispoNatB.innerHTML = formatStockNatBadge(res.totalNatBDispoLots, res.lotsVendusNatBTotal, res.stockNatBFinLots);
       const elDispoNatC = document.getElementById('out-dispo-nat-c');
-      if (elDispoNatC) elDispoNatC.innerText = Math.round(res.stockNatCFinLots + res.lotsVendusNatCTotal).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatC) elDispoNatC.innerHTML = formatStockNatBadge(res.totalNatCDispoLots, res.lotsVendusNatCTotal, res.stockNatCFinLots);
 
       const elDispoNatMarocA = document.getElementById('out-dispo-nat-maroc-a');
-      if (elDispoNatMarocA) elDispoNatMarocA.innerText = Math.round(res.stockNatMarocAFinLots + res.lotsVendusNatMarocATotal).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatMarocA) elDispoNatMarocA.innerHTML = formatStockNatBadge(res.totalNatMarocADispoLots, res.lotsVendusNatMarocATotal, res.stockNatMarocAFinLots);
       const elDispoNatMarocB = document.getElementById('out-dispo-nat-maroc-b');
-      if (elDispoNatMarocB) elDispoNatMarocB.innerText = Math.round(res.stockNatMarocBFinLots + res.lotsVendusNatMarocBTotal).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatMarocB) elDispoNatMarocB.innerHTML = formatStockNatBadge(res.totalNatMarocBDispoLots, res.lotsVendusNatMarocBTotal, res.stockNatMarocBFinLots);
 
       const elDispoNatPortA = document.getElementById('out-dispo-nat-portugal-a');
-      if (elDispoNatPortA) elDispoNatPortA.innerText = Math.round((res.stockNatPortugalAFinLots || 0) + (res.lotsVendusNatPortugalATotal || 0)).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatPortA) elDispoNatPortA.innerHTML = formatStockNatBadge(res.totalNatPortugalADispoLots, res.lotsVendusNatPortugalATotal, res.stockNatPortugalAFinLots);
       const elDispoNatPortB = document.getElementById('out-dispo-nat-portugal-b');
-      if (elDispoNatPortB) elDispoNatPortB.innerText = Math.round((res.stockNatPortugalBFinLots || 0) + (res.lotsVendusNatPortugalBTotal || 0)).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatPortB) elDispoNatPortB.innerHTML = formatStockNatBadge(res.totalNatPortugalBDispoLots, res.lotsVendusNatPortugalBTotal, res.stockNatPortugalBFinLots);
       const elDispoNatPortC = document.getElementById('out-dispo-nat-portugal-c');
-      if (elDispoNatPortC) elDispoNatPortC.innerText = Math.round((res.stockNatPortugalCFinLots || 0) + (res.lotsVendusNatPortugalCTotal || 0)).toLocaleString('fr-FR') + ' lots';
+      if (elDispoNatPortC) elDispoNatPortC.innerHTML = formatStockNatBadge(res.totalNatPortugalCDispoLots, res.lotsVendusNatPortugalCTotal, res.stockNatPortugalCFinLots);
 
-      const totalNatDispo = (res.stockNatAFinLots + res.lotsVendusNatATotal) + 
-                            (res.stockNatBFinLots + res.lotsVendusNatBTotal) + 
-                            (res.stockNatCFinLots + res.lotsVendusNatCTotal) +
-                            (res.stockNatMarocAFinLots + res.lotsVendusNatMarocATotal) +
-                            (res.stockNatMarocBFinLots + res.lotsVendusNatMarocBTotal) +
-                            (res.stockNatMarocCFinLots + res.lotsVendusNatMarocCTotal) +
-                            ((res.stockNatPortugalAFinLots || 0) + (res.lotsVendusNatPortugalATotal || 0)) +
-                            ((res.stockNatPortugalBFinLots || 0) + (res.lotsVendusNatPortugalBTotal || 0)) +
-                            ((res.stockNatPortugalCFinLots || 0) + (res.lotsVendusNatPortugalCTotal || 0));
+      const totalNatDispo = (res.totalNatDispoLots !== undefined) ? res.totalNatDispoLots : (
+                            (res.totalNatADispoLots || 0) + 
+                            (res.totalNatBDispoLots || 0) + 
+                            (res.totalNatCDispoLots || 0) +
+                            (res.totalNatMarocADispoLots || 0) + 
+                            (res.totalNatMarocBDispoLots || 0) + 
+                            (res.totalNatMarocCDispoLots || 0) +
+                            (res.totalNatPortugalADispoLots || 0) +
+                            (res.totalNatPortugalBDispoLots || 0) +
+                            (res.totalNatPortugalCDispoLots || 0));
       const elTotNatDispo = document.getElementById('out-total-nat-dispo');
       if (elTotNatDispo) elTotNatDispo.innerText = Math.round(totalNatDispo).toLocaleString('fr-FR');
 
@@ -3043,9 +3057,14 @@
       // MAJ Ventes
       const badgeVendu = document.getElementById('badge-total-vendu');
       badgeVendu.innerText = res.lotsVendusTotal.toLocaleString('fr-FR') + ' lots vendus';
-      if (res.lotsVendusTotal > (res.totalBouchonsDispoLots + totalNatDispo)) {
+      const totDispoGlobal = res.totalBouchonsDispoLots + totalNatDispo;
+      if (res.alerteSurvente || res.lotsVendusTotal > totDispoGlobal) {
         badgeVendu.className = 'text-xs bg-red-600 text-white font-bold px-2.5 py-0.5 rounded-full animate-pulse';
-        badgeVendu.innerText = 'ATTENTION : Ventes (' + res.lotsVendusTotal + ') > Disponibles (' + (res.totalBouchonsDispoLots + totalNatDispo) + ') !';
+        if (res.lotsVendusTotal > totDispoGlobal) {
+          badgeVendu.innerText = 'ATTENTION : Ventes (' + res.lotsVendusTotal.toLocaleString('fr-FR') + ') > Disponibles (' + totDispoGlobal.toLocaleString('fr-FR') + ') !';
+        } else {
+          badgeVendu.innerText = 'ATTENTION : Survente détectée (' + (res.surventeTotalLots || 0).toLocaleString('fr-FR') + ' lots vendus au-delà du stock dispo) !';
+        }
       } else {
         badgeVendu.className = 'text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full';
       }

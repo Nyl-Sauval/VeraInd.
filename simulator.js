@@ -849,6 +849,10 @@ function simulateAllMonths(state) {
     const totalNatPortugalBDispoLots = stockNatPortugalBEntrantLots + bouchonsNatPortugalBProduitsLots;
     const totalNatPortugalCDispoLots = stockNatPortugalCEntrantLots + bouchonsNatPortugalCProduitsLots;
 
+    const totalNatDispoLots = totalNatADispoLots + totalNatBDispoLots + totalNatCDispoLots +
+                              totalNatMarocADispoLots + totalNatMarocBDispoLots + totalNatMarocCDispoLots +
+                              totalNatPortugalADispoLots + totalNatPortugalBDispoLots + totalNatPortugalCDispoLots;
+
     // 4. Transformation & Production classique (Broyage & Moulage Agglomérés)
     const maxBroyageMachine = PARAMS.capaciteMoulinsKg; // 155 000 kg / mois
     const liegeDemande = Number(monthData.liegeABroyerKg) || 0;
@@ -1015,6 +1019,23 @@ function simulateAllMonths(state) {
     const stockNatPortugalBFinLots = Math.max(0, totalNatPortugalBDispoLots - lotsVendusNatPortugalBTotal);
     const stockNatPortugalCFinLots = Math.max(0, totalNatPortugalCDispoLots - lotsVendusNatPortugalCTotal);
     const valStockNatPortugalFin = (stockNatPortugalAFinLots * cmpNatPortugalALot) + (stockNatPortugalBFinLots * cmpNatPortugalBLot) + (stockNatPortugalCFinLots * cmpNatPortugalCLot);
+
+    // Détection des surventes éventuelles (Ventes > Disponibles)
+    const surventeAggloLots = Math.max(0, lotsVendusAggloTotal - totalBouchonsDispoLots);
+    const surventeNatALots = Math.max(0, lotsVendusNatATotal - totalNatADispoLots);
+    const surventeNatBLots = Math.max(0, lotsVendusNatBTotal - totalNatBDispoLots);
+    const surventeNatCLots = Math.max(0, lotsVendusNatCTotal - totalNatCDispoLots);
+    const surventeNatMarocALots = Math.max(0, lotsVendusNatMarocATotal - totalNatMarocADispoLots);
+    const surventeNatMarocBLots = Math.max(0, lotsVendusNatMarocBTotal - totalNatMarocBDispoLots);
+    const surventeNatMarocCLots = Math.max(0, lotsVendusNatMarocCTotal - totalNatMarocCDispoLots);
+    const surventeNatPortugalALots = Math.max(0, lotsVendusNatPortugalATotal - totalNatPortugalADispoLots);
+    const surventeNatPortugalBLots = Math.max(0, lotsVendusNatPortugalBTotal - totalNatPortugalBDispoLots);
+    const surventeNatPortugalCLots = Math.max(0, lotsVendusNatPortugalCTotal - totalNatPortugalCDispoLots);
+    const surventeNatTotalLots = surventeNatALots + surventeNatBLots + surventeNatCLots +
+                                 surventeNatMarocALots + surventeNatMarocBLots + surventeNatMarocCLots +
+                                 surventeNatPortugalALots + surventeNatPortugalBLots + surventeNatPortugalCLots;
+    const surventeTotalLots = surventeAggloLots + surventeNatTotalLots;
+    const alerteSurvente = surventeTotalLots > 0;
 
     const valeurStockTotalFin = valStockLiegeFin + valStockGrainsFin + valStockBouchonsFin +
                                 valStockPlanchesFin + valStockPlanchesMarocFin + valStockPlanchesPortugalFin +
@@ -1186,6 +1207,10 @@ function simulateAllMonths(state) {
       cmpNatALot,
       cmpNatBLot,
       cmpNatCLot,
+      totalNatADispoLots,
+      totalNatBDispoLots,
+      totalNatCDispoLots,
+      totalNatDispoLots,
       stockNatAFinLots,
       stockNatBFinLots,
       stockNatCFinLots,
@@ -1342,6 +1367,19 @@ function simulateAllMonths(state) {
       pointsRN,
       pointsCA,
       penaliteTreso,
+      surventeAggloLots,
+      surventeNatALots,
+      surventeNatBLots,
+      surventeNatCLots,
+      surventeNatMarocALots,
+      surventeNatMarocBLots,
+      surventeNatMarocCLots,
+      surventeNatPortugalALots,
+      surventeNatPortugalBLots,
+      surventeNatPortugalCLots,
+      surventeNatTotalLots,
+      surventeTotalLots,
+      alerteSurvente,
       scoreMois,
       scoreCumule
     };

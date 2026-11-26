@@ -488,6 +488,31 @@ console.log("- Planches Portugal B : Base 2.30€ -> Palier 16k à 1.95€ -> Co
 console.log("- Planches Portugal C : Base 2.80€ -> Palier 16k à 2.38€ -> Coût direct lot = " + boussolePortC.coutDirectFabricant.toFixed(2) + " € (Marge à 65€ : +" + boussolePortC.margeBruteFabricant.toFixed(2) + " €)");
 console.log("- Liège Portugal : Base 0.50€ -> Palier 140k à 0.43€");
 
+console.log("\n--- Validation Disponibilité Stock Naturel & Détection Survente ---");
+// Vérifier la présence des disponibilités exportées en M3
+assert(typeof m3.totalNatADispoLots === 'number', "totalNatADispoLots est exporté en M3");
+assert(typeof m3.totalNatBDispoLots === 'number', "totalNatBDispoLots est exporté en M3");
+assert(typeof m3.totalNatCDispoLots === 'number', "totalNatCDispoLots est exporté en M3");
+assert(typeof m3.totalNatDispoLots === 'number', "totalNatDispoLots est exporté en M3");
+assert.strictEqual(m3.totalNatADispoLots, m3.bouchonsNatAProduitsLots, "En M3 (pas de stock initial de bouchons), dispo = production");
+
+// Test de non-inflation du stock disponible lors d'une survente
+const stateSurvente = sim.getDefaultState();
+// En M3, on produit 1000 lots de Nat A (10 000 kg tubés)
+stateSurvente.moisData[3].planchesATuberAKg = 10000;
+stateSurvente.moisData[3].ventes = [
+  { distributeur: 1, typeTransport: 'camion', lots: 0, prix: 20, lotsNatA: 4000, prixNatA: 55 }
+];
+const resSurvente = sim.simulateAllMonths(stateSurvente);
+const m3Survente = resSurvente.moisResults[3];
+
+assert.strictEqual(m3Survente.totalNatADispoLots, 1000, "Le stock disponible reste 1 000 lots malgré la vente de 4 000 lots");
+assert.strictEqual(m3Survente.stockNatAFinLots, 0, "Le stock final est borné à 0 en cas de survente");
+assert.strictEqual(m3Survente.alerteSurvente, true, "L'alerte de survente est active");
+assert.strictEqual(m3Survente.surventeNatALots, 3000, "3 000 lots de Nat A en survente (4 000 vendus - 1 000 dispos)");
+assert.strictEqual(m3Survente.surventeTotalLots, 3000, "Total survente = 3 000 lots");
+console.log("Validation Disponibilité & Détection Survente réussie : le stock disponible ne gonfle pas artificiellement lors d'une vente excessive !");
+
 console.log("\n Tous les tests du moteur mathématique (8 mois), tubage, séparation Espagne/Maroc/Portugal, enchères M5, boussole et trieuse sont passés avec succès !");
 
 
